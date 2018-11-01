@@ -1,0 +1,2 @@
+DUCK >>> 90
+--Last Update Time-- >>> 2018-11-01 12:08:17 AM
