@@ -75,7 +75,7 @@ namespace DuckBot.UserActions
                             {
                                 try
                                 {
-                                    if (message.Author.ToString() == user.Substring(0, message.Author.ToString().Length))
+                                    if (message.Author.Id.ToString() == user.Substring(0, message.Author.ToString().Length))
                                     {
                                         userExists = true;
 
@@ -98,7 +98,7 @@ namespace DuckBot.UserActions
                                         using (System.IO.StreamWriter file =
                                         new System.IO.StreamWriter(location, true))
                                         {
-                                            file.WriteLine($"{message.Author.ToString()} >>> {userCounterNew}");
+                                            file.WriteLine($"{message.Author.Id.ToString()} >>> {userCounterNew}");
                                         }
                                     }
                                 }
@@ -123,7 +123,7 @@ namespace DuckBot.UserActions
                                 using (System.IO.StreamWriter file =
                                 new System.IO.StreamWriter(location, true))
                                 {
-                                    file.WriteLine($"{message.Author.ToString()} >>> 1");
+                                    file.WriteLine($"{message.Author.Id.ToString()} >>> 1");
                                 }
 
                             }

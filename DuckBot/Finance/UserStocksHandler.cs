@@ -94,13 +94,17 @@ namespace DuckBot.Finance
 
             var MarketStocksValueStorage = TaskMethods.ReadFromFileToList("MarketStocksValue.txt");
 
+            bool buyStockExists = false;
             MarketStocksValueStorage = MarketStocksValueStorage.Where(p => !p.Contains(updateTimeContainer)).ToList();
             foreach (string stockItem in MarketStocksValueStorage)
             {
                 if (stockItem.Substring(0, tickerSymbol.Length) == tickerSymbol)
                 {
+                    //Sets buystockExists to true so it won't send a warning saying stock does not exist
+                    buyStockExists = true;
+
                     //Get user portfolio
-                    var userStocksStorage = TaskMethods.ReadFromFilePathToList(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.ToString() + @"\UserStockPortfolio.txt");
+                    var userStocksStorage = TaskMethods.ReadFromFilePathToList(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
 
                     //Get target stock ticker
                     int stockTickerLength = 0;
@@ -151,13 +155,17 @@ namespace DuckBot.Finance
                         WriteToUserPortfolioFile(
                             userStocksStorage,
                             stockItem.Substring(0, stockTickerLength) + " >>> " + newStockAmount,
-                            TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.ToString() + @"\UserStockPortfolio.txt");
+                            TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
 
 
                         //Write user Stock buy cost
                         //WIP
                     }
                 }
+            }
+            if (buyStockExists == false)
+            {
+                await Context.Message.Channel.SendMessageAsync($"Stock **{tickerSymbol}** does not exist in the market");
             }
         }
 
@@ -171,7 +179,7 @@ namespace DuckBot.Finance
                 if (stockItem.Substring(0, tickerSymbol.Length) == tickerSymbol)
                 {
                     //Get user portfolio
-                    var userStocksStorage = TaskMethods.ReadFromFilePathToList(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.ToString() + @"\UserStockPortfolio.txt");
+                    var userStocksStorage = TaskMethods.ReadFromFilePathToList(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
 
                     //Get target stock ticker
                     int stockTickerLength = 0;
@@ -183,8 +191,10 @@ namespace DuckBot.Finance
 
                     int stockTotalWorth = int.Parse(stockPrice) * sellAmount;
 
-                    string userStockAmount = GetUserStockAmount(tickerSymbol, TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.ToString() + @"\UserStockPortfolio.txt");
+                    string userStockAmount = GetUserStockAmount(tickerSymbol, TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
                     //Check if user is selling more stocks than they have
+                    try
+                    {
                     if (int.Parse(userStockAmount) - sellAmount < 0)
                     {
                         await Context.Message.Channel.SendMessageAsync($"You do not have enough **{tickerSymbol}** stocks to sell || **{userStockAmount} Stocks**");
@@ -210,7 +220,13 @@ namespace DuckBot.Finance
                         WriteToUserPortfolioFile(
                             userStocksStorage,
                             stockItem.Substring(0, stockTickerLength) + " >>> " + newStockAmount,
-                            TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.ToString() + @"\UserStockPortfolio.txt");
+                            TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
+                    }
+
+                    }
+                    catch (Exception)
+                    {
+                        await Context.Message.Channel.SendMessageAsync($"You do not have any stock **{tickerSymbol}**");
                     }
                 }
             }
@@ -223,7 +239,7 @@ namespace DuckBot.Finance
             List<string> userStockList = new List<string>();
 
             //Get user portfolio
-            var userStocksStorage = TaskMethods.ReadFromFilePathToList(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.ToString() + @"\UserStockPortfolio.txt");
+            var userStocksStorage = TaskMethods.ReadFromFilePathToList(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
 
             //Send stock header
             userStockList.Add($"**Stock Ticker - Stock Amount ** || **Buy price** || **Market value**");
@@ -326,7 +342,7 @@ namespace DuckBot.Finance
             //Create user stock storage directory if not exist
             if (!Directory.Exists(userFolderLocation + @"\" + Context.Message.Author.ToString()))
             {
-                System.IO.Directory.CreateDirectory(userFolderLocation + @"\" + Context.Message.Author.ToString());
+                System.IO.Directory.CreateDirectory(userFolderLocation + @"\" + Context.Message.Author.Id.ToString());
                 return false;
             }
             else
