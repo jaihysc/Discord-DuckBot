@@ -58,17 +58,18 @@ namespace DuckBot.Commands
         [Command("slot")]
         public async Task PlaySlotAsync(int gambleAmount)
         {
-            UserBankingHandler.CheckIfUserCreditProfileExists(Context);
-            await UserGamblingHandler.UserGambling(Context, Context.Message, gambleAmount);
+            try
+            {
+                UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                await UserGamblingHandler.UserGambling(Context, Context.Message, gambleAmount);
+            }
+            catch (Exception)
+            {
+            }
         }
         [Command("balance")]
+        [Alias("bal")]
         public async Task SlotBalanceAsync()
-        {
-            UserBankingHandler.CheckIfUserCreditProfileExists(Context);
-            await UserBankingHandler.DisplayUserCredits(Context);
-        }
-        [Command("bal")]
-        public async Task SlotBalanceShortenedAsync()
         {
             UserBankingHandler.CheckIfUserCreditProfileExists(Context);
             await UserBankingHandler.DisplayUserCredits(Context);
@@ -82,24 +83,69 @@ namespace DuckBot.Commands
 
         //Stocks
         [Group("stock")]
+        [Alias("s")]
         public class Stock : ModuleBase<SocketCommandContext>
         {
             //Stocks
             [Command("buy")]
+            [Alias("b")]
             public async Task UserStockBuyAsync(string tickerSymbol, int amount)
             {
+                try
+                {
                 UserBankingHandler.CheckIfUserCreditProfileExists(Context);
-                UserStocksHandler.BuyUserStocks(Context, tickerSymbol, amount);
+                UserStocksHandler.CheckIfUserHasPortfolio(Context);
+
+                UserStocksHandler.BuyUserStocksAsync(Context, tickerSymbol, amount);
+                }
+                catch (Exception)
+                {
+                }
             }
             [Command("sell")]
-            public async Task UserStockSellAsync()
+            [Alias("s")]
+            public async Task UserStockSellAsync(string tickerSymbol, int amount)
             {
+                try
+                {
+                UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                UserStocksHandler.CheckIfUserHasPortfolio(Context);
 
+                UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
+                }
+                catch (Exception)
+                {
+                }
             }
             [Command("portfolio")]
+            [Alias("p")]
             public async Task UserStockPortfolioAsync()
             {
+                try
+                {
+                UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                UserStocksHandler.CheckIfUserHasPortfolio(Context);
 
+                UserStocksHandler.DisplayUserStocksAsync(Context);
+                }
+                catch (Exception)
+                {
+                }
+            }
+            [Command("market")]
+            [Alias("m")]
+            public async Task DisplayMarketStocksAsync()
+            {
+                try
+                {
+                UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                UserStocksHandler.CheckIfUserHasPortfolio(Context);
+
+                UserStocksHandler.DisplayMarketStocksAsync(Context);
+                }
+                catch (Exception)
+                {
+                }
             }
         }
     }

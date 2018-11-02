@@ -133,6 +133,7 @@
   <ItemGroup>
     <Compile Include="Commands\CommandModule.cs" />
     <Compile Include="Commands\ElevatedCommandModule.cs" />
+    <Compile Include="Commands\Preconditions\RequireWhitelistUsersPrecondition.cs" />
     <Compile Include="EventLogger.cs" />
     <Compile Include="Finance\UserBankingHandler.cs" />
     <Compile Include="MainProgram.cs" />

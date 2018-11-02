@@ -307,6 +307,38 @@ namespace DuckBot.Finance
             }
 
         }
+        public static void SubtractCredits(SocketCommandContext Context, ulong guildID, ulong userID, int subtractAmount, string filePath)
+        {
+            //Get user credits to list
+            var userCreditStorage = TaskMethods.ReadFromFileToList("UserCredits.txt");
 
+            //Get user in txt file and add selected number of credits
+            foreach (var storedUser in userCreditStorage)
+            {
+                Console.WriteLine(storedUser);
+                var guild = Context.Client.GetGuild(guildID);
+                var user = guild.GetUser(userID);
+
+                //The task will cycle through every entry to find the one matching message sender
+                //Check if selected user is equal to the message sender
+                bool storedUserLengthIsGreaterThanMessageAuthor = false;
+                if (user.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
+
+                if (storedUserLengthIsGreaterThanMessageAuthor == true && user.ToString() == storedUser.Substring(0, user.ToString().Length))
+                {
+                    //Extract counter behind username in txt file
+                    string userCredits = storedUser.Substring(user.ToString().Length + 5, storedUser.Length - user.ToString().Length - 5);
+                    string userCreditsNew = "";
+
+                    //Calculate new balance
+                    userCreditsNew = (int.Parse(userCredits) + subtractAmount).ToString();
+
+                    var otherCreditStorageUsers = userCreditStorage.Where(p => !p.Contains(user.ToString())).OrderBy(x => x).ToList();
+
+                    TaskMethods.WriteListToFile(otherCreditStorageUsers, true, filePath);
+                    TaskMethods.WriteStringToFile($"{user.ToString()} >>> {userCreditsNew}", false, filePath);
+                }
+            }
+        }
     }
 }

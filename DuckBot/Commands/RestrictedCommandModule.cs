@@ -1,12 +1,12 @@
 ﻿using Discord;
 using Discord.Commands;
-using DuckBot;
+using Discord.WebSocket;
 using DuckBot.Finance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using DuckBot.Commands.Preconditions;
 
 namespace DuckBot.Commands
 {
@@ -15,7 +15,7 @@ namespace DuckBot.Commands
         internal static string guildRoleMessage = "";
 
         [Group("crossGuild")]
-        [RequireOwner]
+        [RequireWhitelistedUsers]
         public class CrossGuild : ModuleBase<SocketCommandContext>
         {
             [Group("elevated")]
@@ -183,7 +183,7 @@ namespace DuckBot.Commands
 
 
             [Command("logAllMessages")]
-            [RequireOwner]
+            [RequireWhitelistedUsers]
             public async Task LogAllMessagesAsync(ulong guildID, ulong retrieveTargetChannelID, string path)
             {
                 if (Context.Message.Author.Id == 285266023475838976)

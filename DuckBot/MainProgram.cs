@@ -2,6 +2,7 @@ using Discord;
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot.Commands.Preconditions;
 using DuckBot.Finance;
 using DuckBot.UserActions;
 using Microsoft.Extensions.DependencyInjection;
@@ -39,6 +40,8 @@ namespace DuckBot
             _services = new ServiceCollection()
                 .AddSingleton(_client)
                 .AddSingleton<InteractiveService>()
+
+                //BuildsServiceProvider
                 .BuildServiceProvider();
 
             try
@@ -60,6 +63,7 @@ namespace DuckBot
             //Connect to discord
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
+
             }
             catch (Exception) { Console.WriteLine("Unable to initialize!"); }
 
@@ -122,9 +126,8 @@ namespace DuckBot
                 return;
 
             var context = new SocketCommandContext(_client, message);
-            var result = await _commands.ExecuteAsync(context, argPos, services: null);
+            var result = await _commands.ExecuteAsync(context: context, argPos: argPos, services: _services);
 
-            
             //COMMAND LOGGING
             // Inform the user if the command fails
             if (!result.IsSuccess)

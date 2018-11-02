@@ -187,27 +187,9 @@ namespace DuckBot.Finance
         }
 
         //Give credits because I am a cheater
-        public static void SetCredits(SocketCommandContext context, ulong guildID, ulong userID, int addAmount)
+        public static void SetCredits(SocketCommandContext context, ulong guildID, ulong userID, int setAmount)
         {
-            var userCreditStorage = TaskMethods.ReadFromFileToList("UserCredits.txt");
-
-            //Get user in txt file and add selected number of credits
-            try
-            {
-                //GET USER
-                var guild = context.Client.GetGuild(guildID);
-                var user = guild.GetUser(userID);
-
-                var otherCreditStorageUsers = userCreditStorage.Where(p => !p.Contains(user.ToString()));
-                var sortedOtherCreditStorageUsers = otherCreditStorageUsers.OrderBy(x => x).ToList();
-
-                //Write new credits
-                TaskMethods.WriteListToFile(sortedOtherCreditStorageUsers, true, UserBankingHandler.userCreditsStorageLocation);
-                TaskMethods.WriteStringToFile($"{user} >>> {addAmount}", false, UserBankingHandler.userCreditsStorageLocation);
-            }
-            catch (Exception)
-            {
-            }
+            UserBankingHandler.SetCredits(context, guildID, userID, setAmount, TaskMethods.GetFileLocation("UserCredits.txt"));
         }
     }
 }
