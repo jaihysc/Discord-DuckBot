@@ -15,7 +15,7 @@ namespace DuckBot.Commands
         internal static string guildRoleMessage = "";
 
         [Group("crossGuild")]
-        [RequireWhitelistedUsers]
+        [WhitelistedUsersPrecondition]
         public class CrossGuild : ModuleBase<SocketCommandContext>
         {
             [Group("elevated")]
@@ -183,7 +183,7 @@ namespace DuckBot.Commands
 
 
             [Command("logAllMessages")]
-            [RequireWhitelistedUsers]
+            [WhitelistedUsersPrecondition]
             public async Task LogAllMessagesAsync(ulong guildID, ulong retrieveTargetChannelID, string path)
             {
                 if (Context.Message.Author.Id == 285266023475838976)

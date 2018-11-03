@@ -74,7 +74,7 @@ namespace DuckBot.Finance
             //
 
             //Win
-            if (randomNumber2 >= 2)
+            if (randomNumber2 >= 1)
             {
                 if (randomNumber == 999999)
                 {

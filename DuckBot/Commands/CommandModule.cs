@@ -3,6 +3,7 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot;
+using DuckBot.Commands.Preconditions;
 using DuckBot.Finance;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Commands
 {
+    [BlacklistedUsersPrecondition]
     public class CommandModule : ModuleBase<SocketCommandContext>
     {
         public static ulong boyRoleId = 380519578138050562;

@@ -206,12 +206,18 @@ namespace DuckBot.Finance
                     }
                     else
                     {
-                        //Add user balance
-                        UserBankingHandler.AddCredits(Context, stockTotalWorth, TaskMethods.GetFileLocation("UserCredits.txt"));
+                        //Add user balance 
+                        UserBankingHandler.AddCredits(
+                            Context,
+                            //Subtract tax deductions
+                            await UserBankingHandler.TaxCollectorAsync(
+                                Context, 
+                                stockTotalWorth, 
+                                $"You sold **{sellAmount} {tickerSymbol}** stocks at **{stockTotalWorth} Credits**"),
+                            TaskMethods.GetFileLocation("UserCredits.txt"));
 
                         //Send user receipt
-                        await Context.Message.Channel.SendMessageAsync($"You sold **{sellAmount} {tickerSymbol}** stocks at **{stockTotalWorth} Credits**");
-
+                        //await Context.Message.Channel.SendMessageAsync($"You sold **{sellAmount} {tickerSymbol}** stocks at **{stockTotalWorth} Credits**");
 
                         userStocksStorage = userStocksStorage.Where(p => !p.Contains(stockItem.Substring(0, tickerSymbol.Length))).ToList();
 

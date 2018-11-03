@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DuckBot.Commands.Preconditions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Commands
 {
+    [BlacklistedUsersPrecondition]
     public class ElevatedCommandModule : ModuleBase<SocketCommandContext>
     {
         [Group("elevated")]
