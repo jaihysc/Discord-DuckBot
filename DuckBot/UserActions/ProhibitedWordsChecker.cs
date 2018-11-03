@@ -75,14 +75,14 @@ namespace DuckBot.UserActions
                             {
                                 try
                                 {
-                                    if (message.Author.Id.ToString() == user.Substring(0, message.Author.ToString().Length))
+                                    if (message.Author.Id.ToString() == user.Substring(0, message.Author.Id.ToString().Length))
                                     {
                                         userExists = true;
 
-                                        string userCounter = user.Substring(message.Author.ToString().Length + 5, user.Length - message.Author.ToString().Length - 5);
+                                        string userCounter = user.Substring(message.Author.Id.ToString().Length + 5, user.Length - message.Author.Id.ToString().Length - 5);
                                         string userCounterNew = (int.Parse(userCounter) + 1).ToString();
 
-                                        var newProhibitedWordUsers = prohibitedWordUsers.Where(p => !p.Contains(message.Author.ToString()));
+                                        var newProhibitedWordUsers = prohibitedWordUsers.Where(p => !p.Contains(message.Author.Id.ToString()));
                                         var sortedNewProhibitedWordUsers = newProhibitedWordUsers.OrderBy(x => x).ToList();
 
                                         File.WriteAllText(location, "");

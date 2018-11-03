@@ -13,7 +13,8 @@ namespace DuckBot.Finance
     {
         public static string userCreditsStorageLocation = TaskMethods.GetFileLocation("UserCredits.txt");
         internal static int startingCredits = 10000;
-
+        //Percentage between 0-1, expressed as a fraction
+        internal static double taxPercentage = 0.13;
 
         //Methods
 
@@ -116,8 +117,6 @@ namespace DuckBot.Finance
         //Taxes- everyone loves em
         public static async Task<int> TaxCollectorAsync(SocketCommandContext Context, int inputCredits,string sendMessage)
         {
-            //Percentage between 0-1, expressed as a fraction
-            double taxPercentage = 0.13;
 
             double taxSubtractions = inputCredits * taxPercentage;
 
@@ -135,9 +134,6 @@ namespace DuckBot.Finance
         {
             var guild = Context.Client.GetGuild(guildID);
             var user = guild.GetUser(userID);
-
-            //Percentage between 0-1, expressed as a fraction
-            double taxPercentage = 0.13;
 
             double taxSubtractions = inputCredits * taxPercentage;
 
@@ -189,14 +185,14 @@ namespace DuckBot.Finance
                 //The task will cycle through every entry to find the one matching message sender
                 //Check if selected user is equal to the message sender
                 bool storedUserLengthIsGreaterThanMessageAuthor = false;
-                if (user.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
+                if (user.Id.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
 
-                if (storedUserLengthIsGreaterThanMessageAuthor == true && user.ToString() == storedUser.Substring(0, user.ToString().Length))
+                if (storedUserLengthIsGreaterThanMessageAuthor == true && user.Id.ToString() == storedUser.Substring(0, user.Id.ToString().Length))
                 {
-                    var otherCreditStorageUsers = userCreditStorage.Where(p => !p.Contains(user.ToString())).OrderBy(x => x).ToList();
+                    var otherCreditStorageUsers = userCreditStorage.Where(p => !p.Contains(user.Id.ToString())).OrderBy(x => x).ToList();
 
                     TaskMethods.WriteListToFile(otherCreditStorageUsers, true, filePath);
-                    TaskMethods.WriteStringToFile($"{user.ToString()} >>> {setAmount}", false, filePath);
+                    TaskMethods.WriteStringToFile($"{user.Id.ToString()} >>> {setAmount}", false, filePath);
                 }
             }
         }
@@ -245,21 +241,21 @@ namespace DuckBot.Finance
                 //The task will cycle through every entry to find the one matching message sender
                 //Check if selected user is equal to the message sender
                 bool storedUserLengthIsGreaterThanMessageAuthor = false;
-                if (user.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
+                if (user.Id.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
 
-                if (storedUserLengthIsGreaterThanMessageAuthor == true && user.ToString() == storedUser.Substring(0, user.ToString().Length))
+                if (storedUserLengthIsGreaterThanMessageAuthor == true && user.Id.ToString() == storedUser.Substring(0, user.Id.ToString().Length))
                 {
                     //Extract counter behind username in txt file
-                    string userCredits = storedUser.Substring(user.ToString().Length + 5, storedUser.Length - user.ToString().Length - 5);
+                    string userCredits = storedUser.Substring(user.Id.ToString().Length + 5, storedUser.Length - user.Id.ToString().Length - 5);
                     string userCreditsNew = "";
 
                     //Calculate new balance
                     userCreditsNew = (int.Parse(userCredits) + addAmount).ToString();
 
-                    var otherCreditStorageUsers = userCreditStorage.Where(p => !p.Contains(user.ToString())).OrderBy(x => x).ToList();
+                    var otherCreditStorageUsers = userCreditStorage.Where(p => !p.Contains(user.Id.ToString())).OrderBy(x => x).ToList();
 
                     TaskMethods.WriteListToFile(otherCreditStorageUsers, true, filePath);
-                    TaskMethods.WriteStringToFile($"{user.ToString()} >>> {userCreditsNew}", false, filePath);
+                    TaskMethods.WriteStringToFile($"{user.Id.ToString()} >>> {userCreditsNew}", false, filePath);
                 }
             }
         }
@@ -309,21 +305,21 @@ namespace DuckBot.Finance
                 //The task will cycle through every entry to find the one matching message sender
                 //Check if selected user is equal to the message sender
                 bool storedUserLengthIsGreaterThanMessageAuthor = false;
-                if (user.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
+                if (user.Id.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
 
-                if (storedUserLengthIsGreaterThanMessageAuthor == true && user.ToString() == storedUser.Substring(0, user.ToString().Length))
+                if (storedUserLengthIsGreaterThanMessageAuthor == true && user.Id.ToString() == storedUser.Substring(0, user.Id.ToString().Length))
                 {
                     //Extract counter behind username in txt file
-                    string userCredits = storedUser.Substring(user.ToString().Length + 5, storedUser.Length - user.ToString().Length - 5);
+                    string userCredits = storedUser.Substring(user.Id.ToString().Length + 5, storedUser.Length - user.Id.ToString().Length - 5);
                     string userCreditsNew = "";
 
                     //Calculate new balance
                     userCreditsNew = (int.Parse(userCredits) + subtractAmount).ToString();
 
-                    var otherCreditStorageUsers = userCreditStorage.Where(p => !p.Contains(user.ToString())).OrderBy(x => x).ToList();
+                    var otherCreditStorageUsers = userCreditStorage.Where(p => !p.Contains(user.Id.ToString())).OrderBy(x => x).ToList();
 
                     TaskMethods.WriteListToFile(otherCreditStorageUsers, true, filePath);
-                    TaskMethods.WriteStringToFile($"{user.ToString()} >>> {userCreditsNew}", false, filePath);
+                    TaskMethods.WriteStringToFile($"{user.Id.ToString()} >>> {userCreditsNew}", false, filePath);
                 }
             }
         }

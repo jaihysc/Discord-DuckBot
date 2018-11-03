@@ -31,12 +31,12 @@ namespace DuckBot.Finance
                 foreach (var storedUser in userCreditStorage)
                 {
                     bool storedUserLengthIsGreaterThanMessageAuthor = false;
-                    if (message.Author.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
+                    if (message.Author.Id.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
 
-                    if (storedUserLengthIsGreaterThanMessageAuthor == true && message.Author.ToString() == storedUser.Substring(0, message.Author.ToString().Length))
+                    if (storedUserLengthIsGreaterThanMessageAuthor == true && message.Author.Id.ToString() == storedUser.Substring(0, message.Author.Id.ToString().Length))
                     {
                         //Extract counter behind username in txt file
-                        string userCredits = storedUser.Substring(message.Author.ToString().Length + 5, storedUser.Length - message.Author.ToString().Length - 5);
+                        string userCredits = storedUser.Substring(message.Author.Id.ToString().Length + 5, storedUser.Length - message.Author.Id.ToString().Length - 5);
 
                         //Money subtractor
                         if ((int.Parse(userCredits) - gambleAmount) < 0)
@@ -74,7 +74,7 @@ namespace DuckBot.Finance
             //
 
             //Win
-            if (randomNumber2 >= 1)
+            if (randomNumber2 >= 2)
             {
                 if (randomNumber == 999999)
                 {
@@ -155,12 +155,12 @@ namespace DuckBot.Finance
             foreach (var storedUser in userLastDailyCreditStorage)
             {
                 bool storedUserLengthIsGreaterThanMessageAuthor = false;
-                if (Context.Message.Author.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
+                if (Context.Message.Author.Id.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
 
-                if (storedUserLengthIsGreaterThanMessageAuthor == true && Context.Message.Author.ToString() == storedUser.Substring(0, Context.Message.Author.ToString().Length))
+                if (storedUserLengthIsGreaterThanMessageAuthor == true && Context.Message.Author.Id.ToString() == storedUser.Substring(0, Context.Message.Author.Id.ToString().Length))
                 {
                     //Extract counter behind username in txt file
-                    DateTime userLastUseDate = DateTime.Parse(storedUser.Substring(Context.Message.Author.ToString().Length + 5, storedUser.Length - Context.Message.Author.ToString().Length - 5));
+                    DateTime userLastUseDate = DateTime.Parse(storedUser.Substring(Context.Message.Author.Id.ToString().Length + 5, storedUser.Length - Context.Message.Author.Id.ToString().Length - 5));
 
                     if (userLastUseDate.AddHours(24) < DateTime.UtcNow)
                     {
@@ -168,11 +168,11 @@ namespace DuckBot.Finance
                         UserBankingHandler.AddCredits(Context, dailyAmount, UserBankingHandler.userCreditsStorageLocation);
 
                         //Write last daily use date
-                        var otherLastDailyCreditUsers = userLastDailyCreditStorage.Where(p => !p.Contains(Context.Message.Author.ToString()));
+                        var otherLastDailyCreditUsers = userLastDailyCreditStorage.Where(p => !p.Contains(Context.Message.Author.Id.ToString()));
                         var sortedLastDailyCreditUsers = otherLastDailyCreditUsers.OrderBy(x => x).ToList();
 
                         TaskMethods.WriteListToFile(sortedLastDailyCreditUsers, true, userDailyLastRedemmedStorageLocation);
-                        TaskMethods.WriteStringToFile($"{Context.Message.Author.ToString()} >>> {DateTime.UtcNow.ToString()}", false, userDailyLastRedemmedStorageLocation);
+                        TaskMethods.WriteStringToFile($"{Context.Message.Author.Id.ToString()} >>> {DateTime.UtcNow.ToString()}", false, userDailyLastRedemmedStorageLocation);
 
                         //Send channel message confirmation
                         await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + dailyAmount + " Credits!**");

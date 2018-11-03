@@ -123,7 +123,7 @@ namespace DuckBot.Finance
                     //Check if user is buying 0 or less stocks
                     else if (buyAmount < 1)
                     {
-                        await Context.Message.Channel.SendMessageAsync($"You must buy 1 or more stocks**");
+                        await Context.Message.Channel.SendMessageAsync($"You must buy **1 or more** stocks");
                     }
                     else
                     {
@@ -202,7 +202,7 @@ namespace DuckBot.Finance
                     //Check if user is selling 0 or less stocks
                     else if (sellAmount < 1)
                     {
-                        await Context.Message.Channel.SendMessageAsync($"You must sell 1 or more stocks**");
+                        await Context.Message.Channel.SendMessageAsync($"You must sell **1 or more** stocks");
                     }
                     else
                     {
@@ -340,7 +340,7 @@ namespace DuckBot.Finance
             string userFolderLocation = TaskMethods.GetFileLocation(@"\UserStocks");
 
             //Create user stock storage directory if not exist
-            if (!Directory.Exists(userFolderLocation + @"\" + Context.Message.Author.ToString()))
+            if (!Directory.Exists(userFolderLocation + @"\" + Context.Message.Author.Id.ToString()))
             {
                 System.IO.Directory.CreateDirectory(userFolderLocation + @"\" + Context.Message.Author.Id.ToString());
                 return false;
