@@ -73,7 +73,6 @@ namespace DuckBot
                     {
                         file.WriteLine($"{DateTime.Now,-19} [    Log] {chnl.Guild.Name} || {msg.Channel} - {msg.Author}: {msg.ToString()}");
                     }
-                    //System.IO.File.WriteAllText(@"C:\Users\Johnny Cai\Documents\Visual Studio 2017\Projects\ConsoleApp\DuckBot\WriteText.txt", $"{DateTime.Now,-19} [    Log] {msg.Channel} - {msg.Author}: {msg.ToString()}");
                 }
                 catch (Exception)
                 {
