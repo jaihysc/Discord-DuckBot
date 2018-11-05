@@ -21,6 +21,7 @@ namespace DuckBot.Commands.Preconditions
 
             //---START Blacklist entry below
             blacklistedUsers.Add(423656753423581204);
+           // blacklistedUsers.Add(387953113585418240);
             //---END blacklist entry
 
             //Test if user is blacklisted

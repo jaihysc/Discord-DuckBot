@@ -54,8 +54,7 @@ namespace DuckBot.Finance
                             //Write credits to file
                             UserBankingHandler.SetCredits(
                                 Context,
-                                userReturnAmount - await UserBankingHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{gambleAmount} credits** and made **{returnAmount} credits**"),
-                                UserBankingHandler.userCreditsStorageLocation);
+                                userReturnAmount - await UserBankingHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{gambleAmount} credits** and made **{returnAmount} credits**"));
                         }
                     }
                 }
@@ -165,7 +164,7 @@ namespace DuckBot.Finance
                     if (userLastUseDate.AddHours(24) < DateTime.UtcNow)
                     {
                         //Add credits
-                        UserBankingHandler.AddCredits(Context, dailyAmount, UserBankingHandler.userCreditsStorageLocation);
+                        UserBankingHandler.AddCredits(Context, dailyAmount);
 
                         //Write last daily use date
                         var otherLastDailyCreditUsers = userLastDailyCreditStorage.Where(p => !p.Contains(Context.Message.Author.Id.ToString()));
@@ -189,7 +188,7 @@ namespace DuckBot.Finance
         //Give credits because I am a cheater
         public static void SetCredits(SocketCommandContext context, ulong guildID, ulong userID, int setAmount)
         {
-            UserBankingHandler.SetCredits(context, guildID, userID, setAmount, TaskMethods.GetFileLocation("UserCredits.txt"));
+            UserBankingHandler.SetCredits(context, guildID, userID, setAmount);
         }
     }
 }

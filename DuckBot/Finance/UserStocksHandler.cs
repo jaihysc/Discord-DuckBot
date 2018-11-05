@@ -129,7 +129,7 @@ namespace DuckBot.Finance
                     {
 
                         //Subtract user balance
-                        UserBankingHandler.SubtractCredits(Context, stockTotalCost, TaskMethods.GetFileLocation("UserCredits.txt"));
+                        UserBankingHandler.SubtractCredits(Context, stockTotalCost);
 
                         //Check if user already has some of stock currently buying
                         //Calculates new user stock total
@@ -210,11 +210,10 @@ namespace DuckBot.Finance
                         UserBankingHandler.AddCredits(
                             Context,
                             //Subtract tax deductions
-                            await UserBankingHandler.TaxCollectorAsync(
+                            stockTotalWorth - await UserBankingHandler.TaxCollectorAsync(
                                 Context, 
                                 stockTotalWorth, 
-                                $"You sold **{sellAmount} {tickerSymbol}** stocks at **{stockTotalWorth} Credits**"),
-                            TaskMethods.GetFileLocation("UserCredits.txt"));
+                                $"You sold **{sellAmount} {tickerSymbol}** stocks at **{stockTotalWorth} Credits**"));
 
                         //Send user receipt
                         //await Context.Message.Channel.SendMessageAsync($"You sold **{sellAmount} {tickerSymbol}** stocks at **{stockTotalWorth} Credits**");

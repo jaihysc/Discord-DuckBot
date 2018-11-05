@@ -4,7 +4,9 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot.Commands.Preconditions;
 using DuckBot.Finance;
+using DuckBot.Finance.ServiceThreads;
 using DuckBot.UserActions;
+using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -24,12 +26,27 @@ namespace DuckBot
 
         public static void Main(string[] args)
         {
+            //Declearation
+            HelperMethod.DeclareUpdateTimeContainer("--Last Update Time--");
+            CoreMethod.DeclareRootLocation(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
+            //Continously running threads declearation
+            Thread updateUserBankingInterest = new Thread(new ThreadStart(UserBankingInterestUpdater.UpdateUserDebtInterest));
+            Thread updateUserMarketStocks = new Thread(new ThreadStart(UserMarketStocksUpdater.UpdateMarketStocks));
+            //Start
+            updateUserBankingInterest.Start();
+            updateUserMarketStocks.Start();
+
             new MainProgram().MainAsync().GetAwaiter().GetResult();
+
+
         }
 
         public DiscordSocketClient _client;
         public CommandService _commands;
         public IServiceProvider _services;
+
+        public static bool _stopThreads = false;
 
         public async Task MainAsync()
         {

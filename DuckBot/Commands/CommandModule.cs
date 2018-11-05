@@ -48,12 +48,60 @@ namespace DuckBot.Commands
             await (user as IGuildUser).RemoveRoleAsync(removeRole);
         }
 
+        //
         //Banking
         [Command("moneyTransfer")]
-        public async Task PlaySlotAsync(string targetUser, int amount)
+        public async Task MoneyTransferAsync(string targetUser, int amount)
         {
             UserBankingHandler.CheckIfUserCreditProfileExists(Context);
             await UserBankingHandler.TransferCredits(Context, targetUser, amount);
+        }
+
+        [Group("bank")]
+        [Alias("b")]
+        public class Banking : ModuleBase<SocketCommandContext>
+        {
+            [Command("debt")]
+            public async Task GetBorrowedCreditsAsync()
+            {
+                try
+                {
+                    UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                    int userDebt = UserBankingHandler.GetUserCreditsDebt(Context);
+
+                    await Context.Message.Channel.SendMessageAsync($"You owe **{userDebt} Credits**");
+                }
+                catch (Exception)
+                {
+                }
+
+            }
+            [Command("borrow")]
+            public async Task BorrowCreditsAsync(int amount)
+            {
+                try
+                {
+                    UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                    await UserBankingHandler.BorrowCredits(Context, amount);
+                }
+                catch (Exception)
+                {
+                }
+
+            }
+            [Command("return")]
+            public async Task ReturnCreditsAsync(int amount)
+            {
+                try
+                {
+                    UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                    await UserBankingHandler.ReturnCredits(Context, amount);
+                }
+                catch (Exception)
+                {
+                }
+
+            }
         }
 
         //Gambling
