@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DuckBot;
+using DuckBot_ClassLibrary;
+using DuckBot.UserActions;
 
 namespace DuckBot.Finance
 {
@@ -17,8 +19,6 @@ namespace DuckBot.Finance
         //Slots
         public static async Task UserGambling(SocketCommandContext Context, SocketMessage message, int gambleAmount)
         {
-            var userCreditStorage = TaskMethods.ReadFromFileToList("UserCredits.txt");
-
             //Tell off the user if they are trying to gamble 0 dollars
             if (gambleAmount <= 0)
             {
@@ -26,37 +26,26 @@ namespace DuckBot.Finance
             }
             else
             {
+                //Get user credits to list
+                var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-                //Check if user exists in txt entry
-                foreach (var storedUser in userCreditStorage)
+                //Money subtractor
+                if ((userCreditStorage.UserInfo.UserBankingStorage.Credit - gambleAmount) < 0)
                 {
-                    bool storedUserLengthIsGreaterThanMessageAuthor = false;
-                    if (message.Author.Id.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
+                    await message.Channel.SendMessageAsync("You broke quack, you do not have enough credits || **" + userCreditStorage.UserInfo.UserBankingStorage.Credit + " Credits**");
+                }
+                else
+                {
+                    //Calculate outcome (userCredits - amountGambled + AmountReturned)
+                    int returnAmount = CalculateUserGamblingOutcome(gambleAmount);
 
-                    if (storedUserLengthIsGreaterThanMessageAuthor == true && message.Author.Id.ToString() == storedUser.Substring(0, message.Author.Id.ToString().Length))
-                    {
-                        //Extract counter behind username in txt file
-                        string userCredits = storedUser.Substring(message.Author.Id.ToString().Length + 5, storedUser.Length - message.Author.Id.ToString().Length - 5);
+                    int userReturnAmount = userCreditStorage.UserInfo.UserBankingStorage.Credit - gambleAmount + returnAmount;
 
-                        //Money subtractor
-                        if ((int.Parse(userCredits) - gambleAmount) < 0)
-                        {
-                            await message.Channel.SendMessageAsync("You broke quack, you do not have enough credits || **" + int.Parse(userCredits) + " Credits**");
-                        }
-                        else
-                        {
-                            //Calculate outcome (userCredits - amountGambled + AmountReturned)
-                            int returnAmount = CalculateUserGamblingOutcome(gambleAmount);
-
-                            int userReturnAmount = int.Parse(userCredits) - gambleAmount + returnAmount;
-
-                            //Send outcome & calculate taxes
-                            //Write credits to file
-                            UserBankingHandler.SetCredits(
-                                Context,
-                                userReturnAmount - await UserBankingHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{gambleAmount} credits** and made **{returnAmount} credits**"));
-                        }
-                    }
+                    //Send outcome & calculate taxes
+                    //Write credits to file
+                    UserBankingHandler.SetCredits(
+                        Context,
+                        userReturnAmount - await UserBankingHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{gambleAmount} credits** and made **{returnAmount} credits**"));
                 }
             }
         }
@@ -147,42 +136,37 @@ namespace DuckBot.Finance
         {
             //DAILY AMOUNT
             int dailyAmount = 5000;
-            //
 
-            var userLastDailyCreditStorage = TaskMethods.ReadFromFileToList("UserCreditsDailyLastUsed.txt");
+            var userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-            foreach (var storedUser in userLastDailyCreditStorage)
+            if (userLastDailyCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime.AddHours(24) < DateTime.UtcNow)
             {
-                bool storedUserLengthIsGreaterThanMessageAuthor = false;
-                if (Context.Message.Author.Id.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
+                //Add credits
+                UserBankingHandler.AddCredits(Context, dailyAmount);
 
-                if (storedUserLengthIsGreaterThanMessageAuthor == true && Context.Message.Author.Id.ToString() == storedUser.Substring(0, Context.Message.Author.Id.ToString().Length))
+                userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+                var userRecord = new UserStorage
                 {
-                    //Extract counter behind username in txt file
-                    DateTime userLastUseDate = DateTime.Parse(storedUser.Substring(Context.Message.Author.Id.ToString().Length + 5, storedUser.Length - Context.Message.Author.Id.ToString().Length - 5));
-
-                    if (userLastUseDate.AddHours(24) < DateTime.UtcNow)
+                    UserId = Context.Message.Author.Id,
+                    UserInfo = new UserInfo
                     {
-                        //Add credits
-                        UserBankingHandler.AddCredits(Context, dailyAmount);
-
-                        //Write last daily use date
-                        var otherLastDailyCreditUsers = userLastDailyCreditStorage.Where(p => !p.Contains(Context.Message.Author.Id.ToString()));
-                        var sortedLastDailyCreditUsers = otherLastDailyCreditUsers.OrderBy(x => x).ToList();
-
-                        TaskMethods.WriteListToFile(sortedLastDailyCreditUsers, true, userDailyLastRedemmedStorageLocation);
-                        TaskMethods.WriteStringToFile($"{Context.Message.Author.Id.ToString()} >>> {DateTime.UtcNow.ToString()}", false, userDailyLastRedemmedStorageLocation);
-
-                        //Send channel message confirmation
-                        await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + dailyAmount + " Credits!**");
-
+                        UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = DateTime.UtcNow },
+                        UserBankingStorage = new UserBankingStorage { Credit = userLastDailyCreditStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = userLastDailyCreditStorage.UserInfo.UserBankingStorage.CreditDebt },
+                        UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userLastDailyCreditStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
                     }
-                    else
-                    {
-                        await Context.Message.Channel.SendMessageAsync("You quacker, it has not yet been 24 hours since you last redeemed");
-                    }
-                }
+                };
+
+                XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+
+                //Send channel message confirmation
+                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + dailyAmount + " Credits!**");
+
             }
+            else
+            {
+                await Context.Message.Channel.SendMessageAsync("You quacker, it has not yet been 24 hours since you last redeemed");
+            }
+
         }
 
         //Give credits because I am a cheater

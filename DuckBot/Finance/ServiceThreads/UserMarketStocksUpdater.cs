@@ -25,7 +25,7 @@ namespace DuckBot.Finance.ServiceThreads
                     //If 3 seconds has passed, update stocks
                     if (userLastUseDate.AddSeconds(3) < DateTime.UtcNow)
                     {
-                        Console.WriteLine("Stock prices updated - " + DateTime.UtcNow);
+                        //Console.WriteLine("Stock prices updated - " + DateTime.UtcNow);
 
                         //Clear file for new stock amounts
                         File.WriteAllText(CoreMethod.GetFileLocation("MarketStocksValue.txt"), "");

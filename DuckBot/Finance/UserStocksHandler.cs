@@ -129,7 +129,7 @@ namespace DuckBot.Finance
                     {
 
                         //Subtract user balance
-                        UserBankingHandler.SubtractCredits(Context, stockTotalCost);
+                        UserBankingHandler.AddCredits(Context, -stockTotalCost);
 
                         //Check if user already has some of stock currently buying
                         //Calculates new user stock total

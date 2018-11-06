@@ -148,6 +148,7 @@
     <Compile Include="Commands\RestrictedCommandModule.cs" />
     <Compile Include="TaskMethods.cs" />
     <Compile Include="Finance\UserGamblingHandler.cs" />
+    <Compile Include="UserActions\UserDataManager.cs" />
     <Compile Include="UserActions\UserJoinHandler.cs" />
     <Compile Include="Finance\UserStocksHandler.cs" />
   </ItemGroup>
