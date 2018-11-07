@@ -16,6 +16,7 @@ namespace DuckBot.Commands
 
         [Group("crossGuild")]
         [WhitelistedUsersPrecondition]
+        [UserStorageCheckerPrecondition]
         public class CrossGuild : ModuleBase<SocketCommandContext>
         {
             [Group("elevated")]

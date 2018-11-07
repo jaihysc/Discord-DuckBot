@@ -137,6 +137,7 @@
     <Compile Include="Commands\CommandModule.cs" />
     <Compile Include="Commands\ElevatedCommandModule.cs" />
     <Compile Include="Commands\Preconditions\BlacklistedUsersPrecondition.cs" />
+    <Compile Include="Commands\Preconditions\UserStorageCheckerPrecondition.cs" />
     <Compile Include="Commands\Preconditions\WhitelistedUsersPrecondition.cs" />
     <Compile Include="EventLogger.cs" />
     <Compile Include="Finance\ServiceThreads\UserBankingInterestUpdater.cs" />

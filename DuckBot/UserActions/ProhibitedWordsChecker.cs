@@ -2,6 +2,8 @@
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot.Finance;
+using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -55,7 +57,7 @@ namespace DuckBot.UserActions
                         string userReturnString = string.Join(", ", blockedWords);
 
                         //Send swear warning
-                        if (lastProhibitedWordString != userReturnString || lastProhibitedWordAuthor != message.Author.Id.ToString())
+                        if (lastProhibitedWordString != message.ToString() || lastProhibitedWordAuthor != message.Author.Id.ToString())
                         {
                             await message.Channel.SendMessageAsync(message.Author.Mention + " HEY `" + message.Author.Username + "` WATCH IT! THIS IS A FUCKING CHRISTIAN FUCKING DISCORD SERVER, `" + userReturnString + "` IS NOT ALLOWED HERE");
                         }
@@ -66,68 +68,40 @@ namespace DuckBot.UserActions
 
 
                         //Logs user swear amount to local counter
-                        foreach (var location in userProhibitedWordsCounterLocation)
+                        //Create txt user credit entry if user does not exist
+                        if (!File.Exists(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml"))
                         {
-                            bool userExists = false;
-                            var prohibitedWordUsers = File.ReadAllLines(location);
-
-                            foreach (var user in prohibitedWordUsers)
+                            //Create user profile
+                            var userRecord = new UserStorage
                             {
-                                try
+                                UserId = message.Author.Id,
+                                UserInfo = new UserInfo
                                 {
-                                    if (message.Author.Id.ToString() == user.Substring(0, message.Author.Id.ToString().Length))
-                                    {
-                                        userExists = true;
-
-                                        string userCounter = user.Substring(message.Author.Id.ToString().Length + 5, user.Length - message.Author.Id.ToString().Length - 5);
-                                        string userCounterNew = (int.Parse(userCounter) + 1).ToString();
-
-                                        var newProhibitedWordUsers = prohibitedWordUsers.Where(p => !p.Contains(message.Author.Id.ToString()));
-                                        var sortedNewProhibitedWordUsers = newProhibitedWordUsers.OrderBy(x => x).ToList();
-
-                                        File.WriteAllText(location, "");
-                                        foreach (var name in sortedNewProhibitedWordUsers)
-                                        {
-                                            using (System.IO.StreamWriter file =
-                                            new System.IO.StreamWriter(location, true))
-                                            {
-                                                file.WriteLine(name);
-                                            }
-                                        }
-
-                                        using (System.IO.StreamWriter file =
-                                        new System.IO.StreamWriter(location, true))
-                                        {
-                                            file.WriteLine($"{message.Author.Id.ToString()} >>> {userCounterNew}");
-                                        }
-                                    }
+                                    UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = DateTime.UtcNow.AddYears(-1) },
+                                    UserBankingStorage = new UserBankingStorage { Credit = 10000, CreditDebt = 0 },
+                                    UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = 0 }
                                 }
-                                catch (Exception)
-                                {
-                                }
-                            }
+                            };
 
-                            //Create txt entry if user is not found
-                            if (userExists == false)
-                            {
-                                File.WriteAllText(location, "");
-                                foreach (var name in prohibitedWordUsers)
-                                {
-                                    using (System.IO.StreamWriter file =
-                                    new System.IO.StreamWriter(location, true))
-                                    {
-                                        file.WriteLine(name);
-                                    }
-                                }
-
-                                using (System.IO.StreamWriter file =
-                                new System.IO.StreamWriter(location, true))
-                                {
-                                    file.WriteLine($"{message.Author.Id.ToString()} >>> 1");
-                                }
-
-                            }
+                            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
                         }
+
+
+                        var userStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
+
+                        //write to user profile
+                        var userRecordNew = new UserStorage
+                        {
+                            UserId = userStorage.UserId,
+                            UserInfo = new UserInfo
+                            {
+                                UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userStorage.UserInfo.UserDailyLastUseStorage.DateTime },
+                                UserBankingStorage = new UserBankingStorage { Credit = userStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = userStorage.UserInfo.UserBankingStorage.CreditDebt },
+                                UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userStorage.UserInfo.UserProhibitedWordsStorage.SwearCount + 1 }
+                            }
+                        };
+
+                        XmlManager.ToXmlFile(userRecordNew, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
                     }
                 }
             }

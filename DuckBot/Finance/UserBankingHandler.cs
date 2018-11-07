@@ -210,19 +210,17 @@ namespace DuckBot.Finance
         //Money borrowing & debt
         public static async Task DisplayUserCreditsDebt(SocketCommandContext Context)
         {
-            var userCreditStorage = TaskMethods.ReadFromFileToList("UserCreditsDebt.txt");
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-            string selectedUser = userCreditStorage.First(x => x.Contains(Context.Message.Author.Id.ToString()));
-            await Context.Message.Channel.SendMessageAsync($"You owe **{ selectedUser.Substring(Context.Message.Author.Id.ToString().Length + 5, selectedUser.Length - Context.Message.Author.Id.ToString().Length - 5)} Credits**");
+            await Context.Message.Channel.SendMessageAsync($"You owe **{userCreditStorage.UserInfo.UserBankingStorage.CreditDebt} Credits**");
 
         }
 
         public static int GetUserCreditsDebt(SocketCommandContext Context)
         {
-            var userCreditStorage = TaskMethods.ReadFromFileToList("UserCreditsDebt.txt");
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-            string selectedUser = userCreditStorage.First(x => x.Contains(Context.Message.Author.Id.ToString()));
-            return int.Parse(selectedUser.Substring(Context.Message.Author.Id.ToString().Length + 5, selectedUser.Length - Context.Message.Author.Id.ToString().Length - 5));
+            return userCreditStorage.UserInfo.UserBankingStorage.CreditDebt;
         }
 
         public static async Task BorrowCredits(SocketCommandContext Context, int borrowAmount)
@@ -266,7 +264,7 @@ namespace DuckBot.Finance
             else
             {
                 //Subtract from debt counter
-                SubtractDebt(Context, returnAmount);
+                AddDebt(Context, -returnAmount);
                 //Subtract credits to user
                 AddCredits(Context, -returnAmount);
 
@@ -279,61 +277,23 @@ namespace DuckBot.Finance
         public static void AddDebt(SocketCommandContext Context, int addAmount)
         {
             //Get user debt to list
-            var userCreditDebtStorage = TaskMethods.ReadFromFileToList("UserCreditsDebt.txt");
+            var userCreditDebtStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-            //Get user in txt file and add selected number of credits
-            foreach (var storedUser in userCreditDebtStorage)
+            //Calculate new debt balance
+            int userCreditsDebtNew = userCreditDebtStorage.UserInfo.UserBankingStorage.CreditDebt + addAmount;
+
+            var userRecord = new UserStorage
             {
-                //The task will cycle through every entry to find the one matching message sender
-                //Check if selected user is equal to the message sender
-                bool storedUserLengthIsGreaterThanMessageAuthor = false;
-                if (Context.Message.Author.Id.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
-
-                if (storedUserLengthIsGreaterThanMessageAuthor == true && Context.Message.Author.Id.ToString() == storedUser.Substring(0, Context.Message.Author.Id.ToString().Length))
+                UserId = userCreditDebtStorage.UserId,
+                UserInfo = new UserInfo
                 {
-                    //Extract counter behind username in txt file
-                    string userCredits = storedUser.Substring(Context.Message.Author.Id.ToString().Length + 5, storedUser.Length - Context.Message.Author.Id.ToString().Length - 5);
-                    string userCreditsDebtNew = "";
-
-                    //Calculate new debt balance
-                    userCreditsDebtNew = (int.Parse(userCredits) + addAmount).ToString();
-
-                    var otherCreditStorageUsers = userCreditDebtStorage.Where(p => !p.Contains(Context.Message.Author.Id.ToString())).OrderBy(x => x).ToList();
-
-                    TaskMethods.WriteListToFile(otherCreditStorageUsers, true, TaskMethods.GetFileLocation("UserCreditsDebt.txt"));
-                    TaskMethods.WriteStringToFile($"{Context.Message.Author.Id.ToString()} >>> {userCreditsDebtNew}", false, TaskMethods.GetFileLocation("UserCreditsDebt.txt"));
+                    UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditDebtStorage.UserInfo.UserDailyLastUseStorage.DateTime },
+                    UserBankingStorage = new UserBankingStorage { Credit = userCreditDebtStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = userCreditsDebtNew },
+                    UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditDebtStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
                 }
-            }
-        }
+            };
 
-        public static void SubtractDebt(SocketCommandContext Context, int addAmount)
-        {
-            //Get user debt to list
-            var userCreditDebtStorage = TaskMethods.ReadFromFileToList("UserCreditsDebt.txt");
-
-            //Get user in txt file and add selected number of credits
-            foreach (var storedUser in userCreditDebtStorage)
-            {
-                //The task will cycle through every entry to find the one matching message sender
-                //Check if selected user is equal to the message sender
-                bool storedUserLengthIsGreaterThanMessageAuthor = false;
-                if (Context.Message.Author.Id.ToString().Length <= storedUser.Length) storedUserLengthIsGreaterThanMessageAuthor = true;
-
-                if (storedUserLengthIsGreaterThanMessageAuthor == true && Context.Message.Author.Id.ToString() == storedUser.Substring(0, Context.Message.Author.Id.ToString().Length))
-                {
-                    //Extract counter behind username in txt file
-                    string userCredits = storedUser.Substring(Context.Message.Author.Id.ToString().Length + 5, storedUser.Length - Context.Message.Author.Id.ToString().Length - 5);
-                    string userCreditsDebtNew = "";
-
-                    //Calculate new debt balance
-                    userCreditsDebtNew = (int.Parse(userCredits) - addAmount).ToString();
-
-                    var otherCreditStorageUsers = userCreditDebtStorage.Where(p => !p.Contains(Context.Message.Author.Id.ToString())).OrderBy(x => x).ToList();
-
-                    TaskMethods.WriteListToFile(otherCreditStorageUsers, true, TaskMethods.GetFileLocation("UserCreditsDebt.txt"));
-                    TaskMethods.WriteStringToFile($"{Context.Message.Author.Id.ToString()} >>> {userCreditsDebtNew}", false, TaskMethods.GetFileLocation("UserCreditsDebt.txt"));
-                }
-            }
+            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
         }
     }
 }

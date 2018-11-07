@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 namespace DuckBot.Commands
 {
     [BlacklistedUsersPrecondition]
+    [UserStorageCheckerPrecondition]
     public class CommandModule : ModuleBase<SocketCommandContext>
     {
         public static ulong boyRoleId = 380519578138050562;

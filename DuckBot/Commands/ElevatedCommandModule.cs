@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 namespace DuckBot.Commands
 {
     [BlacklistedUsersPrecondition]
+    [UserStorageCheckerPrecondition]
     public class ElevatedCommandModule : ModuleBase<SocketCommandContext>
     {
         [Group("elevated")]

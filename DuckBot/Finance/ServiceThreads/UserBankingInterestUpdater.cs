@@ -1,4 +1,5 @@
-﻿using DuckBot_ClassLibrary;
+﻿using DuckBot.UserActions;
+using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,55 +21,32 @@ namespace DuckBot.Finance.ServiceThreads
             {
                 try
                 {
-                    List<string> userDebtAmountStorage = CoreMethod.ReadFromFileToList("UserCreditsDebt.txt");
+                    //Log action
+                    Console.WriteLine("User debt updated - " + DateTime.Now);
 
-                    //Get last update time
-                    DateTime interestLastUpdateDate = HelperMethod.GetLastUpdateTime(userDebtAmountStorage);
-
-                    //If 1 hour has passed, update user interest
-                    if (interestLastUpdateDate.AddHours(1) < DateTime.UtcNow)
+                    //Update user debt
+                    foreach (string file in Directory.EnumerateFiles(TaskMethods.GetFileLocation(@"\UserStorage"), "*.xml"))
                     {
-                        //Log action
-                        Console.WriteLine("User debt updated - " + DateTime.Now);
+                        var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(file);
 
-                        //Clear file for new debt amounts
-                        File.WriteAllText(CoreMethod.GetFileLocation("UserCreditsDebt.txt"), "");
+                        //Calculate new debt with interest
+                        Int64 debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
 
-                        //Update user debt
-                        List<string> sortedUserDebtStorage = userDebtAmountStorage.Where(p => !p.Contains(HelperMethod.updateTimeContainer)).ToList();
-                        foreach (var userEntry in sortedUserDebtStorage)
+                        //Write to file
+                        var userRecord = new UserStorage
                         {
-                            //Get user debt
-                            int userIdLength = 0;
-
-                            userIdLength = userEntry.IndexOf(" ", StringComparison.Ordinal);
-                            string oldDebtAmount = userEntry.Substring(userIdLength + 5, userEntry.Length - userIdLength - 5);
-
-                            //Calculate new debt with interest
-                            Int64 debtAmountNew = Convert.ToInt64((int.Parse(oldDebtAmount) * interestPercentage) + int.Parse(oldDebtAmount));
-
-                            if (int.Parse(oldDebtAmount) > 0 && debtAmountNew == int.Parse(oldDebtAmount))
+                            UserId = userCreditStorage.UserId,
+                            UserInfo = new UserInfo
                             {
-                                debtAmountNew++;
+                                UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime },
+                                UserBankingStorage = new UserBankingStorage { Credit = userCreditStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = Convert.ToInt32(debtAmountNew) },
+                                UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
                             }
+                        };
 
-                            //Log in console
-                            Console.WriteLine(userEntry.Substring(0, userIdLength) + " >>> " + debtAmountNew);
-
-                            //Write new debt
-                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(CoreMethod.GetFileLocation("UserCreditsDebt.txt"), true))
-                            {
-                                file.WriteLine(userEntry.Substring(0, userIdLength) + " >>> " + debtAmountNew);
-                            }
-                        }
-
-                        //Write new debt last update date
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(CoreMethod.GetFileLocation("UserCreditsDebt.txt"), true))
-                        {
-                            file.WriteLine(HelperMethod.updateTimeContainer + " >>> " + DateTime.UtcNow);
-                        }
-
+                        XmlManager.ToXmlFile(userRecord, file);
                     }
+
 
                     //Sleep for 1 hour
                     Thread.Sleep(3600000);
