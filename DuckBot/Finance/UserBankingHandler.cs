@@ -155,7 +155,7 @@ namespace DuckBot.Finance
                 }
             };
 
-            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
         }
 
         public static void AddCredits(SocketCommandContext Context, int addAmount)
@@ -187,8 +187,7 @@ namespace DuckBot.Finance
             var user = guild.GetUser(userID);
 
             //Get user credits to list
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
-
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
 
             //Calculate new balance
             int userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
@@ -204,7 +203,7 @@ namespace DuckBot.Finance
                 }
             };
 
-            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
 
         }
 
