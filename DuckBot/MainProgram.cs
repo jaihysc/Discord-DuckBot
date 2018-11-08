@@ -186,10 +186,3 @@ namespace DuckBot
         }
     }
 }
-
-/* ban
-    if (culture.CompareInfo.IndexOf(message.Content, "duck", CompareOptions.IgnoreCase) >= 0 && message.Author.IsBot != true)
-{
-    await message.Channel.SendMessageAsync("Hi, I am a duck, I live inside a computer sitting on Discord");
-}
-            */

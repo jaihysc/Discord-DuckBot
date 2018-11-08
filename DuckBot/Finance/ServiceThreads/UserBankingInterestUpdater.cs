@@ -25,7 +25,7 @@ namespace DuckBot.Finance.ServiceThreads
                     Console.WriteLine("User debt updated - " + DateTime.Now);
 
                     //Update user debt
-                    foreach (string file in Directory.EnumerateFiles(TaskMethods.GetFileLocation(@"\UserStorage"), "*.xml"))
+                    foreach (string file in Directory.EnumerateFiles(TaskMethods.GetFileLocation(@"\UserStorage"), ".xml"))
                     {
                         var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(file);
 

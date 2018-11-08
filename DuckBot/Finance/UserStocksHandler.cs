@@ -1,6 +1,8 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot;
+using DuckBot.Finance.ServiceThreads;
+using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -92,33 +94,25 @@ namespace DuckBot.Finance
         public static async void BuyUserStocksAsync(SocketCommandContext Context, string tickerSymbol, int buyAmount)
         {
 
-            var MarketStocksValueStorage = TaskMethods.ReadFromFileToList("MarketStocksValue.txt");
+            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
-            bool buyStockExists = false;
-            MarketStocksValueStorage = MarketStocksValueStorage.Where(p => !p.Contains(updateTimeContainer)).ToList();
-            foreach (string stockItem in MarketStocksValueStorage)
+            foreach (var stock in marketStockStorage.MarketStock)
             {
-                if (stockItem.Substring(0, tickerSymbol.Length) == tickerSymbol)
+                //Get the user selected stock from storage
+                if (stock.StockTicker == tickerSymbol)
                 {
                     //Sets buystockExists to true so it won't send a warning saying stock does not exist
-                    buyStockExists = true;
+                    bool buyStockExists = true;
 
                     //Get user portfolio
                     var userStocksStorage = TaskMethods.ReadFromFilePathToList(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
 
-                    //Get target stock ticker
-                    int stockTickerLength = 0;
-
-                    stockTickerLength = stockItem.IndexOf(" ", StringComparison.Ordinal);
-
-                    //Get target stock price
-                    string stockPrice = stockItem.Substring(stockTickerLength + 5, stockItem.Length - stockTickerLength - 5);
-
-                    int stockTotalCost = int.Parse(stockPrice) * buyAmount;
+                    //Calculate stock price
+                    long stockTotalCost = stock.StockPrice * buyAmount;
 
                     if (UserBankingHandler.GetUserCredits(Context) - stockTotalCost < 0)
                     {
-                        await Context.Message.Channel.SendMessageAsync($"You do not have enough credits to buy **{buyAmount} {tickerSymbol}** stocks at price of **{stockPrice} each** totaling **{stockTotalCost} Credits**");
+                        await Context.Message.Channel.SendMessageAsync($"You do not have enough credits to buy **{buyAmount} {tickerSymbol}** stocks at price of **{stock.StockPrice} each** totaling **{stockTotalCost} Credits**");
                     }
                     //Check if user is buying 0 or less stocks
                     else if (buyAmount < 1)
@@ -129,7 +123,7 @@ namespace DuckBot.Finance
                     {
 
                         //Subtract user balance
-                        UserBankingHandler.AddCredits(Context, -stockTotalCost);
+                        UserBankingHandler.AddCredits(Context, Convert.ToInt32(-stockTotalCost));
 
                         //Check if user already has some of stock currently buying
                         //Calculates new user stock total
@@ -146,50 +140,39 @@ namespace DuckBot.Finance
 
 
                         //Send user receipt
-                        await Context.Message.Channel.SendMessageAsync($"You purchased **{buyAmount} {tickerSymbol}** stocks at price of **{stockPrice} each** totaling **{stockTotalCost} Credits**");
-
-
-                        userStocksStorage = userStocksStorage.Where(p => !p.Contains(stockItem.Substring(0, tickerSymbol.Length))).ToList();
+                        await Context.Message.Channel.SendMessageAsync($"You purchased **{buyAmount} {tickerSymbol}** stocks at price of **{stock.StockPrice} each** totaling **{stockTotalCost} Credits**");
 
                         //Write user stock amount
                         WriteToUserPortfolioFile(
                             userStocksStorage,
-                            stockItem.Substring(0, stockTickerLength) + " >>> " + newStockAmount,
+                            stock.StockTicker + " >>> " + newStockAmount,
                             TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
 
 
                         //Write user Stock buy cost
                         //WIP
                     }
+
+                    if (buyStockExists == false)
+                    {
+                        await Context.Message.Channel.SendMessageAsync($"Stock **{tickerSymbol}** does not exist in the market");
+                    }
                 }
-            }
-            if (buyStockExists == false)
-            {
-                await Context.Message.Channel.SendMessageAsync($"Stock **{tickerSymbol}** does not exist in the market");
             }
         }
 
         public static async void SellUserStocksAsync(SocketCommandContext Context, string tickerSymbol, int sellAmount)
         {
-            var MarketStocksValueStorage = TaskMethods.ReadFromFileToList("MarketStocksValue.txt");
+            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
-            MarketStocksValueStorage = MarketStocksValueStorage.Where(p => !p.Contains(updateTimeContainer)).ToList();
-            foreach (string stockItem in MarketStocksValueStorage)
+            foreach (var stock in marketStockStorage.MarketStock)
             {
-                if (stockItem.Substring(0, tickerSymbol.Length) == tickerSymbol)
+                if (stock.StockTicker == tickerSymbol)
                 {
                     //Get user portfolio
                     var userStocksStorage = TaskMethods.ReadFromFilePathToList(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
 
-                    //Get target stock ticker
-                    int stockTickerLength = 0;
-
-                    stockTickerLength = stockItem.IndexOf(" ", StringComparison.Ordinal);
-
-                    //Get target stock price
-                    string stockPrice = stockItem.Substring(stockTickerLength + 5, stockItem.Length - stockTickerLength - 5);
-
-                    int stockTotalWorth = int.Parse(stockPrice) * sellAmount;
+                    int stockTotalWorth = Convert.ToInt32(stock.StockPrice) * sellAmount;
 
                     string userStockAmount = GetUserStockAmount(tickerSymbol, TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
                     //Check if user is selling more stocks than they have
@@ -218,13 +201,11 @@ namespace DuckBot.Finance
                         //Send user receipt
                         //await Context.Message.Channel.SendMessageAsync($"You sold **{sellAmount} {tickerSymbol}** stocks at **{stockTotalWorth} Credits**");
 
-                        userStocksStorage = userStocksStorage.Where(p => !p.Contains(stockItem.Substring(0, tickerSymbol.Length))).ToList();
-
                         int newStockAmount = int.Parse(userStockAmount) - sellAmount;
                         //Write user stock amount
                         WriteToUserPortfolioFile(
                             userStocksStorage,
-                            stockItem.Substring(0, stockTickerLength) + " >>> " + newStockAmount,
+                            stock.StockTicker + " >>> " + newStockAmount,
                             TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.txt");
                     }
 
@@ -278,25 +259,14 @@ namespace DuckBot.Finance
             List<string> marketStockList = new List<string>();
 
             //Get market stock value from storage
-            var MarketStocksValueStorage = TaskMethods.ReadFromFileToList("MarketStocksValue.txt");
-            MarketStocksValueStorage = MarketStocksValueStorage.Where(p => !p.Contains(updateTimeContainer)).ToList();
+            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
             //Send stock header
             marketStockList.Add($"**Stock Ticker** - **Market value**");
-            foreach (string marketStock in MarketStocksValueStorage)
+            foreach (var stock in marketStockStorage.MarketStock)
             {
-                int stockTickerLength = 0;
-
-                stockTickerLength = marketStock.IndexOf(" ", StringComparison.Ordinal);
-
-                //Get market stock ticker
-                string marketStockTicker = marketStock.Substring(0, stockTickerLength);
-
-                //Get market stock value
-                string marketStockValue = marketStock.Substring(stockTickerLength + 5, marketStock.Length - stockTickerLength - 5);
-
                 //Add market stock value to list
-                marketStockList.Add($"**{marketStockTicker}** - **{marketStockValue}**");
+                marketStockList.Add($"**{stock.StockTicker}** - **{stock.StockPrice}**");
             }
 
             //Send market stock to user
@@ -305,19 +275,16 @@ namespace DuckBot.Finance
 
         private static string GetStockMarketValue(string stockTicker)
         {
-            var MarketStocksValueStorage = TaskMethods.ReadFromFileToList("MarketStocksValue.txt");
-
-            MarketStocksValueStorage = MarketStocksValueStorage.Where(p => !p.Contains(updateTimeContainer)).ToList();
+            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
             string stockValue = "";
-            foreach (string stockItem in MarketStocksValueStorage)
+            foreach (var stock in marketStockStorage.MarketStock)
             {
-                if (stockItem.Length >= stockTicker.Length && 
-                    stockItem.Substring(0, stockTicker.Length) == stockTicker)
+                //Get the user selected stock from storage
+                if (stock.StockTicker == stockTicker)
                 {
-                    stockValue = stockItem.Substring(stockTicker.Length + 5, stockItem.Length - stockTicker.Length - 5);
+                    stockValue = stock.StockPrice.ToString();
                 }
-                    
             }
 
             return stockValue;

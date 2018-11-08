@@ -9,6 +9,16 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Finance.ServiceThreads
 {
+    public class MarketStockStorage
+    {
+        public List<MarketStock> MarketStock { get; set; }
+    }
+    public class MarketStock
+    {
+        public string StockTicker { get; set; }
+        public long StockPrice { get; set; }
+    }
+
     public class UserMarketStocksUpdater
     {
         public static void UpdateMarketStocks()
@@ -17,104 +27,81 @@ namespace DuckBot.Finance.ServiceThreads
             {
                 try
                 {
-                    List<string> MarketStocksValueStorage = CoreMethod.ReadFromFileToList("MarketStocksValue.txt");
+                    var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
-                    //Get last update time
-                    DateTime userLastUseDate = HelperMethod.GetLastUpdateTime(MarketStocksValueStorage);
-
-                    //If 3 seconds has passed, update stocks
-                    if (userLastUseDate.AddSeconds(3) < DateTime.UtcNow)
+                    List<MarketStock> updatedMarketStocks = new List<MarketStock>();
+                    foreach (var stock in marketStockStorage.MarketStock)
                     {
-                        //Console.WriteLine("Stock prices updated - " + DateTime.UtcNow);
+                        //Calculate new stock price
+                        Random rand = new Random();
 
-                        //Clear file for new stock amounts
-                        File.WriteAllText(CoreMethod.GetFileLocation("MarketStocksValue.txt"), "");
+                        int stockHeadDirection = rand.Next(2);
+                        int stockChangeAmount = rand.Next(1, rand.Next(2, 2000));
+                        int stockChangeAmountMultiplier = rand.Next(0, rand.Next(1, 10));
 
-                        List<string> sortedMarketStocksValueStorage = MarketStocksValueStorage.Where(p => !p.Contains(HelperMethod.updateTimeContainer)).ToList();
-                        foreach (var stockItem in sortedMarketStocksValueStorage)
+                        long stockPriceNew = 0;
+                        if (stockHeadDirection == 0)
                         {
-                            //Get ticker + value of old stock
-                            int stockTickerLength = 0;
+                            //Increase
 
-                            stockTickerLength = stockItem.IndexOf(" ", StringComparison.Ordinal);
-                            string oldStockPrice = stockItem.Substring(stockTickerLength + 5, stockItem.Length - stockTickerLength - 5);
-
-                            //Calculate new stock price
-                            Random rand = new Random();
-
-                            int stockHeadDirection = rand.Next(2);
-                            int stockChangeAmount = rand.Next(1, rand.Next(2, 2000));
-                            int stockChangeAmountMultiplier = rand.Next(0, rand.Next(1, 10));
-
-                            int stockPriceNew = 0;
-                            if (stockHeadDirection == 0)
+                            if (stock.StockPrice <= 0)
                             {
-                                //Increase
-
-                                if (int.Parse(oldStockPrice) <= 0)
-                                {
-                                    stockPriceNew = int.Parse(oldStockPrice) + stockChangeAmount * stockChangeAmountMultiplier;
-                                }
-                                else
-                                {
-                                    try
-                                    {
-                                        stockPriceNew = int.Parse(oldStockPrice) + (stockChangeAmount + (int.Parse(oldStockPrice) / (int.Parse(oldStockPrice) - rand.Next(1, rand.Next(rand.Next(1, 50), 1000))) * stockChangeAmountMultiplier));
-                                    }
-                                    catch (Exception)
-                                    {
-                                        stockPriceNew = int.Parse(oldStockPrice) + stockChangeAmount;
-                                    }
-                                }
+                                stockPriceNew = stock.StockPrice + stockChangeAmount * stockChangeAmountMultiplier;
                             }
                             else
                             {
-                                //Decrease
-                                if (int.Parse(oldStockPrice) <= 0)
+                                try
                                 {
-
+                                    stockPriceNew = stock.StockPrice + (stockChangeAmount + (stock.StockPrice / (stock.StockPrice - rand.Next(1, rand.Next(rand.Next(1, 50), 1000))) * stockChangeAmountMultiplier));
                                 }
-                                else
+                                catch (Exception)
                                 {
-                                    try
-                                    {
-                                        stockPriceNew = int.Parse(oldStockPrice) - (stockChangeAmount + (int.Parse(oldStockPrice) / (int.Parse(oldStockPrice) - rand.Next(1, rand.Next(rand.Next(1, 50), 1000))) * stockChangeAmountMultiplier));
-                                    }
-                                    catch (Exception)
-                                    {
-                                        stockPriceNew = int.Parse(oldStockPrice) - stockChangeAmount;
-                                    }
+                                    stockPriceNew = stock.StockPrice + stockChangeAmount;
                                 }
-                            }
-
-                            //If price went negative, reset to 0
-                            if (stockPriceNew < 0)
-                            {
-                                stockPriceNew = 0;
-                            }
-
-                            //Log stock prices in console
-                            //Console.WriteLine(stockItem.Substring(0, stockTickerLength) + " >>> " + stockPriceNew);
-
-                            //Write new stock price
-                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(CoreMethod.GetFileLocation("MarketStocksValue.txt"), true))
-                            {
-                                file.WriteLine(stockItem.Substring(0, stockTickerLength) + " >>> " + stockPriceNew);
                             }
                         }
-
-                        //Write new stock last update date
-                        using (System.IO.StreamWriter file = new System.IO.StreamWriter(CoreMethod.GetFileLocation("MarketStocksValue.txt"), true))
+                        else
                         {
-                            file.WriteLine(HelperMethod.updateTimeContainer + " >>> " + DateTime.UtcNow);
+                            //Decrease
+                            if (stock.StockPrice <= 0)
+                            {
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    stockPriceNew = stock.StockPrice - (stockChangeAmount + (stock.StockPrice / (stock.StockPrice - rand.Next(1, rand.Next(rand.Next(1, 50), 1000))) * stockChangeAmountMultiplier));
+                                }
+                                catch (Exception)
+                                {
+                                    stockPriceNew = stock.StockPrice - stockChangeAmount;
+                                }
+                            }
                         }
+
+                        //If price went negative, reset to 0
+                        if (stockPriceNew < 0)
+                        {
+                            stockPriceNew = 0;
+                        }
+
+
+                        updatedMarketStocks.Add(new MarketStock {StockTicker = stock.StockTicker, StockPrice = stockPriceNew });
                     }
 
-                    Thread.Sleep(3000);
+                    var marketStock = new MarketStockStorage
+                    {
+                        MarketStock = updatedMarketStocks
+                    };
+
+                    XmlManager.ToXmlFile(marketStock, TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
                 }
                 catch (Exception)
                 {
                 }
+
+                //Wait 3 seconds
+                Thread.Sleep(3000);
             }
         }
     }
