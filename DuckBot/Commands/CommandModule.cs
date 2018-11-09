@@ -54,7 +54,7 @@ namespace DuckBot.Commands
         [Command("moneyTransfer")]
         public async Task MoneyTransferAsync(string targetUser, int amount)
         {
-            UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+            
             await UserBankingHandler.TransferCredits(Context, targetUser, amount);
         }
 
@@ -67,7 +67,7 @@ namespace DuckBot.Commands
             {
                 try
                 {
-                    UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                    
                     int userDebt = UserBankingHandler.GetUserCreditsDebt(Context);
 
                     await Context.Message.Channel.SendMessageAsync($"You owe **{userDebt} Credits**");
@@ -82,7 +82,7 @@ namespace DuckBot.Commands
             {
                 try
                 {
-                    UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                    
                     await UserBankingHandler.BorrowCredits(Context, amount);
                 }
                 catch (Exception)
@@ -95,7 +95,7 @@ namespace DuckBot.Commands
             {
                 try
                 {
-                    UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                    
                     await UserBankingHandler.ReturnCredits(Context, amount);
                 }
                 catch (Exception)
@@ -111,7 +111,7 @@ namespace DuckBot.Commands
         {
             try
             {
-                UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+                
                 await UserGamblingHandler.UserGambling(Context, Context.Message, gambleAmount);
             }
             catch (Exception)
@@ -121,14 +121,13 @@ namespace DuckBot.Commands
         [Command("balance")]
         [Alias("bal")]
         public async Task SlotBalanceAsync()
-        {
-            UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+        {   
             await UserBankingHandler.DisplayUserCredits(Context);
         }
         [Command("daily")]
         public async Task SlotDailyCreditsAsync()
         {
-            UserBankingHandler.CheckIfUserCreditProfileExists(Context);
+            
             await UserGamblingHandler.SlotDailyCreditsAsync(Context);
         }
 
@@ -143,10 +142,7 @@ namespace DuckBot.Commands
             public async Task UserStockBuyAsync(string tickerSymbol, int amount)
             {
                 try
-                {
-                UserBankingHandler.CheckIfUserCreditProfileExists(Context);
-                UserStocksHandler.CheckIfUserHasPortfolio(Context);
-
+                { 
                 UserStocksHandler.BuyUserStocksAsync(Context, tickerSymbol, amount);
                 }
                 catch (Exception)
@@ -159,9 +155,6 @@ namespace DuckBot.Commands
             {
                 try
                 {
-                UserBankingHandler.CheckIfUserCreditProfileExists(Context);
-                UserStocksHandler.CheckIfUserHasPortfolio(Context);
-
                 UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
                 }
                 catch (Exception)
@@ -174,9 +167,6 @@ namespace DuckBot.Commands
             {
                 try
                 {
-                UserBankingHandler.CheckIfUserCreditProfileExists(Context);
-                UserStocksHandler.CheckIfUserHasPortfolio(Context);
-
                 UserStocksHandler.DisplayUserStocksAsync(Context);
                 }
                 catch (Exception)
@@ -189,9 +179,6 @@ namespace DuckBot.Commands
             {
                 try
                 {
-                UserBankingHandler.CheckIfUserCreditProfileExists(Context);
-                UserStocksHandler.CheckIfUserHasPortfolio(Context);
-
                 UserStocksHandler.DisplayMarketStocksAsync(Context);
                 }
                 catch (Exception)

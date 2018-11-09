@@ -23,9 +23,12 @@ namespace DuckBot
     public class MainProgram
     {
         public static string rootLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        public static bool _stopThreads = false;
 
+        //Setup
         public static void Main(string[] args)
         {
+            //Injection
             //Declearation
             HelperMethod.DeclareUpdateTimeContainer("--Last Update Time--");
             CoreMethod.DeclareRootLocation(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
@@ -46,8 +49,7 @@ namespace DuckBot
         public CommandService _commands;
         public IServiceProvider _services;
 
-        public static bool _stopThreads = false;
-
+        //Main
         public async Task MainAsync()
         {
             var _config = new DiscordSocketConfig { MessageCacheSize = 100 };
@@ -119,6 +121,7 @@ namespace DuckBot
             
         }
 
+        //Event handlers
         public async Task HandleCommandAsync(SocketMessage messageParam)
         {
             // Don't process the command if it was a system message, if sender is bot or ID is not ME!
@@ -155,6 +158,7 @@ namespace DuckBot
                 await channel.SendMessageAsync($"[ERROR] `{message}`  >|  {result.ErrorReason}");
             }
 
+            /*
             //Logs command if successful
             if (result.IsSuccess)
             {
@@ -163,6 +167,7 @@ namespace DuckBot
 
                 await channel.SendMessageAsync($"[Log] `{message}`  >|  {result.ToString()}");
             }
+            */
             
         }
 
