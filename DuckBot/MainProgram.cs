@@ -87,7 +87,7 @@ namespace DuckBot
             catch (Exception) { Console.WriteLine("Unable to initialize!"); }
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            await _client.SetGameAsync("Use .d");
+            await _client.SetGameAsync("Use .d help");
 
             //
             //Event handlers
