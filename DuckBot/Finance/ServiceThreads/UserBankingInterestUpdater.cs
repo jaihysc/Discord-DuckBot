@@ -34,7 +34,7 @@ namespace DuckBot.Finance.ServiceThreads
                 }
 
                 //Sleep for 30 minutes
-                Thread.Sleep(180000);
+                Thread.Sleep(1800000);
             }
         }
 
@@ -46,24 +46,31 @@ namespace DuckBot.Finance.ServiceThreads
             //Update user debt
             foreach (string file in Directory.EnumerateFiles(TaskMethods.GetFileLocation(@"\UserStorage"), "*.xml"))
             {
-                var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(file);
-
-                //Calculate new debt with interest
-                int debtAmountNew = Convert.ToInt32((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
-
-                //Write to file
-                var userRecord = new UserStorage
+                try
                 {
-                    UserId = userCreditStorage.UserId,
-                    UserInfo = new UserInfo
-                    {
-                        UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime },
-                        UserBankingStorage = new UserBankingStorage { Credit = userCreditStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = Convert.ToInt32(debtAmountNew) },
-                        UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
-                    }
-                };
+                    var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(file);
 
-                XmlManager.ToXmlFile(userRecord, file);
+                    //Calculate new debt with interest
+                    int debtAmountNew = Convert.ToInt32((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
+
+                    //Write to file
+                    var userRecord = new UserStorage
+                    {
+                        UserId = userCreditStorage.UserId,
+                        UserInfo = new UserInfo
+                        {
+                            UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime },
+                            UserBankingStorage = new UserBankingStorage { Credit = userCreditStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = Convert.ToInt32(debtAmountNew) },
+                            UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
+                        }
+                    };
+
+                    XmlManager.ToXmlFile(userRecord, file);
+
+                }
+                catch (Exception)
+                {
+                }
             }
         }
     }

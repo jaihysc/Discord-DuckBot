@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using DuckBot;
 using DuckBot.Commands.Preconditions;
 using DuckBot.Finance;
+using DuckBot.UserActions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +21,16 @@ namespace DuckBot.Commands
     {
         public static ulong boyRoleId = 380519578138050562;
         public static ulong girlRole2Id = 406545739464835073;
+
+        [Command("help")]
+        public async Task HelpAsync([Remainder]string inputCommand)
+        {
+            await UserHelpHandler.DisplayCommandHelpMenu(Context, inputCommand);
+        }
+        public async Task HelpAsync()
+        {
+            await UserHelpHandler.DisplayHelpMenu(Context);
+        }
 
         [Command("setGame")]
         public async Task SetGameAsync([Remainder]string game)
@@ -49,86 +60,88 @@ namespace DuckBot.Commands
             await (user as IGuildUser).RemoveRoleAsync(removeRole);
         }
 
+
         //
         //Banking
-        [Command("moneyTransfer")]
-        public async Task MoneyTransferAsync(string targetUser, int amount)
-        {
-            
-            await UserBankingHandler.TransferCredits(Context, targetUser, amount);
-        }
-
-        [Group("bank")]
-        [Alias("b")]
-        public class Banking : ModuleBase<SocketCommandContext>
-        {
-            [Command("debt")]
-            public async Task GetBorrowedCreditsAsync()
-            {
-                try
-                {
-                    
-                    int userDebt = UserBankingHandler.GetUserCreditsDebt(Context);
-
-                    await Context.Message.Channel.SendMessageAsync($"You owe **{userDebt} Credits**");
-                }
-                catch (Exception)
-                {
-                }
-
-            }
-            [Command("borrow")]
-            public async Task BorrowCreditsAsync(int amount)
-            {
-                try
-                {
-                    
-                    await UserBankingHandler.BorrowCredits(Context, amount);
-                }
-                catch (Exception)
-                {
-                }
-
-            }
-            [Command("return")]
-            public async Task ReturnCreditsAsync(int amount)
-            {
-                try
-                {
-                    
-                    await UserBankingHandler.ReturnCredits(Context, amount);
-                }
-                catch (Exception)
-                {
-                }
-
-            }
-        }
-
-        //Gambling
-        [Command("slot")]
-        public async Task PlaySlotAsync(int gambleAmount)
-        {
-            try
-            {
-                
-                await UserGamblingHandler.UserGambling(Context, Context.Message, gambleAmount);
-            }
-            catch (Exception)
-            {
-            }
-        }
         [Command("balance")]
         [Alias("bal")]
         public async Task SlotBalanceAsync()
-        {   
+        {
             await UserBankingHandler.DisplayUserCredits(Context);
         }
         [Command("daily")]
         public async Task SlotDailyCreditsAsync()
         {
-            
+
             await UserGamblingHandler.SlotDailyCreditsAsync(Context);
+        }
+
+        [Command("moneyTransfer")]
+        public async Task MoneyTransferAsync(string targetUser, int amount)
+        {
+
+            await UserBankingHandler.TransferCredits(Context, targetUser, amount);
+        }
+
+        [Command("debt")]
+        public async Task GetBorrowedCreditsAsync()
+        {
+            try
+            {
+
+                int userDebt = UserBankingHandler.GetUserCreditsDebt(Context);
+
+                await Context.Message.Channel.SendMessageAsync($"You owe **{userDebt} Credits**");
+            }
+            catch (Exception)
+            {
+            }
+
+        }
+        [Command("borrow")]
+        public async Task BorrowCreditsAsync(int amount)
+        {
+            try
+            {
+
+                await UserBankingHandler.BorrowCredits(Context, amount);
+            }
+            catch (Exception)
+            {
+            }
+
+        }
+        [Command("return")]
+        public async Task ReturnCreditsAsync(int amount)
+        {
+            try
+            {
+
+                await UserBankingHandler.ReturnCredits(Context, amount);
+            }
+            catch (Exception)
+            {
+            }
+
+        }
+
+        //Stocks
+        [Group("game")]
+        [Alias("g")]
+        public class Game : ModuleBase<SocketCommandContext>
+        {
+            //Gambling
+            [Command("slot")]
+            public async Task PlaySlotAsync(int gambleAmount)
+            {
+                try
+                {
+                await UserGamblingHandler.UserGambling(Context, Context.Message, gambleAmount);
+                }
+                catch (Exception)
+                {
+                }
+            }
         }
 
         //Stocks
@@ -142,8 +155,8 @@ namespace DuckBot.Commands
             public async Task UserStockBuyAsync(string tickerSymbol, int amount)
             {
                 try
-                { 
-                UserStocksHandler.BuyUserStocksAsync(Context, tickerSymbol, amount);
+                {
+                    UserStocksHandler.BuyUserStocksAsync(Context, tickerSymbol, amount);
                 }
                 catch (Exception)
                 {
@@ -155,7 +168,7 @@ namespace DuckBot.Commands
             {
                 try
                 {
-                UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
+                    UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
                 }
                 catch (Exception)
                 {
@@ -167,7 +180,7 @@ namespace DuckBot.Commands
             {
                 try
                 {
-                UserStocksHandler.DisplayUserStocksAsync(Context);
+                    UserStocksHandler.DisplayUserStocksAsync(Context);
                 }
                 catch (Exception)
                 {
@@ -179,7 +192,7 @@ namespace DuckBot.Commands
             {
                 try
                 {
-                UserStocksHandler.DisplayMarketStocksAsync(Context);
+                    UserStocksHandler.DisplayMarketStocksAsync(Context);
                 }
                 catch (Exception)
                 {

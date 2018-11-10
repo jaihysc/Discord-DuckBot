@@ -26,82 +26,6 @@ namespace DuckBot.Finance
     {
         internal static string updateTimeContainer = "--Last Update Time--";
 
-        //internal static string userStocksStorageLocation = TaskMethods.GetFileLocation(@"\UserStocks");
-        //internal static string marketStocksValueStorageLocation = TaskMethods.GetFileLocation("MarketStocksValue.txt");
-
-
-        /*
-        public static void UpdateUserStocks()
-        {
-            var MarketStocksValueStorage = TaskMethods.ReadFromFileToList("MarketStocksValue.txt");
-
-            DateTime userLastUseDate = DateTime.Now;
-            string stockLastUpdateTime = "";
-            try
-            {
-                //Get line containg last update time
-                stockLastUpdateTime = MarketStocksValueStorage.First(p => p.Contains(updateTimeContainer));
-
-                //Extract last update date 
-                userLastUseDate = DateTime.Parse(stockLastUpdateTime.Substring(updateTimeContainer.Length + 5, stockLastUpdateTime.Length - updateTimeContainer.Length - 5));
-            }
-            catch (Exception)
-            {
-            }
-
-            if (userLastUseDate.AddSeconds(5) < DateTime.UtcNow)
-            {
-                File.WriteAllText(marketStocksValueStorageLocation, "");
-
-                //Write new stock prices
-                var sortedMarketStocksValueStorage = MarketStocksValueStorage.Where(p => !p.Contains(updateTimeContainer));
-                foreach (var stockItem in sortedMarketStocksValueStorage)
-                {
-                    //Get ticker + value of old stock
-                    int stockTickerLength = 0;
-
-                    stockTickerLength = stockItem.IndexOf(" ", StringComparison.Ordinal);
-                    string oldStockPrice = stockItem.Substring(stockTickerLength + 5, stockItem.Length - stockTickerLength - 5);
-
-                    //Get new stock price
-                    Random rand = new Random();
-
-                    int stockHeadDirection = rand.Next(2);
-                    int stockChangeAmount = rand.Next(1, 8);
-
-                    int stockPriceNew = 0;
-                    if (stockHeadDirection == 0)
-                    {
-                        //Increase
-                        stockPriceNew = int.Parse(oldStockPrice) + stockChangeAmount;
-                    }
-                    else
-                    {
-                        //Decrease
-                        stockPriceNew = int.Parse(oldStockPrice) - stockChangeAmount;
-
-                        if (stockPriceNew < 0)
-                        {
-                            stockPriceNew = 0;
-                        }
-                    }
-
-                    //Write new stock price
-                    using (System.IO.StreamWriter file = new System.IO.StreamWriter(marketStocksValueStorageLocation, true))
-                    {
-                        file.WriteLine(stockItem.Substring(0, stockTickerLength) + " >>> " + stockPriceNew);
-                    }
-                }
-
-                //Write new last update date
-                using (System.IO.StreamWriter file = new System.IO.StreamWriter(marketStocksValueStorageLocation, true))
-                {
-                    file.WriteLine(updateTimeContainer + " >>> " + DateTime.UtcNow);
-                }
-            }
-        }
-        */
-
         public static async void BuyUserStocksAsync(SocketCommandContext Context, string tickerSymbol, int buyAmount)
         {
 
@@ -322,6 +246,7 @@ namespace DuckBot.Finance
             //Send market stock to user
             await Context.Message.Channel.SendMessageAsync(string.Join(" \n ", marketStockList));
         }
+
 
         private static string GetStockMarketValue(string stockTicker)
         {
