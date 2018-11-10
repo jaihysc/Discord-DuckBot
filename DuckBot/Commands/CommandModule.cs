@@ -27,6 +27,7 @@ namespace DuckBot.Commands
         {
             await UserHelpHandler.DisplayCommandHelpMenu(Context, inputCommand);
         }
+        [Command("help")]
         public async Task HelpAsync()
         {
             await UserHelpHandler.DisplayHelpMenu(Context);
