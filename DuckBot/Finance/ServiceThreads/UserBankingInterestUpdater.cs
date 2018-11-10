@@ -28,13 +28,13 @@ namespace DuckBot.Finance.ServiceThreads
                     Console.WriteLine("User debt updated - " + DateTime.Now);
 
                     UserDebtInterestUpdater();
-
-                    //Sleep for 30 minutes
-                    Thread.Sleep(1800000);
                 }
                 catch (Exception)
                 {
                 }
+
+                //Sleep for 30 minutes
+                Thread.Sleep(180000);
             }
         }
 
@@ -49,7 +49,7 @@ namespace DuckBot.Finance.ServiceThreads
                 var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(file);
 
                 //Calculate new debt with interest
-                Int64 debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
+                int debtAmountNew = Convert.ToInt32((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
 
                 //Write to file
                 var userRecord = new UserStorage
