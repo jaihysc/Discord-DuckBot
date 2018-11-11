@@ -36,8 +36,8 @@ namespace DuckBot.Finance.ServiceThreads
                         Random rand = new Random();
 
                         int stockHeadDirection = rand.Next(2);
-                        int stockChangeAmount = rand.Next(1, rand.Next(2, 2000));
-                        int stockChangeAmountMultiplier = rand.Next(0, rand.Next(1, 10));
+                        int stockChangeAmount = rand.Next(1, rand.Next(2, 4000));
+                        int stockChangeAmountMultiplier = rand.Next(0, rand.Next(1, 15));
 
                         long stockPriceNew = 0;
                         if (stockHeadDirection == 0)
@@ -52,7 +52,7 @@ namespace DuckBot.Finance.ServiceThreads
                             {
                                 try
                                 {
-                                    stockPriceNew = stock.StockPrice + (stockChangeAmount + (stock.StockPrice / (stock.StockPrice - rand.Next(1, rand.Next(rand.Next(1, 50), 1000))) * stockChangeAmountMultiplier));
+                                    stockPriceNew = stock.StockPrice + (stockChangeAmount + (stock.StockPrice / (stock.StockPrice - rand.Next(100, 1000)) * stockChangeAmountMultiplier));
                                 }
                                 catch (Exception)
                                 {
@@ -70,7 +70,7 @@ namespace DuckBot.Finance.ServiceThreads
                             {
                                 try
                                 {
-                                    stockPriceNew = stock.StockPrice - (stockChangeAmount + (stock.StockPrice / (stock.StockPrice - rand.Next(1, rand.Next(rand.Next(1, 50), 1000))) * stockChangeAmountMultiplier));
+                                    stockPriceNew = stock.StockPrice - (stockChangeAmount + (stock.StockPrice / (stock.StockPrice - rand.Next(100, 1000)) * stockChangeAmountMultiplier));
                                 }
                                 catch (Exception)
                                 {

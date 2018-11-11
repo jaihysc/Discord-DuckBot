@@ -19,10 +19,10 @@ namespace DuckBot.UserActions
             //https://leovoel.github.io/embed-visualizer/
             var builder = new EmbedBuilder()
                 .WithDescription(" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki/Main). \n \n Prefix: `.d`")
-                .WithColor(new Color(0xB58F0C))
+                .WithColor(new Color(253, 184, 20))
                 .WithFooter(footer => {
                     footer
-                        .WithText("To check command usage, type .d help <command> // Send by " + targetUser.ToString());
+                        .WithText("To check command usage, type .d help <command> // Sent by " + targetUser.ToString());
                 })
                 .WithAuthor(author => {
                     author
@@ -30,7 +30,6 @@ namespace DuckBot.UserActions
                         .WithIconUrl("https://ubisafe.org/images/duck-transparent-jpeg-5.png");
                 })
                 .AddField("Currency Commands", "`balance` `daily` `debt` `borrow` `return` `moneyTransfer` ")
-
                 .AddField("Game Commands", "`Prefix: game` | `slot`")
                 .AddField("Stock Commands", "`Prefix: stock` | `portfolio` `market` `buy` `sell`");
 
@@ -65,7 +64,26 @@ namespace DuckBot.UserActions
                     commandHelpDefinitionExists = true;
 
                     //Send command definition to user
-                    await Context.Channel.SendMessageAsync($"**Command** *{inputCommand}* || **Description:** {commandHelpDefinition.Description} || **Usage:** `{commandHelpDefinition.Usage}`");
+                    //await Context.Channel.SendMessageAsync($"**Command** *{inputCommand}* || **Description:** {commandHelpDefinition.Description} || **Usage:** `{commandHelpDefinition.Usage}`");
+
+                    var builder = new EmbedBuilder()
+                    .WithDescription($"{commandHelpDefinition.Description} \n \n **Usage:** `{commandHelpDefinition.Usage}`")
+                    .WithColor(new Color(253, 88, 20))
+                    .WithFooter(footer =>
+                    {
+                        footer
+                            .WithText("Sent by " + Context.Message.Author.ToString());
+                    })
+                    .WithAuthor(author =>
+                    {
+                        author
+                            .WithName("Duck Help - " + inputCommand)
+                            .WithIconUrl("https://ubisafe.org/images/duck-transparent-jpeg-5.png");
+                    });
+
+                    var embed = builder.Build();
+
+                    await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
                 }
             }
 
