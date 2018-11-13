@@ -51,7 +51,7 @@ namespace DuckBot.Finance.ServiceThreads
                     var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(file);
 
                     //Calculate new debt with interest
-                    int debtAmountNew = Convert.ToInt32((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
+                    long debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
 
                     //Write to file
                     var userRecord = new UserStorage
@@ -60,7 +60,7 @@ namespace DuckBot.Finance.ServiceThreads
                         UserInfo = new UserInfo
                         {
                             UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime },
-                            UserBankingStorage = new UserBankingStorage { Credit = userCreditStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = Convert.ToInt32(debtAmountNew) },
+                            UserBankingStorage = new UserBankingStorage { Credit = userCreditStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = debtAmountNew },
                             UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
                         }
                     };
@@ -68,8 +68,9 @@ namespace DuckBot.Finance.ServiceThreads
                     XmlManager.ToXmlFile(userRecord, file);
 
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
         }

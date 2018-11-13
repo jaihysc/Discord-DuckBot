@@ -17,7 +17,7 @@ namespace DuckBot.Finance
         internal static string userDailyLastRedemmedStorageLocation = TaskMethods.GetFileLocation("UserCreditsDailyLastUsed.txt");
 
         //Slots
-        public static async Task UserGambling(SocketCommandContext Context, SocketMessage message, int gambleAmount)
+        public static async Task UserGambling(SocketCommandContext Context, SocketMessage message, long gambleAmount)
         {
             //Tell off the user if they are trying to gamble 0 dollars
             if (gambleAmount <= 0)
@@ -37,9 +37,9 @@ namespace DuckBot.Finance
                 else
                 {
                     //Calculate outcome (userCredits - amountGambled + AmountReturned)
-                    int returnAmount = CalculateUserGamblingOutcome(gambleAmount);
+                    long returnAmount = CalculateUserGamblingOutcome(gambleAmount);
 
-                    int userReturnAmount = userCreditStorage.UserInfo.UserBankingStorage.Credit - gambleAmount + returnAmount;
+                    long userReturnAmount = userCreditStorage.UserInfo.UserBankingStorage.Credit - gambleAmount + returnAmount;
 
                     //Send outcome & calculate taxes
                     //Write credits to file
@@ -50,10 +50,10 @@ namespace DuckBot.Finance
             }
         }
 
-        private static int CalculateUserGamblingOutcome(int gambleAmount)
+        private static long CalculateUserGamblingOutcome(long gambleAmount)
         {
             Random rand = new Random();
-            int returnAmount = 0;
+            long returnAmount = 0;
 
             int randomNumber = rand.Next(1000000);
 
@@ -86,7 +86,7 @@ namespace DuckBot.Finance
                 }
                 if (randomNumber >= 650000 && randomNumber <= 649999)
                 {
-                    returnAmount = gambleAmount + rand.Next(gambleAmount);
+                    returnAmount = gambleAmount + rand.Next(Convert.ToInt32(gambleAmount));
                 }
                 if (randomNumber >= 500000 && randomNumber <= 599999)
                 {
@@ -135,7 +135,7 @@ namespace DuckBot.Finance
         public static async Task SlotDailyCreditsAsync(SocketCommandContext Context)
         {
             //DAILY AMOUNT
-            int dailyAmount = 5000;
+            long dailyAmount = 50000;
 
             var userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
@@ -170,7 +170,7 @@ namespace DuckBot.Finance
         }
 
         //Give credits because I am a cheater
-        public static void SetCredits(SocketCommandContext context, ulong guildID, ulong userID, int setAmount)
+        public static void SetCredits(SocketCommandContext context, ulong guildID, ulong userID, long setAmount)
         {
             UserBankingHandler.SetCredits(context, guildID, userID, setAmount);
         }

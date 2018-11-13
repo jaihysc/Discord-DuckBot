@@ -18,7 +18,7 @@ namespace DuckBot.Finance
     public class UserStock
     {
         public string StockTicker { get; set; }
-        public int StockAmount { get; set; }
+        public long StockAmount { get; set; }
         public long StockBuyPrice { get; set; }
     }
 
@@ -26,7 +26,7 @@ namespace DuckBot.Finance
     {
         internal static string updateTimeContainer = "--Last Update Time--";
 
-        public static async void BuyUserStocksAsync(SocketCommandContext Context, string tickerSymbol, int buyAmount)
+        public static async void BuyUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long buyAmount)
         {
 
             var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
@@ -45,10 +45,13 @@ namespace DuckBot.Finance
                     //Calculate stock price
                     long stockTotalCost = stock.StockPrice * buyAmount;
 
-
-
+                    //Return error if stock value is currently at 0
+                    if (stock.StockPrice <= 0)
+                    {
+                        await Context.Message.Channel.SendMessageAsync($"There are no available sellers for stock {tickerSymbol}");
+                    }
                     //Check if user can buy stock
-                    if (UserBankingHandler.GetUserCredits(Context) - stockTotalCost < 0)
+                    else if (UserBankingHandler.GetUserCredits(Context) - stockTotalCost < 0)
                     {
                         await Context.Message.Channel.SendMessageAsync($"You do not have enough credits to buy **{buyAmount} {tickerSymbol}** stocks at price of **{stock.StockPrice} each** totaling **{stockTotalCost} Credits**");
                     }
@@ -65,7 +68,7 @@ namespace DuckBot.Finance
 
                         //Check if user already has some of stock currently buying
                         //If true, Calculates new user stock total
-                        int newStockAmount = buyAmount;
+                        long newStockAmount = buyAmount;
                         foreach (var userStock in userStocksStorage.UserStock)
                         {
                             if (userStock.StockTicker == tickerSymbol)
@@ -112,7 +115,7 @@ namespace DuckBot.Finance
             }
         }
 
-        public static async void SellUserStocksAsync(SocketCommandContext Context, string tickerSymbol, int sellAmount)
+        public static async void SellUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long sellAmount)
         {
             var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
@@ -126,14 +129,14 @@ namespace DuckBot.Finance
                     //Check if user is selling more stocks than they have
                     try
                     {
-                        int userStockAmount = 0;
-                        int stockTotalWorth = 0;
+                        long userStockAmount = 0;
+                        long stockTotalWorth = 0;
                         foreach (var userStock in userStockStorage.UserStock)
                         {
                             if (userStock.StockTicker == tickerSymbol)
                             {
                                 userStockAmount = userStock.StockAmount;
-                                stockTotalWorth = Convert.ToInt32( userStock.StockAmount * stock.StockPrice);
+                                stockTotalWorth = userStock.StockAmount * stock.StockPrice;
                             }
                         }
 
@@ -159,7 +162,7 @@ namespace DuckBot.Finance
 
                             //Send user receipt
 
-                            int newStockAmount = userStockAmount - sellAmount;
+                            long newStockAmount = userStockAmount - sellAmount;
 
                             //Write user stock amount
                             //Add existing user stocks to list
@@ -185,9 +188,10 @@ namespace DuckBot.Finance
                             XmlManager.ToXmlFile(userStockRecord, TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
                         }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
-                        await Context.Message.Channel.SendMessageAsync($"You do not have any stock **{tickerSymbol}**");
+                        await Context.Message.Channel.SendMessageAsync($"Something has gone wrong!");
+                        Console.WriteLine(ex.StackTrace);
                     }
                 }
             }

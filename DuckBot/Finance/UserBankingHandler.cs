@@ -14,9 +14,12 @@ namespace DuckBot.Finance
 {
     public class UserBankingHandler
     {
-        internal static int startingCredits = 10000;
+        internal static long startingCredits = 10000;
         //Percentage between 0-1, expressed as a fraction
-        internal static double taxPercentage = 0.05;
+        public static double taxPercentage = 0.10;
+
+        public static long maxBorrowAmount = 5000000;
+
 
         //Methods
         public static void CheckIfUserCreditProfileExists(SocketCommandContext Context)
@@ -28,7 +31,7 @@ namespace DuckBot.Finance
                 UserXmlDataStorage.CreateNewUserXmlEntry(Context);
             }
         }
-        public static int GetUserCredits(SocketCommandContext Context)
+        public static long GetUserCredits(SocketCommandContext Context)
         {
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
@@ -44,7 +47,7 @@ namespace DuckBot.Finance
 
         }
 
-        public static async Task TransferCredits(SocketCommandContext Context, string targetUser, int amount)
+        public static async Task TransferCredits(SocketCommandContext Context, string targetUser, long amount)
         {
             if (amount <= 0)
             {
@@ -85,7 +88,7 @@ namespace DuckBot.Finance
         }
 
         //Taxes- everyone loves em
-        public static async Task<int> TaxCollectorAsync(SocketCommandContext Context, int inputCredits,string sendMessage)
+        public static async Task<long> TaxCollectorAsync(SocketCommandContext Context, long inputCredits,string sendMessage)
         {
 
             double taxSubtractions = inputCredits * taxPercentage;
@@ -95,31 +98,31 @@ namespace DuckBot.Finance
                 taxSubtractions = 0;
             }
 
-            int roundedTaxSubtractions = Convert.ToInt32(taxSubtractions);
+            long roundedTaxSubtractions = Convert.ToInt64(taxSubtractions);
             await Context.Message.Channel.SendMessageAsync(sendMessage + " || A total of **" + roundedTaxSubtractions + " Credits** was taken off as tax");
 
             return roundedTaxSubtractions;
         }
-        public static async Task<int> TaxCollectorAsync(SocketCommandContext Context, ulong guildID, ulong userID, int inputCredits, string sendMessage)
+        public static async Task<long> TaxCollectorAsync(SocketCommandContext Context, ulong guildID, ulong userID, long inputCredits, string sendMessage)
         {
             var guild = Context.Client.GetGuild(guildID);
             var user = guild.GetUser(userID);
 
-            double taxSubtractions = inputCredits * taxPercentage;
+            double taxSubtractions = inputCredits * taxPercentage; ;
 
             if (taxSubtractions < 0)
             {
                 taxSubtractions = 0;
             }
 
-            int roundedTaxSubtractions = Convert.ToInt32(taxSubtractions);
+            long roundedTaxSubtractions = Convert.ToInt64(taxSubtractions);
             await user.SendMessageAsync(sendMessage + " || A total of **" + roundedTaxSubtractions + " Credits** was taken off as tax");
 
             return roundedTaxSubtractions;
         }
 
         //User credit functions
-        public static void SetCredits(SocketCommandContext Context, int setAmount)
+        public static void SetCredits(SocketCommandContext Context, long setAmount)
         {
             var otherCreditStorageUsers = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
@@ -136,7 +139,7 @@ namespace DuckBot.Finance
 
             XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
         }
-        public static void SetCredits(SocketCommandContext Context, ulong guildID, ulong userID, int setAmount)
+        public static void SetCredits(SocketCommandContext Context, ulong guildID, ulong userID, long setAmount)
         {
             //Get user credits to list
             var guild = Context.Client.GetGuild(guildID);
@@ -158,14 +161,14 @@ namespace DuckBot.Finance
             XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
         }
 
-        public static void AddCredits(SocketCommandContext Context, int addAmount)
+        public static void AddCredits(SocketCommandContext Context, long addAmount)
         {
             //Get user credits to list
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
 
             //Calculate new balance
-            int userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
+            long userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
 
             var userRecord = new UserStorage
             {
@@ -181,7 +184,7 @@ namespace DuckBot.Finance
             XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
         }
-        public static void AddCredits(SocketCommandContext Context, ulong guildID, ulong userID, int addAmount)
+        public static void AddCredits(SocketCommandContext Context, ulong guildID, ulong userID, long addAmount)
         {
             var guild = Context.Client.GetGuild(guildID);
             var user = guild.GetUser(userID);
@@ -190,7 +193,7 @@ namespace DuckBot.Finance
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
 
             //Calculate new balance
-            int userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
+            long userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
 
             var userRecord = new UserStorage
             {
@@ -216,17 +219,15 @@ namespace DuckBot.Finance
 
         }
 
-        public static int GetUserCreditsDebt(SocketCommandContext Context)
+        public static long GetUserCreditsDebt(SocketCommandContext Context)
         {
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             return userCreditStorage.UserInfo.UserBankingStorage.CreditDebt;
         }
 
-        public static async Task BorrowCredits(SocketCommandContext Context, int borrowAmount)
+        public static async Task BorrowCredits(SocketCommandContext Context, long borrowAmount)
         {
-            int maxBorrowAmount = 100000;
-
             if (GetUserCreditsDebt(Context) + borrowAmount > maxBorrowAmount)
             {
                 await Context.Message.Channel.SendMessageAsync($"You have exceeded your credit limit of **{maxBorrowAmount} Credits**");
@@ -247,7 +248,7 @@ namespace DuckBot.Finance
             }
         }
 
-        public static async Task ReturnCredits(SocketCommandContext Context, int returnAmount)
+        public static async Task ReturnCredits(SocketCommandContext Context, long returnAmount)
         {
             if (returnAmount > GetUserCreditsDebt(Context))
             {
@@ -274,13 +275,13 @@ namespace DuckBot.Finance
         }
 
 
-        public static void AddDebt(SocketCommandContext Context, int addAmount)
+        public static void AddDebt(SocketCommandContext Context, long addAmount)
         {
             //Get user debt to list
             var userCreditDebtStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             //Calculate new debt balance
-            int userCreditsDebtNew = userCreditDebtStorage.UserInfo.UserBankingStorage.CreditDebt + addAmount;
+            long userCreditsDebtNew = userCreditDebtStorage.UserInfo.UserBankingStorage.CreditDebt + addAmount;
 
             var userRecord = new UserStorage
             {

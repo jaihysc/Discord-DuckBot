@@ -26,8 +26,8 @@ namespace DuckBot.UserActions
     }
     public class UserBankingStorage
     {
-        public int Credit { get; set; }
-        public int CreditDebt { get; set; }
+        public long Credit { get; set; }
+        public long CreditDebt { get; set; }
     }
     public class UserProhibitedWordsStorage
     {

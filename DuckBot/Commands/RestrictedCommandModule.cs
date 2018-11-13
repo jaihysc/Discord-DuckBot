@@ -213,7 +213,7 @@ namespace DuckBot.Commands
 
             //Gambling
             [Command("setCredits")]
-            public async Task SetCreditsAsync(ulong guildID, ulong userID, int addAmount)
+            public async Task SetCreditsAsync(ulong guildID, ulong userID, long addAmount)
             {
                 UserGamblingHandler.SetCredits(Context, guildID, userID, addAmount);
             }

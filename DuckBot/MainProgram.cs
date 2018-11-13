@@ -24,6 +24,7 @@ namespace DuckBot
     {
         public static string rootLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         public static bool _stopThreads = false;
+        public static string botCommandPrefix = ".d";
 
         //Setup
         public static void Main(string[] args)
@@ -87,20 +88,11 @@ namespace DuckBot
             catch (Exception) { Console.WriteLine("Unable to initialize!"); }
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            await _client.SetGameAsync("Use .d help");
+            await _client.SetGameAsync($"Use {botCommandPrefix} help");
 
             //
             //Event handlers
             //
-
-            //Update Stocks
-            //Stock updater is currently inoperational due to high memory usage
-            //To use, comment out task.delay
-            /*
-            await Task.Run(async () => {
-                UserStocksHandler.UpdateUserStocks();
-            });
-            */
 
             //Log user / console messages
             _client.Log += EventLogger.Log;
@@ -141,7 +133,7 @@ namespace DuckBot
             //integer to determine when commands start
             int argPos = 0;
 
-            if (!(message.HasStringPrefix(".d ", ref argPos) ||
+            if (!(message.HasStringPrefix(botCommandPrefix + " ", ref argPos) ||
                 message.Author.IsBot))
                 return;
 
@@ -155,7 +147,18 @@ namespace DuckBot
                 var guild = _client.GetGuild(384492615745142784);
                 var channel = guild.GetTextChannel(504375404547801138);
 
-                await channel.SendMessageAsync($"[ERROR] `{message}`  >|  {result.ErrorReason}");
+                if (result.Error == CommandError.UnknownCommand)
+                {
+                    await context.Channel.SendMessageAsync("Invalid command, use `.d help` for a list of commands");
+                }
+                else if (result.Error == CommandError.BadArgCount)
+                {
+                    await context.Channel.SendMessageAsync($"Invalid command usage, use `.d help <command>` for correct command usage");
+                }
+                else
+                {
+                    await channel.SendMessageAsync($"[ERROR] `{message}`  >|  {result.ErrorReason}");
+                }
             }
 
             /*

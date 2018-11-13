@@ -1,16 +1,9 @@
 ﻿using Discord;
-using Discord.Addons.Interactive;
 using Discord.Commands;
-using Discord.WebSocket;
-using DuckBot;
 using DuckBot.Commands.Preconditions;
 using DuckBot.Finance;
 using DuckBot.UserActions;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DuckBot.Commands
@@ -36,7 +29,8 @@ namespace DuckBot.Commands
         [Command("setGame")]
         public async Task SetGameAsync([Remainder]string game)
         {
-            await Context.Client.SetGameAsync(game);
+            MainProgram.botCommandPrefix = game;
+            await Context.Client.SetGameAsync($"Use {game} help");
         }
 
         //Genders
@@ -78,7 +72,8 @@ namespace DuckBot.Commands
         }
 
         [Command("moneyTransfer")]
-        public async Task MoneyTransferAsync(string targetUser, int amount)
+        [Alias("mT")]
+        public async Task MoneyTransferAsync(string targetUser, long amount)
         {
 
             await UserBankingHandler.TransferCredits(Context, targetUser, amount);
@@ -87,42 +82,21 @@ namespace DuckBot.Commands
         [Command("debt")]
         public async Task GetBorrowedCreditsAsync()
         {
-            try
-            {
+            long userDebt = UserBankingHandler.GetUserCreditsDebt(Context);
 
-                int userDebt = UserBankingHandler.GetUserCreditsDebt(Context);
-
-                await Context.Message.Channel.SendMessageAsync($"You owe **{userDebt} Credits**");
-            }
-            catch (Exception)
-            {
-            }
+            await Context.Message.Channel.SendMessageAsync($"You owe **{userDebt} Credits**");
 
         }
         [Command("borrow")]
-        public async Task BorrowCreditsAsync(int amount)
+        public async Task BorrowCreditsAsync(long amount)
         {
-            try
-            {
-
-                await UserBankingHandler.BorrowCredits(Context, amount);
-            }
-            catch (Exception)
-            {
-            }
+            await UserBankingHandler.BorrowCredits(Context, amount);
 
         }
         [Command("return")]
-        public async Task ReturnCreditsAsync(int amount)
+        public async Task ReturnCreditsAsync(long amount)
         {
-            try
-            {
-
-                await UserBankingHandler.ReturnCredits(Context, amount);
-            }
-            catch (Exception)
-            {
-            }
+            await UserBankingHandler.ReturnCredits(Context, amount);
 
         }
 
@@ -133,15 +107,11 @@ namespace DuckBot.Commands
         {
             //Gambling
             [Command("slot")]
-            public async Task PlaySlotAsync(int gambleAmount)
+            [Alias("s")]
+            public async Task PlaySlotAsync(long gambleAmount)
             {
-                try
-                {
                 await UserGamblingHandler.UserGambling(Context, Context.Message, gambleAmount);
-                }
-                catch (Exception)
-                {
-                }
+
             }
         }
 
@@ -153,51 +123,32 @@ namespace DuckBot.Commands
             //Stocks
             [Command("buy")]
             [Alias("b")]
-            public async Task UserStockBuyAsync(string tickerSymbol, int amount)
+            public async Task UserStockBuyAsync(string tickerSymbol, long amount)
             {
-                try
-                {
                     UserStocksHandler.BuyUserStocksAsync(Context, tickerSymbol, amount);
-                }
-                catch (Exception)
-                {
-                }
             }
             [Command("sell")]
             [Alias("s")]
-            public async Task UserStockSellAsync(string tickerSymbol, int amount)
+            public async Task UserStockSellAsync(string tickerSymbol, long amount)
             {
-                try
-                {
-                    UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
-                }
-                catch (Exception)
-                {
-                }
+                 UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
+
             }
             [Command("portfolio")]
             [Alias("p")]
             public async Task UserStockPortfolioAsync()
             {
-                try
-                {
-                    UserStocksHandler.DisplayUserStocksAsync(Context);
-                }
-                catch (Exception)
-                {
-                }
+
+                UserStocksHandler.DisplayUserStocksAsync(Context);
+
             }
             [Command("market")]
             [Alias("m")]
             public async Task DisplayMarketStocksAsync()
             {
-                try
-                {
-                    UserStocksHandler.DisplayMarketStocksAsync(Context);
-                }
-                catch (Exception)
-                {
-                }
+
+                UserStocksHandler.DisplayMarketStocksAsync(Context);
+
             }
         }
     }

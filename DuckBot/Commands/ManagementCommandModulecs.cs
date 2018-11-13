@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using DuckBot.Finance;
 using DuckBot.Finance.ServiceThreads;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,44 @@ namespace DuckBot.Commands
             public async Task UpdateUserDebtInterestAsync()
             {
                 UserBankingInterestUpdater.UserDebtInterestUpdater();
+            }
+
+            [Command("taxRate")]
+            public async Task ChangeTaxRateAsync(double taxRate)
+            {
+                UserBankingHandler.taxPercentage = taxRate;
+            }
+
+            [Command("maxBorrow")]
+            public async Task ChangeMaxBorrowLimitAsync(long maxBorrow)
+            {
+                UserBankingHandler.maxBorrowAmount = maxBorrow;
+            }
+
+            //Stocks
+            [Command("marketOverride")]
+            public async Task OverrideStockMarketAsync(bool choice)
+            {
+                if (choice == true)
+                {
+                    UserMarketStocksUpdater.overrideMarketDirection = true;
+                }
+                else if (choice == false)
+                {
+                    UserMarketStocksUpdater.overrideMarketDirection = false;
+                }
+            }
+            [Command("marketDirection")]
+            public async Task StockMarketHeadDirectionAsync(int choice)
+            {
+                if (choice == 0)
+                {
+                    UserMarketStocksUpdater.marketDirection = 0;
+                }
+                else if (choice == 1)
+                {
+                    UserMarketStocksUpdater.marketDirection = 1;
+                }
             }
         }
     }

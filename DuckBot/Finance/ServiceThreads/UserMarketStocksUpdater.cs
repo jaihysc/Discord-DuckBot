@@ -21,84 +21,65 @@ namespace DuckBot.Finance.ServiceThreads
 
     public class UserMarketStocksUpdater
     {
+        public static bool overrideMarketDirection = false;
+        public static int marketDirection = 0;
+
         public static void UpdateMarketStocks()
-        {
+        {           
             while (MainProgram._stopThreads == false)
             {
-                try
+                var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+
+                List<MarketStock> updatedMarketStocks = new List<MarketStock>();
+
+                Random rand = new Random();
+                foreach (var stock in marketStockStorage.MarketStock)
                 {
-                    var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+                    //Calculate new stock price
+                    int stockHeadDirection = rand.Next(0, 1);
 
-                    List<MarketStock> updatedMarketStocks = new List<MarketStock>();
-                    foreach (var stock in marketStockStorage.MarketStock)
+                    long stockChangeAmount = rand.Next(0, 10000);
+                    int stockChangeAmountMultiplier = rand.Next(0, 15);
+
+                    long stockPriceNew = 0;
+
+                    //Override stocks
+                    if (overrideMarketDirection == true)
                     {
-                        //Calculate new stock price
-                        Random rand = new Random();
-
-                        int stockHeadDirection = rand.Next(2);
-                        int stockChangeAmount = rand.Next(1, rand.Next(2, 4000));
-                        int stockChangeAmountMultiplier = rand.Next(0, rand.Next(1, 15));
-
-                        long stockPriceNew = 0;
-                        if (stockHeadDirection == 0)
-                        {
-                            //Increase
-
-                            if (stock.StockPrice <= 0)
-                            {
-                                stockPriceNew = stock.StockPrice + stockChangeAmount * stockChangeAmountMultiplier;
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    stockPriceNew = stock.StockPrice + (stockChangeAmount + (stock.StockPrice / (stock.StockPrice - rand.Next(100, 1000)) * stockChangeAmountMultiplier));
-                                }
-                                catch (Exception)
-                                {
-                                    stockPriceNew = stock.StockPrice + stockChangeAmount;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //Decrease
-                            if (stock.StockPrice <= 0)
-                            {
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    stockPriceNew = stock.StockPrice - (stockChangeAmount + (stock.StockPrice / (stock.StockPrice - rand.Next(100, 1000)) * stockChangeAmountMultiplier));
-                                }
-                                catch (Exception)
-                                {
-                                    stockPriceNew = stock.StockPrice - stockChangeAmount;
-                                }
-                            }
-                        }
-
-                        //If price went negative, reset to 0
-                        if (stockPriceNew < 0)
-                        {
-                            stockPriceNew = 0;
-                        }
-
-
-                        updatedMarketStocks.Add(new MarketStock {StockTicker = stock.StockTicker, StockPrice = stockPriceNew });
+                        stockHeadDirection = marketDirection;
                     }
 
-                    var marketStock = new MarketStockStorage
+                    if (stockHeadDirection == 0)
                     {
-                        MarketStock = updatedMarketStocks
-                    };
+                        //Increase
 
-                    XmlManager.ToXmlFile(marketStock, TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+                        stockPriceNew = stock.StockPrice + stockChangeAmount * stockChangeAmountMultiplier;
+                    }
+                    else
+                    {
+                        //Decrease
+                        if (stock.StockPrice > 0)
+                        {
+                            stockPriceNew = stock.StockPrice - stockChangeAmount * stockChangeAmountMultiplier;
+                        }
+                    }
+
+                    //If price went negative, reset to 0
+                    if (stockPriceNew < 0)
+                    {
+                        stockPriceNew = 0;
+                    }
+
+
+                    updatedMarketStocks.Add(new MarketStock {StockTicker = stock.StockTicker, StockPrice = stockPriceNew });
                 }
-                catch (Exception)
+
+                var marketStock = new MarketStockStorage
                 {
-                }
+                    MarketStock = updatedMarketStocks
+                };
+
+                XmlManager.ToXmlFile(marketStock, TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
                 //Wait 3 seconds
                 Thread.Sleep(3000);
