@@ -2,21 +2,17 @@ using Discord;
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
-using DuckBot.Commands.Preconditions;
-using DuckBot.Finance;
 using DuckBot.Finance.ServiceThreads;
 using DuckBot.UserActions;
 using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 
 namespace DuckBot
 {
@@ -122,11 +118,6 @@ namespace DuckBot
 
             if (message.Author.IsBot) return;
 
-            //List of people who can use the bot
-            //if (message.Author.Id != 285266023475838976 
-                //message.Author.Id != 257225194391732237
-                //) return;
-
             //if command is not sent in my beautiful dedicated channel
             //if (message.Channel.Id != 504371769738526752) return;
 
@@ -157,7 +148,7 @@ namespace DuckBot
                 }
                 else
                 {
-                    await channel.SendMessageAsync($"[ERROR] `{message}`  >|  {result.ErrorReason}");
+                    await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
                 }
             }
 

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DuckBot.Commands.Preconditions;
+using DuckBot.Finance.CurrencyManager;
 
 namespace DuckBot.Commands
 {
@@ -213,9 +214,9 @@ namespace DuckBot.Commands
 
             //Gambling
             [Command("setCredits")]
-            public async Task SetCreditsAsync(ulong guildID, ulong userID, long addAmount)
+            public async Task SetCreditsAsync(ulong guildID, ulong userID, long setAmount)
             {
-                UserGamblingHandler.SetCredits(Context, guildID, userID, addAmount);
+                UserCreditsHandler.SetCredits(Context, guildID, userID, setAmount);
             }
         }
     }

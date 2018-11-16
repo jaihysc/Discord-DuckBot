@@ -51,7 +51,16 @@ namespace DuckBot.Finance.ServiceThreads
                     var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(file);
 
                     //Calculate new debt with interest
-                    long debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
+
+                    long debtAmountNew;
+                    try
+                    {
+                        debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
+                    }
+                    catch (OverflowException)
+                    {
+                        debtAmountNew = long.MaxValue;
+                    }
 
                     //Write to file
                     var userRecord = new UserStorage
@@ -68,7 +77,7 @@ namespace DuckBot.Finance.ServiceThreads
                     XmlManager.ToXmlFile(userRecord, file);
 
                 }
-                catch (Exception ex)
+                catch(Exception ex)
                 {
                     Console.WriteLine(ex.StackTrace);
                 }

@@ -36,13 +36,13 @@ namespace DuckBot.Commands
             [Command("taxRate")]
             public async Task ChangeTaxRateAsync(double taxRate)
             {
-                UserBankingHandler.taxPercentage = taxRate;
+                ConfigValues.taxPercentage = taxRate;
             }
 
             [Command("maxBorrow")]
             public async Task ChangeMaxBorrowLimitAsync(long maxBorrow)
             {
-                UserBankingHandler.maxBorrowAmount = maxBorrow;
+                ConfigValues.maxBorrowAmount = maxBorrow;
             }
 
             //Stocks
@@ -69,6 +69,11 @@ namespace DuckBot.Commands
                 {
                     UserMarketStocksUpdater.marketDirection = 1;
                 }
+            }
+            [Command("marketRandNext")]
+            public async Task ChangeMarketRandNextAsync(int choice)
+            {
+                UserMarketStocksUpdater.randNextMax = choice;
             }
         }
     }

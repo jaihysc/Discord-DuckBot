@@ -2,6 +2,7 @@
 using Discord.Commands;
 using DuckBot.Commands.Preconditions;
 using DuckBot.Finance;
+using DuckBot.Finance.CurrencyManager;
 using DuckBot.UserActions;
 using System.Linq;
 using System.Threading.Tasks;
@@ -62,7 +63,7 @@ namespace DuckBot.Commands
         [Alias("bal")]
         public async Task SlotBalanceAsync()
         {
-            await UserBankingHandler.DisplayUserCredits(Context);
+            await UserCreditsHandler.DisplayUserCredits(Context);
         }
         [Command("daily")]
         public async Task SlotDailyCreditsAsync()
@@ -76,13 +77,13 @@ namespace DuckBot.Commands
         public async Task MoneyTransferAsync(string targetUser, long amount)
         {
 
-            await UserBankingHandler.TransferCredits(Context, targetUser, amount);
+            await UserCreditsHandler.TransferCredits(Context, targetUser, amount);
         }
 
         [Command("debt")]
         public async Task GetBorrowedCreditsAsync()
         {
-            long userDebt = UserBankingHandler.GetUserCreditsDebt(Context);
+            long userDebt = UserDebtHandler.GetUserCreditsDebt(Context);
 
             await Context.Message.Channel.SendMessageAsync($"You owe **{userDebt} Credits**");
 
@@ -90,13 +91,13 @@ namespace DuckBot.Commands
         [Command("borrow")]
         public async Task BorrowCreditsAsync(long amount)
         {
-            await UserBankingHandler.BorrowCredits(Context, amount);
+            await UserDebtHandler.BorrowCredits(Context, amount);
 
         }
         [Command("return")]
         public async Task ReturnCreditsAsync(long amount)
         {
-            await UserBankingHandler.ReturnCredits(Context, amount);
+            await UserDebtHandler.ReturnCredits(Context, amount);
 
         }
 

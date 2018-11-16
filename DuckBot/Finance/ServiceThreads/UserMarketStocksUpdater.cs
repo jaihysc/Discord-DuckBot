@@ -21,9 +21,14 @@ namespace DuckBot.Finance.ServiceThreads
 
     public class UserMarketStocksUpdater
     {
+        //User override values
         public static bool overrideMarketDirection = false;
         public static int marketDirection = 0;
+        public static int randNextMax = 2;
 
+        /// <summary>
+        /// Updates the user market stocks
+        /// </summary>
         public static void UpdateMarketStocks()
         {           
             while (MainProgram._stopThreads == false)
@@ -36,10 +41,10 @@ namespace DuckBot.Finance.ServiceThreads
                 foreach (var stock in marketStockStorage.MarketStock)
                 {
                     //Calculate new stock price
-                    int stockHeadDirection = rand.Next(0, 1);
+                    int stockHeadDirection = rand.Next(randNextMax);
 
-                    long stockChangeAmount = rand.Next(0, 10000);
-                    int stockChangeAmountMultiplier = rand.Next(0, 15);
+                    long stockChangeAmount = rand.Next(0, 1000);
+                    int stockChangeAmountMultiplier = rand.Next(2);
 
                     long stockPriceNew = 0;
 
@@ -55,7 +60,9 @@ namespace DuckBot.Finance.ServiceThreads
 
                         stockPriceNew = stock.StockPrice + stockChangeAmount * stockChangeAmountMultiplier;
                     }
-                    else
+
+
+                    if (stockHeadDirection >= 1)
                     {
                         //Decrease
                         if (stock.StockPrice > 0)

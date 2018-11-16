@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot;
+using DuckBot.Finance.CurrencyManager;
 using DuckBot.Finance.ServiceThreads;
 using DuckBot_ClassLibrary;
 using System;
@@ -24,11 +25,8 @@ namespace DuckBot.Finance
 
     public class UserStocksHandler : ModuleBase<SocketCommandContext>
     {
-        internal static string updateTimeContainer = "--Last Update Time--";
-
         public static async void BuyUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long buyAmount)
         {
-
             var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
             foreach (var stock in marketStockStorage.MarketStock)
@@ -51,7 +49,7 @@ namespace DuckBot.Finance
                         await Context.Message.Channel.SendMessageAsync($"There are no available sellers for stock {tickerSymbol}");
                     }
                     //Check if user can buy stock
-                    else if (UserBankingHandler.GetUserCredits(Context) - stockTotalCost < 0)
+                    else if (UserCreditsHandler.GetUserCredits(Context) - stockTotalCost < 0)
                     {
                         await Context.Message.Channel.SendMessageAsync($"You do not have enough credits to buy **{buyAmount} {tickerSymbol}** stocks at price of **{stock.StockPrice} each** totaling **{stockTotalCost} Credits**");
                     }
@@ -63,7 +61,7 @@ namespace DuckBot.Finance
                     else
                     {
                         //Subtract user balance
-                        UserBankingHandler.AddCredits(Context, Convert.ToInt32(-stockTotalCost));
+                        UserCreditsHandler.AddCredits(Context, Convert.ToInt64(-stockTotalCost));
 
 
                         //Check if user already has some of stock currently buying
@@ -152,10 +150,10 @@ namespace DuckBot.Finance
                         else
                         {
                             //Add user balance 
-                            UserBankingHandler.AddCredits(
+                            UserCreditsHandler.AddCredits(
                                 Context,
                                 //Subtract tax deductions
-                                stockTotalWorth - await UserBankingHandler.TaxCollectorAsync(
+                                stockTotalWorth - await UserCreditsTaxHandler.TaxCollectorAsync(
                                     Context, 
                                     stockTotalWorth, 
                                     $"You sold **{sellAmount} {tickerSymbol}** stocks at **{stockTotalWorth} Credits**"));
@@ -190,7 +188,6 @@ namespace DuckBot.Finance
                     }
                     catch (Exception ex)
                     {
-                        await Context.Message.Channel.SendMessageAsync($"Something has gone wrong!");
                         Console.WriteLine(ex.StackTrace);
                     }
                 }
@@ -205,7 +202,6 @@ namespace DuckBot.Finance
 
             //Get user portfolio
             var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
-
 
             //Send stock header
             userStockList.Add($"**Stock Ticker - Stock Amount ** || **Buy price** || **Market value**");

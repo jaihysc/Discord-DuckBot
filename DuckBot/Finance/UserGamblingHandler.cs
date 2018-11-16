@@ -1,22 +1,15 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using DuckBot;
 using DuckBot_ClassLibrary;
 using DuckBot.UserActions;
+using DuckBot.Finance.CurrencyManager;
 
 namespace DuckBot.Finance
 {
     public class UserGamblingHandler : ModuleBase<SocketCommandContext>
     {
-        internal static string userDailyLastRedemmedStorageLocation = TaskMethods.GetFileLocation("UserCreditsDailyLastUsed.txt");
-
-        //Slots
         public static async Task UserGambling(SocketCommandContext Context, SocketMessage message, long gambleAmount)
         {
             //Tell off the user if they are trying to gamble 0 dollars
@@ -43,9 +36,9 @@ namespace DuckBot.Finance
 
                     //Send outcome & calculate taxes
                     //Write credits to file
-                    UserBankingHandler.SetCredits(
+                    UserCreditsHandler.SetCredits(
                         Context,
-                        userReturnAmount - await UserBankingHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{gambleAmount} credits** and made **{returnAmount} credits**"));
+                        userReturnAmount - await UserCreditsTaxHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{gambleAmount} credits** and made **{returnAmount} credits**"));
                 }
             }
         }
@@ -134,16 +127,15 @@ namespace DuckBot.Finance
         //Daily
         public static async Task SlotDailyCreditsAsync(SocketCommandContext Context)
         {
-            //DAILY AMOUNT
-            long dailyAmount = 50000;
-
             var userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             if (userLastDailyCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime.AddHours(24) < DateTime.UtcNow)
             {
                 //Add credits
-                UserBankingHandler.AddCredits(Context, dailyAmount);
+                UserCreditsHandler.AddCredits(Context, ConfigValues.dailyAmount);
 
+
+                //Write last use date
                 userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
                 var userRecord = new UserStorage
                 {
@@ -158,8 +150,9 @@ namespace DuckBot.Finance
 
                 XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
+
                 //Send channel message confirmation
-                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + dailyAmount + " Credits!**");
+                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + ConfigValues.dailyAmount + " Credits!**");
 
             }
             else
@@ -167,12 +160,6 @@ namespace DuckBot.Finance
                 await Context.Message.Channel.SendMessageAsync("You quacker, it has not yet been 24 hours since you last redeemed");
             }
 
-        }
-
-        //Give credits because I am a cheater
-        public static void SetCredits(SocketCommandContext context, ulong guildID, ulong userID, long setAmount)
-        {
-            UserBankingHandler.SetCredits(context, guildID, userID, setAmount);
         }
     }
 }
