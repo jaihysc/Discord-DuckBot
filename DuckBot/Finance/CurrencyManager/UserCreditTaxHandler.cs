@@ -21,7 +21,7 @@ namespace DuckBot.Finance.CurrencyManager
             }
 
             long roundedTaxSubtractions = Convert.ToInt64(taxSubtractions);
-            await Context.Message.Channel.SendMessageAsync(sendMessage + " || A total of **" + roundedTaxSubtractions + " Credits** was taken off as tax");
+            await Context.Message.Channel.SendMessageAsync(sendMessage + " || A total of **" + UserBankingHandler.CreditCurrencyFormatter(roundedTaxSubtractions) + " Credits** was taken off as tax");
 
             return roundedTaxSubtractions;
         }
@@ -38,7 +38,7 @@ namespace DuckBot.Finance.CurrencyManager
             }
 
             long roundedTaxSubtractions = Convert.ToInt64(taxSubtractions);
-            await user.SendMessageAsync(sendMessage + " || A total of **" + roundedTaxSubtractions + " Credits** was taken off as tax");
+            await user.SendMessageAsync(sendMessage + " || A total of **" + UserBankingHandler.CreditCurrencyFormatter(roundedTaxSubtractions) + " Credits** was taken off as tax");
 
             return roundedTaxSubtractions;
         }

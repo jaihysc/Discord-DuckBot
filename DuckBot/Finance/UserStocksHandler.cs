@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot;
 using DuckBot.Finance.CurrencyManager;
@@ -46,12 +47,12 @@ namespace DuckBot.Finance
                     //Return error if stock value is currently at 0
                     if (stock.StockPrice <= 0)
                     {
-                        await Context.Message.Channel.SendMessageAsync($"There are no available sellers for stock {tickerSymbol}");
+                        await Context.Message.Channel.SendMessageAsync($"There are no available sellers for stock **{tickerSymbol}**");
                     }
                     //Check if user can buy stock
                     else if (UserCreditsHandler.GetUserCredits(Context) - stockTotalCost < 0)
                     {
-                        await Context.Message.Channel.SendMessageAsync($"You do not have enough credits to buy **{buyAmount} {tickerSymbol}** stocks at price of **{stock.StockPrice} each** totaling **{stockTotalCost} Credits**");
+                        await Context.Message.Channel.SendMessageAsync($"You do not have enough credits to buy **{buyAmount} {tickerSymbol}** stocks at price of **{UserBankingHandler.CreditCurrencyFormatter(stock.StockPrice)} each** totaling **{UserBankingHandler.CreditCurrencyFormatter(stockTotalCost)} Credits**");
                     }
                     //Check if user is buying 0 or less stocks
                     else if (buyAmount < 1)
@@ -156,7 +157,7 @@ namespace DuckBot.Finance
                                 stockTotalWorth - await UserCreditsTaxHandler.TaxCollectorAsync(
                                     Context, 
                                     stockTotalWorth, 
-                                    $"You sold **{sellAmount} {tickerSymbol}** stocks at **{stockTotalWorth} Credits**"));
+                                    $"You sold **{sellAmount} {tickerSymbol}** stocks totaling **{UserBankingHandler.CreditCurrencyFormatter(stockTotalWorth)} Credits**"));
 
                             //Send user receipt
 
@@ -198,14 +199,27 @@ namespace DuckBot.Finance
         public static async void DisplayUserStocksAsync(SocketCommandContext Context)
         {
             //User stock list
-            List<string> userStockList = new List<string>();
+            List<string> userStockTickerList = new List<string>();
+            List<string> userStockBuyMarketValueList = new List<string>();
 
             //Get user portfolio
             var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
 
-            //Send stock header
-            userStockList.Add($"**Stock Ticker - Stock Amount ** || **Buy price** || **Market value**");
+            var embedBuilder = new EmbedBuilder()
+                .WithColor(new Color(40, 144, 175))
+                .WithFooter(footer =>
+                {
+                    footer
+                        .WithText("Sent by " + Context.Message.Author.ToString());
+                })
+                .WithAuthor(author =>
+                {
+                    author
+                        .WithName("Stock Portfolio - " + Context.Message.Author.ToString())
+                        .WithIconUrl("https://melbournechapter.net/images/transparent-folder-2.png");
+                });
 
+            //Add stock listing to embed
             foreach (var userStock in userStockStorage.UserStock)
             {
                 //get stock market value
@@ -220,31 +234,56 @@ namespace DuckBot.Finance
                     }
                 }
 
-                userStockList.Add($"**{userStock.StockTicker} - {userStock.StockAmount} ** || **{userStock.StockBuyPrice}** || **{userStockMarketPrice}**");
+                userStockTickerList.Add($"**{userStock.StockTicker}** - **{userStock.StockAmount}**");
+                userStockBuyMarketValueList.Add($"**{userStock.StockBuyPrice}** || **{userStockMarketPrice}**");
             }
 
-            //Send user stock amount
-            await Context.Message.Channel.SendMessageAsync(string.Join(" \n ", userStockList));
+            embedBuilder.AddInlineField("Stock Ticker - Amount", string.Join(" \n ", userStockTickerList));
+            embedBuilder.AddInlineField("Buy price || Market price", string.Join(" \n ", userStockBuyMarketValueList));
+
+            //Send user stock portfolio
+            var embed = embedBuilder.Build();
+
+            await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
         }
 
         public static async void DisplayMarketStocksAsync(SocketCommandContext Context)
         {
-            //Market stock list
-            List<string> marketStockList = new List<string>();
+            //User stock list
+            List<string> userStockTickerList = new List<string>();
+            List<string> userStockBuyMarketValueList = new List<string>();
 
             //Get market stock value from storage
             var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
-            //Send stock header
-            marketStockList.Add($"**Stock Ticker** - **Market value**");
-            foreach (var stock in marketStockStorage.MarketStock)
+            var embedBuilder = new EmbedBuilder()
+                .WithColor(new Color(6, 221, 238))
+                .WithFooter(footer =>
+                {
+                    footer
+                        .WithText("Sent by " + Context.Message.Author.ToString());
+                })
+                .WithAuthor(author =>
+                {
+                    author
+                        .WithName("Stock Market")
+                        .WithIconUrl("https://www.clipartmax.com/png/middle/257-2574787_stock-market-clipart-stock-market-clipart.png");
+                });
+
+            foreach (var marketStock in marketStockStorage.MarketStock)
             {
                 //Add market stock value to list
-                marketStockList.Add($"**{stock.StockTicker}** - **{stock.StockPrice}**");
+                userStockTickerList.Add($"**{marketStock.StockTicker}**");
+                userStockBuyMarketValueList.Add($"**{marketStock.StockPrice}**");
             }
 
-            //Send market stock to user
-            await Context.Message.Channel.SendMessageAsync(string.Join(" \n ", marketStockList));
+            embedBuilder.AddInlineField("Stock Ticker", string.Join(" \n ", userStockTickerList));
+            embedBuilder.AddInlineField("Market price", string.Join(" \n ", userStockBuyMarketValueList));
+
+            //Send user stock portfolio
+            var embed = embedBuilder.Build();
+
+            await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
         }
 
 

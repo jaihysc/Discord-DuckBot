@@ -14,7 +14,7 @@ namespace DuckBot.Finance.CurrencyManager
         {
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-            await Context.Message.Channel.SendMessageAsync($"You have **{userCreditStorage.UserInfo.UserBankingStorage.Credit} Credits**");
+            await Context.Message.Channel.SendMessageAsync($"You have **{UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.Credit)} Credits**");
 
         }
 
@@ -34,7 +34,7 @@ namespace DuckBot.Finance.CurrencyManager
             }
             else if (GetUserCredits(Context) - amount < 0)
             {
-                await Context.Message.Author.SendMessageAsync("You do not have enough money to send || **" + GetUserCredits(Context) + " Credits**");
+                await Context.Message.Author.SendMessageAsync("You do not have enough money to send || **" + UserBankingHandler.CreditCurrencyFormatter(GetUserCredits(Context)) + " Credits**");
             }
             else
             {
@@ -46,7 +46,7 @@ namespace DuckBot.Finance.CurrencyManager
                         Context.Guild.Id,
                         Context.Message.Author.Id,
                         amount,
-                        "You successfully sent **" + amount + " Credits** to " + targetUser);
+                        "You successfully sent **" + UserBankingHandler.CreditCurrencyFormatter(amount) + " Credits** to " + targetUser);
 
 
                 var recipient = Context.Guild.GetUser(MentionUtils.ParseUser(targetUser));
@@ -60,7 +60,7 @@ namespace DuckBot.Finance.CurrencyManager
                         recipient.Guild.Id,
                         recipient.Id,
                         amount,
-                        "You received **" + amount + " Credits** from " + Context.Message.Author.Mention));
+                        "You received **" + UserBankingHandler.CreditCurrencyFormatter(amount) + " Credits** from " + Context.Message.Author.Mention));
 
                 //await recipient.SendMessageAsync("You received **" + amount + " Credits** from " + Context.Message.Author.Mention);
             }

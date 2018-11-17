@@ -14,7 +14,7 @@ namespace DuckBot.Finance.CurrencyManager
         {
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-            await Context.Message.Channel.SendMessageAsync($"You owe **{userCreditStorage.UserInfo.UserBankingStorage.CreditDebt} Credits**");
+            await Context.Message.Channel.SendMessageAsync($"You owe **{UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt)} Credits**");
 
         }
 
@@ -30,7 +30,7 @@ namespace DuckBot.Finance.CurrencyManager
         {
             if (GetUserCreditsDebt(Context) + borrowAmount > ConfigValues.maxBorrowAmount)
             {
-                await Context.Message.Channel.SendMessageAsync($"You have exceeded your credit limit of **{ConfigValues.maxBorrowAmount} Credits**");
+                await Context.Message.Channel.SendMessageAsync($"You have exceeded your credit limit of **{UserBankingHandler.CreditCurrencyFormatter(ConfigValues.maxBorrowAmount)} Credits**");
             }
             else if (borrowAmount <= 0)
             {
@@ -44,7 +44,7 @@ namespace DuckBot.Finance.CurrencyManager
                 UserCreditsHandler.AddCredits(Context, borrowAmount);
 
                 //Send receipt
-                await Context.Message.Channel.SendMessageAsync($"You borrowed **{borrowAmount} Credits**");
+                await Context.Message.Channel.SendMessageAsync($"You borrowed **{UserBankingHandler.CreditCurrencyFormatter(borrowAmount)} Credits**");
             }
         }
 
@@ -52,7 +52,7 @@ namespace DuckBot.Finance.CurrencyManager
         {
             if (returnAmount > GetUserCreditsDebt(Context))
             {
-                await Context.Message.Channel.SendMessageAsync($"You do not owe **{returnAmount} Credits** || **{GetUserCreditsDebt(Context)} Credits**");
+                await Context.Message.Channel.SendMessageAsync($"You do not owe **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} Credits** || **{UserBankingHandler.CreditCurrencyFormatter(GetUserCreditsDebt(Context))} Credits**");
             }
             else if (returnAmount <= 0)
             {
@@ -70,7 +70,7 @@ namespace DuckBot.Finance.CurrencyManager
                 UserCreditsHandler.AddCredits(Context, -returnAmount);
 
                 //Send receipt
-                await Context.Message.Channel.SendMessageAsync($"You paid back **{returnAmount} Credits**");
+                await Context.Message.Channel.SendMessageAsync($"You paid back **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} Credits**");
             }
         }
 

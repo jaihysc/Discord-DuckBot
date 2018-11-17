@@ -15,7 +15,7 @@ namespace DuckBot.Finance
             //Tell off the user if they are trying to gamble 0 dollars
             if (gambleAmount <= 0)
             {
-                await message.Channel.SendMessageAsync("Quack, you have to gamble 1 or more credits");
+                await message.Channel.SendMessageAsync("Quack, you have to gamble **1 or more** credits");
             }
             else
             {
@@ -25,7 +25,7 @@ namespace DuckBot.Finance
                 //Money subtractor
                 if ((userCreditStorage.UserInfo.UserBankingStorage.Credit - gambleAmount) < 0)
                 {
-                    await message.Channel.SendMessageAsync("You broke quack, you do not have enough credits || **" + userCreditStorage.UserInfo.UserBankingStorage.Credit + " Credits**");
+                    await message.Channel.SendMessageAsync("You broke quack, you do not have enough credits || **" + UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.Credit) + " Credits**");
                 }
                 else
                 {
@@ -38,7 +38,7 @@ namespace DuckBot.Finance
                     //Write credits to file
                     UserCreditsHandler.SetCredits(
                         Context,
-                        userReturnAmount - await UserCreditsTaxHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{gambleAmount} credits** and made **{returnAmount} credits**"));
+                        userReturnAmount - await UserCreditsTaxHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{UserBankingHandler.CreditCurrencyFormatter(gambleAmount)} credits** and made **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} credits**"));
                 }
             }
         }
@@ -152,7 +152,7 @@ namespace DuckBot.Finance
 
 
                 //Send channel message confirmation
-                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + ConfigValues.dailyAmount + " Credits!**");
+                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + UserBankingHandler.CreditCurrencyFormatter(ConfigValues.dailyAmount) + " Credits!**");
 
             }
             else

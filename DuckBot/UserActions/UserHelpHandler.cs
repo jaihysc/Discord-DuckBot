@@ -14,15 +14,13 @@ namespace DuckBot.UserActions
     {
         public static async Task DisplayHelpMenu(SocketCommandContext Context)
         {
-            var targetUser = Context.Message.Author as SocketGuildUser;
-
             //https://leovoel.github.io/embed-visualizer/
             var builder = new EmbedBuilder()
                 .WithDescription(" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki/Main). \n \n Prefix: `.d`")
                 .WithColor(new Color(253, 184, 20))
                 .WithFooter(footer => {
                     footer
-                        .WithText("To check command usage, type .d help <command> // Sent by " + targetUser.ToString());
+                        .WithText("To check command usage, type .d help <command> // Sent by " + Context.Message.Author.ToString());
                 })
                 .WithAuthor(author => {
                     author

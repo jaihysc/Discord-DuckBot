@@ -2,6 +2,7 @@
 using DuckBot.UserActions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -19,6 +20,13 @@ namespace DuckBot.Finance.CurrencyManager
                 //Create user profile
                 UserXmlDataStorage.CreateNewUserXmlEntry(Context);
             }
+        }
+
+        public static string CreditCurrencyFormatter(long inputCredits)
+        {
+            var numberGroupSeperator = new NumberFormatInfo { NumberGroupSeparator = " " };
+
+            return inputCredits.ToString("N0", numberGroupSeperator);
         }
     }
 }
