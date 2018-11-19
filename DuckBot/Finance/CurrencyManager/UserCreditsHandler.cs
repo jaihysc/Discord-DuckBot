@@ -14,7 +14,7 @@ namespace DuckBot.Finance.CurrencyManager
         {
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-            await Context.Message.Channel.SendMessageAsync($"You have **{UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.Credit)} Credits**");
+            await Context.Message.Channel.SendMessageAsync($"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, You have **{UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.Credit)} Credits**");
 
         }
 
@@ -38,31 +38,48 @@ namespace DuckBot.Finance.CurrencyManager
             }
             else
             {
-                //Subtract money from sender
-                AddCredits(Context, -amount);
-                //Send receipt to sender
-                await UserCreditsTaxHandler.TaxCollectorAsync(
-                        Context,
-                        Context.Guild.Id,
-                        Context.Message.Author.Id,
-                        amount,
-                        "You successfully sent **" + UserBankingHandler.CreditCurrencyFormatter(amount) + " Credits** to " + targetUser);
-
+                long taxAmount = UserCreditsTaxHandler.TaxCollector(Context, Context.Guild.Id, Context.Message.Author.Id, amount);
 
                 var recipient = Context.Guild.GetUser(MentionUtils.ParseUser(targetUser));
+
+                //Subtract money from sender
+                AddCredits(Context, -amount);
+
                 //AddCredits credits to receiver
                 AddCredits(
                     Context,
                     Context.Guild.Id, MentionUtils.ParseUser(targetUser),
                     //Collect taxes!
-                    amount - await UserCreditsTaxHandler.TaxCollectorAsync(
-                        Context,
-                        recipient.Guild.Id,
-                        recipient.Id,
-                        amount,
-                        "You received **" + UserBankingHandler.CreditCurrencyFormatter(amount) + " Credits** from " + Context.Message.Author.Mention));
+                    amount - UserCreditsTaxHandler.TaxCollector(Context, recipient.Guild.Id, recipient.Id, amount));
 
-                //await recipient.SendMessageAsync("You received **" + amount + " Credits** from " + Context.Message.Author.Mention);
+                //Send receipts to both parties
+                var embedBuilder = new EmbedBuilder()
+                    .WithTitle("Transaction Receipt")
+                    .WithDescription("​")
+                    .WithColor(new Color(68, 199, 40))
+                    .WithFooter(footer => {
+                    })
+                    .WithAuthor(author => {
+                        author
+                            .WithName("Duck Banking Inc.")
+                            .WithIconUrl("https://freeiconshop.com/wp-content/uploads/edd/bank-flat.png");
+                    })
+                    .AddInlineField("Sender", Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5))
+                    .AddInlineField("Id", Context.Message.Author.Id)
+                    .AddInlineField("Total Amount", $"-{UserBankingHandler.CreditCurrencyFormatter(amount)}")
+
+                    .AddInlineField("Recipient", recipient.ToString().Substring(0, recipient.ToString().Length - 5))
+                    .AddInlineField("​", recipient.Id)
+                    .AddInlineField("​", UserBankingHandler.CreditCurrencyFormatter(amount))
+
+                    .AddInlineField("​", "​")
+                    .AddInlineField("​", "​")
+                    .AddInlineField("Deductions", $"{UserBankingHandler.CreditCurrencyFormatter(taxAmount)} ({ConfigValues.taxPercentage * 100}% Tax) \n \n -------------- \n {UserBankingHandler.CreditCurrencyFormatter(amount - taxAmount)}");
+
+                var embed = embedBuilder.Build();
+
+                await Context.Message.Author.SendMessageAsync("", embed: embed).ConfigureAwait(false);
+                await recipient.SendMessageAsync("", embed: embed).ConfigureAwait(false);
             }
         }
 

@@ -10,7 +10,21 @@ namespace DuckBot.Finance.CurrencyManager
 {
     public class UserCreditsTaxHandler
     {
-        public static async Task<long> TaxCollectorAsync(SocketCommandContext Context, long inputCredits, string sendMessage)
+        public static long TaxCollector(SocketCommandContext Context, long inputCredits)
+        {
+
+            double taxSubtractions = inputCredits * ConfigValues.taxPercentage;
+
+            if (taxSubtractions < 0)
+            {
+                taxSubtractions = 0;
+            }
+
+            long roundedTaxSubtractions = Convert.ToInt64(taxSubtractions);
+
+            return roundedTaxSubtractions;
+        }
+        public static async Task<long> TaxCollector(SocketCommandContext Context, long inputCredits, string sendMessage)
         {
 
             double taxSubtractions = inputCredits * ConfigValues.taxPercentage;
@@ -25,7 +39,23 @@ namespace DuckBot.Finance.CurrencyManager
 
             return roundedTaxSubtractions;
         }
-        public static async Task<long> TaxCollectorAsync(SocketCommandContext Context, ulong guildID, ulong userID, long inputCredits, string sendMessage)
+        public static long TaxCollector(SocketCommandContext Context, ulong guildID, ulong userID, long inputCredits)
+        {
+            var guild = Context.Client.GetGuild(guildID);
+            var user = guild.GetUser(userID);
+
+            double taxSubtractions = inputCredits * ConfigValues.taxPercentage; ;
+
+            if (taxSubtractions < 0)
+            {
+                taxSubtractions = 0;
+            }
+
+            long roundedTaxSubtractions = Convert.ToInt64(taxSubtractions);
+
+            return roundedTaxSubtractions;
+        }
+        public static async Task<long> TaxCollector(SocketCommandContext Context, ulong guildID, ulong userID, long inputCredits, string sendMessage)
         {
             var guild = Context.Client.GetGuild(guildID);
             var user = guild.GetUser(userID);

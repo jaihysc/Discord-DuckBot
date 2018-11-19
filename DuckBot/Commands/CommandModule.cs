@@ -83,10 +83,7 @@ namespace DuckBot.Commands
         [Command("debt")]
         public async Task GetBorrowedCreditsAsync()
         {
-            long userDebt = UserDebtHandler.GetUserCreditsDebt(Context);
-
-            await Context.Message.Channel.SendMessageAsync($"You owe **{userDebt} Credits**");
-
+            await UserDebtHandler.DisplayUserCreditsDebt(Context);
         }
         [Command("borrow")]
         public async Task BorrowCreditsAsync(long amount)

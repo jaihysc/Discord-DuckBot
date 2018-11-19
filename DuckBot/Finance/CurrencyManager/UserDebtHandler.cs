@@ -14,7 +14,7 @@ namespace DuckBot.Finance.CurrencyManager
         {
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-            await Context.Message.Channel.SendMessageAsync($"You owe **{UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt)} Credits**");
+            await Context.Message.Channel.SendMessageAsync($"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, You owe **{UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt)} Credits**");
 
         }
 

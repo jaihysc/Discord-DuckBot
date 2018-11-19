@@ -25,7 +25,7 @@ namespace DuckBot.Finance.ServiceThreads
                 try
                 {
                     //Log action
-                    Console.WriteLine("User debt updated - " + DateTime.Now);
+                    //Console.WriteLine("User debt updated - " + DateTime.Now);
 
                     UserDebtInterestUpdater();
                 }

@@ -135,7 +135,7 @@ namespace DuckBot.Finance
                             if (userStock.StockTicker == tickerSymbol)
                             {
                                 userStockAmount = userStock.StockAmount;
-                                stockTotalWorth = userStock.StockAmount * stock.StockPrice;
+                                stockTotalWorth = sellAmount * stock.StockPrice;
                             }
                         }
 
@@ -154,7 +154,7 @@ namespace DuckBot.Finance
                             UserCreditsHandler.AddCredits(
                                 Context,
                                 //Subtract tax deductions
-                                stockTotalWorth - await UserCreditsTaxHandler.TaxCollectorAsync(
+                                stockTotalWorth - await UserCreditsTaxHandler.TaxCollector(
                                     Context, 
                                     stockTotalWorth, 
                                     $"You sold **{sellAmount} {tickerSymbol}** stocks totaling **{UserBankingHandler.CreditCurrencyFormatter(stockTotalWorth)} Credits**"));
@@ -256,7 +256,19 @@ namespace DuckBot.Finance
             //Get market stock value from storage
             var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
+            //Get is market stock closed
+            string IsStockMarketOpen = "Closed";
+            if (marketStockStorage.MarketOpen == true)
+            {
+                IsStockMarketOpen = "Open";
+            }
+            else
+            {
+                IsStockMarketOpen = "Closed";
+            }
+
             var embedBuilder = new EmbedBuilder()
+                .WithDescription($"Stock market is `{IsStockMarketOpen}`")
                 .WithColor(new Color(6, 221, 238))
                 .WithFooter(footer =>
                 {
