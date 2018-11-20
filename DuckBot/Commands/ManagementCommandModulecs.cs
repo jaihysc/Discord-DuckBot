@@ -15,6 +15,13 @@ namespace DuckBot.Commands
         [Group("manage")]
         public class Management : ModuleBase<SocketCommandContext>
         {
+            [Command("setGame")]
+            public async Task SetGameAsync([Remainder]string game)
+            {
+                MainProgram.botCommandPrefix = game;
+                await Context.Client.SetGameAsync($"Use {game} help");
+            }
+
             [Command("stopService")]
             public async Task StopServicesAsync()
             {

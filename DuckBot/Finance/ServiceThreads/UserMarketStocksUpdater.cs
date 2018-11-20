@@ -41,7 +41,7 @@ namespace DuckBot.Finance.ServiceThreads
 
                 foreach (var stock in marketStockStorage.MarketStock)
                 {
-                    long stockPriceNew = Convert.ToInt64(OnlineStockHandler.GetOnlineStockInfo(stock.StockTicker).latestPrice * 100);
+                    long stockPriceNew = Convert.ToInt64(OnlineStockHandler.GetOnlineStockInfo(stock.StockTicker).LatestPrice * 100);
 
                     updatedMarketStocks.Add(new MarketStock {StockTicker = stock.StockTicker, StockPrice = stockPriceNew });
                 }
@@ -54,8 +54,8 @@ namespace DuckBot.Finance.ServiceThreads
 
                 XmlManager.ToXmlFile(marketStock, TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
-                //Wait 3 seconds
-                Thread.Sleep(3000);
+                //Wait 10 seconds
+                Thread.Sleep(10000);
             }
         }
     }
@@ -93,7 +93,7 @@ namespace DuckBot.Finance.ServiceThreads
         {
             var returnStockInfo = GetOnlineStockInfo("aapl");
 
-            if (returnStockInfo.latestSource == "Close")
+            if (returnStockInfo.LatestSource == "Close")
             {
                 return false;
             }
@@ -107,41 +107,41 @@ namespace DuckBot.Finance.ServiceThreads
 
     public class CompanyInfoResponse
     {
-        public string symbol { get; set; }
-        public string companyName { get; set; }
-        public string primaryExchange { get; set; }
-        public string sector { get; set; }
-        public string calculationPrice { get; set; }
-        public double open { get; set; }
-        public long openTime { get; set; }
-        public double close { get; set; }
-        public long closeTime { get; set; }
-        public double high { get; set; }
-        public double low { get; set; }
-        public double latestPrice { get; set; }
-        public string latestSource { get; set; }
-        public string latestTime { get; set; }
-        public long latestUpdate { get; set; }
-        public double latestVolume { get; set; }
-        public string iexRealtimePrice { get; set; }
-        public string iexRealtimeSize { get; set; }
-        public string iexLastUpdated { get; set; }
-        public double delayedPrice { get; set; }
-        public long delayedPriceTime { get; set; }
-        public double previousClose { get; set; }
-        public double change { get; set; }
-        public double changePercent { get; set; }
-        public string iexMarketPercent { get; set; }
-        public string iexVolume { get; set; }
-        public double avgTotalVolume { get; set; }
-        public string iexBidPrice { get; set; }
-        public string iexBidSize { get; set; }
-        public string iexAskPrice { get; set; }
-        public string iexAskSize { get; set; }
-        public long marketCap { get; set; }
-        public double peRatio { get; set; }
-        public double week52High { get; set; }
-        public double week52Low { get; set; }
-        public double ytdChange { get; set; }
+        public string Symbol { get; set; }
+        public string CompanyName { get; set; }
+        public string PrimaryExchange { get; set; }
+        public string Sector { get; set; }
+        public string CalculationPrice { get; set; }
+        public double Open { get; set; }
+        public long OpenTime { get; set; }
+        public double Close { get; set; }
+        public long CloseTime { get; set; }
+        public double High { get; set; }
+        public double Low { get; set; }
+        public double LatestPrice { get; set; }
+        public string LatestSource { get; set; }
+        public string LatestTime { get; set; }
+        public long LatestUpdate { get; set; }
+        public double LatestVolume { get; set; }
+        public string IexRealtimePrice { get; set; }
+        public string IexRealtimeSize { get; set; }
+        public string IexLastUpdated { get; set; }
+        public double DelayedPrice { get; set; }
+        public long DelayedPriceTime { get; set; }
+        public double PreviousClose { get; set; }
+        public double Change { get; set; }
+        public double ChangePercent { get; set; }
+        public string IexMarketPercent { get; set; }
+        public string IexVolume { get; set; }
+        public double AvgTotalVolume { get; set; }
+        public string IexBidPrice { get; set; }
+        public string IexBidSize { get; set; }
+        public string IexAskPrice { get; set; }
+        public string IexAskSize { get; set; }
+        public long MarketCap { get; set; }
+        public double PeRatio { get; set; }
+        public double Week52High { get; set; }
+        public double Week52Low { get; set; }
+        public double YtdChange { get; set; }
     }
 }

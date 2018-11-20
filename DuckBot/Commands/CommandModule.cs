@@ -27,13 +27,6 @@ namespace DuckBot.Commands
             await UserHelpHandler.DisplayHelpMenu(Context);
         }
 
-        [Command("setGame")]
-        public async Task SetGameAsync([Remainder]string game)
-        {
-            MainProgram.botCommandPrefix = game;
-            await Context.Client.SetGameAsync($"Use {game} help");
-        }
-
         //Genders
         [Command("gender boy")]
         public async Task SetGenderMaleAsync()
@@ -57,7 +50,6 @@ namespace DuckBot.Commands
         }
 
 
-        //
         //Banking
         [Command("balance")]
         [Alias("bal")]
@@ -98,7 +90,7 @@ namespace DuckBot.Commands
 
         }
 
-        //Stocks
+        //Slot
         [Group("game")]
         [Alias("g")]
         public class Game : ModuleBase<SocketCommandContext>
@@ -123,13 +115,13 @@ namespace DuckBot.Commands
             [Alias("b")]
             public async Task UserStockBuyAsync(string tickerSymbol, long amount)
             {
-                    UserStocksHandler.BuyUserStocksAsync(Context, tickerSymbol, amount);
+                 await UserStocksHandler.BuyUserStocksAsync(Context, tickerSymbol, amount);
             }
             [Command("sell")]
             [Alias("s")]
             public async Task UserStockSellAsync(string tickerSymbol, long amount)
             {
-                 UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
+                 await UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
 
             }
             [Command("portfolio")]
@@ -137,7 +129,7 @@ namespace DuckBot.Commands
             public async Task UserStockPortfolioAsync()
             {
 
-                UserStocksHandler.DisplayUserStocksAsync(Context);
+                await UserStocksHandler.DisplayUserStocksAsync(Context);
 
             }
             [Command("market")]
@@ -145,7 +137,15 @@ namespace DuckBot.Commands
             public async Task DisplayMarketStocksAsync()
             {
 
-                UserStocksHandler.DisplayMarketStocksAsync(Context);
+                await UserStocksHandler.DisplayMarketStocksAsync(Context);
+
+            }
+            [Command("market")]
+            [Alias("m")]
+            public async Task DisplayMarketStockInfoAsync(string stockTicker)
+            {
+
+                await UserStocksHandler.DisplayMarketStockInfoAsync(Context, stockTicker);
 
             }
         }

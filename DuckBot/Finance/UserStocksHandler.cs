@@ -26,7 +26,7 @@ namespace DuckBot.Finance
 
     public class UserStocksHandler : ModuleBase<SocketCommandContext>
     {
-        public static async void BuyUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long buyAmount)
+        public static async Task BuyUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long buyAmount)
         {
             var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
@@ -114,7 +114,7 @@ namespace DuckBot.Finance
             }
         }
 
-        public static async void SellUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long sellAmount)
+        public static async Task SellUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long sellAmount)
         {
             var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
 
@@ -196,7 +196,7 @@ namespace DuckBot.Finance
         }
 
 
-        public static async void DisplayUserStocksAsync(SocketCommandContext Context)
+        public static async Task DisplayUserStocksAsync(SocketCommandContext Context)
         {
             //User stock list
             List<string> userStockTickerList = new List<string>();
@@ -247,7 +247,7 @@ namespace DuckBot.Finance
             await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
         }
 
-        public static async void DisplayMarketStocksAsync(SocketCommandContext Context)
+        public static async Task DisplayMarketStocksAsync(SocketCommandContext Context)
         {
             //User stock list
             List<string> userStockTickerList = new List<string>();
@@ -296,6 +296,42 @@ namespace DuckBot.Finance
             var embed = embedBuilder.Build();
 
             await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
+        }
+
+        public static async Task DisplayMarketStockInfoAsync(SocketCommandContext Context, string stockTicker)
+        {
+            var stockResponse = OnlineStockHandler.GetOnlineStockInfo(stockTicker);
+
+            if (stockResponse != null)
+            {
+                var embedBuilder = new EmbedBuilder()
+                    .WithTitle($"{stockResponse.CompanyName}")
+                    .WithDescription($"Sector: {stockResponse.Sector} \n\n {stockResponse.PrimaryExchange}")
+                    .WithColor(new Color(192, 192, 192))
+                    .WithFooter(footer => {
+                        footer
+                            .WithText($"Sent by {Context.Message.Author.ToString()}");
+                    })
+                    .WithThumbnailUrl(string.Format("https://storage.googleapis.com/iex/api/logos/{0}.png", stockTicker.ToUpper()))
+                    .WithAuthor(author => {
+                        author
+                            .WithName($"Stock Info - {stockResponse.Symbol}")
+                            .WithIconUrl("https://d2v9y0dukr6mq2.cloudfront.net/video/thumbnail/ET83clc_gijohrdoy/animation-of-business-or-stock-market-graph-and-arrow-with-alpha-channel-shows-loss-failure-decline-bankrupt_vszr31_cg__F0004.png");
+                    })
+                    .AddInlineField("Open", $"{stockResponse.Open}")
+                    .AddInlineField("Close", $"{stockResponse.Close}")
+                    .AddInlineField("High", $"{stockResponse.High} \n {stockResponse.Week52High} | 52 Week")
+                    .AddInlineField("Low", $"{stockResponse.Low} \n {stockResponse.Week52Low} | 52 Week")
+                    .AddInlineField("Change", $"{stockResponse.Change} \n {stockResponse.ChangePercent}% \n {stockResponse.YtdChange.ToString().Substring(0, stockResponse.YtdChange.ToString().Length - 4)} YTD")
+                    .AddInlineField("PE Ratio", $"{stockResponse.PeRatio}");
+                var embed = embedBuilder.Build();
+
+                await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
+            }
+            else
+            {
+                await Context.Message.Channel.SendMessageAsync("Invalid stock ticker, use `.d stock market` for a list of stock tickers");
+            }
         }
 
 
