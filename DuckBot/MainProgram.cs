@@ -96,6 +96,7 @@ namespace DuckBot
 
             //Messaged received
             _client.MessageReceived += MessageReceived;
+            _client.MessageReceived += DeleteNonCommandsInCommandsChannel;
 
             //User joined
             _client.UserJoined += UserJoinHandler.DisplayUserGenderChoice;
@@ -182,6 +183,15 @@ namespace DuckBot
                 await message.Channel.SendMessageAsync("Hey! How dare you fish in my pond, no regard for our species and our survival");
             }
 
+        }
+
+        private async Task DeleteNonCommandsInCommandsChannel(SocketMessage message)
+        {
+            if (message.Channel.Id == 504371769738526752 && !message.ToString().StartsWith(botCommandPrefix))
+            {
+                var sentMessage = await message.Channel.GetMessagesAsync(1).Flatten();
+                await message.Channel.DeleteMessagesAsync(sentMessage);
+            }
         }
     }
 }
