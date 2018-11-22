@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using DuckBot.Finance;
 using DuckBot.Finance.ServiceThreads;
+using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -52,35 +53,33 @@ namespace DuckBot.Commands
                 ConfigValues.maxBorrowAmount = maxBorrow;
             }
 
-            //Stocks
-            [Command("marketOverride")]
-            public async Task OverrideStockMarketAsync(bool choice)
+            //Duck access moderation
+            [Command("op")]
+            public async Task WhiteListUserAsync(ulong userId)
             {
-                if (choice == true)
-                {
-                    UserMarketStocksUpdater.overrideMarketDirection = true;
-                }
-                else if (choice == false)
-                {
-                    UserMarketStocksUpdater.overrideMarketDirection = false;
-                }
+                CoreMethod.WriteStringToFile(userId.ToString(), false, CoreMethod.GetFileLocation("UserWhitelist.txt"));
             }
-            [Command("marketDirection")]
-            public async Task StockMarketHeadDirectionAsync(int choice)
+
+            [Command("unop")]
+            public async Task UnWhiteListUserAsync(ulong userId)
             {
-                if (choice == 0)
-                {
-                    UserMarketStocksUpdater.marketDirection = 0;
-                }
-                else if (choice == 1)
-                {
-                    UserMarketStocksUpdater.marketDirection = 1;
-                }
+                var filteredWhitelist = CoreMethod.ReadFromFileToList(CoreMethod.GetFileLocation("UserWhitelist.txt"));
+                filteredWhitelist = filteredWhitelist.Where(u => u != userId.ToString()).ToList();
+                CoreMethod.WriteListToFile(filteredWhitelist, true, CoreMethod.GetFileLocation("UserWhitelist.txt"));
             }
-            [Command("marketRandNext")]
-            public async Task ChangeMarketRandNextAsync(int choice)
+
+            [Command("block")]
+            public async Task BlackListUserAsync(ulong userId)
             {
-                UserMarketStocksUpdater.randNextMax = choice;
+                CoreMethod.WriteStringToFile(userId.ToString(), false, CoreMethod.GetFileLocation("UserBlacklist.txt"));
+            }
+
+            [Command("unblock")]
+            public async Task UnBlackListUserAsync(ulong userId)
+            {
+                var filteredBlacklist = CoreMethod.ReadFromFileToList(CoreMethod.GetFileLocation("UserBlacklist.txt"));
+                filteredBlacklist = filteredBlacklist.Where(u => u != userId.ToString()).ToList();
+                CoreMethod.WriteListToFile(filteredBlacklist, true, CoreMethod.GetFileLocation("UserBlacklist.txt"));
             }
         }
     }

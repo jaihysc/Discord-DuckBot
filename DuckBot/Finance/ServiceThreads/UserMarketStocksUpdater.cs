@@ -35,10 +35,12 @@ namespace DuckBot.Finance.ServiceThreads
         {           
             while (MainProgram._stopThreads == false)
             {
-                var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+                //Get market stocks
+                var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(CoreMethod.GetFileLocation(@"\MarketStocksValue.xml"));
 
                 List<MarketStock> updatedMarketStocks = new List<MarketStock>();
 
+                //Get real price for each
                 foreach (var stock in marketStockStorage.MarketStock)
                 {
                     long stockPriceNew = Convert.ToInt64(OnlineStockHandler.GetOnlineStockInfo(stock.StockTicker).LatestPrice * 100);
@@ -46,13 +48,14 @@ namespace DuckBot.Finance.ServiceThreads
                     updatedMarketStocks.Add(new MarketStock {StockTicker = stock.StockTicker, StockPrice = stockPriceNew });
                 }
 
+                //Write to file
                 var marketStock = new MarketStockStorage
                 {
                     MarketOpen = OnlineStockHandler.GetOnlineIsOpen(),
                     MarketStock = updatedMarketStocks
                 };
 
-                XmlManager.ToXmlFile(marketStock, TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+                XmlManager.ToXmlFile(marketStock, CoreMethod.GetFileLocation(@"\MarketStocksValue.xml"));
 
                 //Wait 10 seconds
                 Thread.Sleep(10000);

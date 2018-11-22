@@ -20,7 +20,7 @@ namespace DuckBot.Finance
             else
             {
                 //Get user credits to list
-                var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+                var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
                 //Money subtractor
                 if ((userCreditStorage.UserInfo.UserBankingStorage.Credit - gambleAmount) < 0)
@@ -127,8 +127,10 @@ namespace DuckBot.Finance
         //Daily
         public static async Task SlotDailyCreditsAsync(SocketCommandContext Context)
         {
-            var userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            //Get user storage
+            var userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
+            //If 24 hours has passed
             if (userLastDailyCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime.AddHours(24) < DateTime.UtcNow)
             {
                 //Add credits
@@ -136,7 +138,7 @@ namespace DuckBot.Finance
 
 
                 //Write last use date
-                userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+                userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
                 var userRecord = new UserStorage
                 {
                     UserId = Context.Message.Author.Id,
@@ -148,7 +150,8 @@ namespace DuckBot.Finance
                     }
                 };
 
-                XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+                //Write new credits and last redeem date to file
+                XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
 
                 //Send channel message confirmation

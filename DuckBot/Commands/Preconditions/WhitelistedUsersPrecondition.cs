@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -21,15 +22,14 @@ namespace DuckBot.Commands.Preconditions
             var ownerId = appInfo.Owner.Id;
 
             //
-            // If this command was executed by predefined users, return a failure
+            // If this command was NOT executed by predefined users, return a failure
             List<ulong> whitelistedUsers = new List<ulong>();
 
-            //---START Blacklist entry below
             whitelistedUsers.Add(ownerId);
-            whitelistedUsers.Add(387953113585418240);
-            //---END blacklist entry
 
-            //Test if user is blacklisted
+            CoreMethod.ReadFromFileToList("UserWhitelist.txt").ForEach(u => whitelistedUsers.Add(ulong.Parse(u)));
+
+            //Test if user is whitelisted
             bool userIsWhiteListed = false;
             foreach (var user in whitelistedUsers)
             {

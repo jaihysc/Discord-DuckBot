@@ -69,7 +69,7 @@ namespace DuckBot.UserActions
 
                         //Logs user swear amount to local counter
                         //Create txt user credit entry if user does not exist
-                        if (!File.Exists(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml"))
+                        if (!File.Exists(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml"))
                         {
                             //Create user profile
                             var userRecord = new UserStorage
@@ -83,13 +83,13 @@ namespace DuckBot.UserActions
                                 }
                             };
 
-                            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
+                            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
                         }
 
+                        //Get user storage
+                        var userStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
 
-                        var userStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
-
-                        //write to user profile
+                        //write new swear count to user profile
                         var userRecordNew = new UserStorage
                         {
                             UserId = userStorage.UserId,
@@ -101,13 +101,12 @@ namespace DuckBot.UserActions
                             }
                         };
 
-                        XmlManager.ToXmlFile(userRecordNew, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
+                        XmlManager.ToXmlFile(userRecordNew, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
                     }
                 }
             }
             catch (Exception)
             {
-                Console.WriteLine("Unable to check for prohibited words > ");
             }
         }
     }

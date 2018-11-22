@@ -12,7 +12,7 @@ namespace DuckBot.Finance.CurrencyManager
     {
         public static async Task DisplayUserCredits(SocketCommandContext Context)
         {
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             await Context.Message.Channel.SendMessageAsync($"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, You have **{UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.Credit)} Credits**");
 
@@ -20,7 +20,7 @@ namespace DuckBot.Finance.CurrencyManager
 
         public static long GetUserCredits(SocketCommandContext Context)
         {
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             return userCreditStorage.UserInfo.UserBankingStorage.Credit;
         }
@@ -85,7 +85,7 @@ namespace DuckBot.Finance.CurrencyManager
 
         public static void SetCredits(SocketCommandContext Context, long setAmount)
         {
-            var otherCreditStorageUsers = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            var otherCreditStorageUsers = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             var userRecord = new UserStorage
             {
@@ -98,7 +98,7 @@ namespace DuckBot.Finance.CurrencyManager
                 }
             };
 
-            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
         }
         public static void SetCredits(SocketCommandContext Context, ulong guildID, ulong userID, long setAmount)
         {
@@ -106,8 +106,10 @@ namespace DuckBot.Finance.CurrencyManager
             var guild = Context.Client.GetGuild(guildID);
             var user = guild.GetUser(userID);
 
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
+            //Get user credit storage
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
 
+            //Write new user credits to file
             var userRecord = new UserStorage
             {
                 UserId = userCreditStorage.UserId,
@@ -119,18 +121,18 @@ namespace DuckBot.Finance.CurrencyManager
                 }
             };
 
-            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
+            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
         }
 
         public static void AddCredits(SocketCommandContext Context, long addAmount)
         {
-            //Get user credits to list
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            //Get user credit storage
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
-
-            //Calculate new balance
+            //Calculate new credits
             long userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
 
+            //write new user credits to file
             var userRecord = new UserStorage
             {
                 UserId = userCreditStorage.UserId,
@@ -142,7 +144,7 @@ namespace DuckBot.Finance.CurrencyManager
                 }
             };
 
-            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
         }
         public static void AddCredits(SocketCommandContext Context, ulong guildID, ulong userID, long addAmount)
@@ -150,12 +152,13 @@ namespace DuckBot.Finance.CurrencyManager
             var guild = Context.Client.GetGuild(guildID);
             var user = guild.GetUser(userID);
 
-            //Get user credits to list
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
+            //Get user credits
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
 
             //Calculate new balance
             long userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
 
+            //write new user credits to file
             var userRecord = new UserStorage
             {
                 UserId = userCreditStorage.UserId,
@@ -167,7 +170,7 @@ namespace DuckBot.Finance.CurrencyManager
                 }
             };
 
-            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
+            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
 
         }
     }

@@ -12,7 +12,7 @@ namespace DuckBot.Finance.CurrencyManager
     {
         public static async Task DisplayUserCreditsDebt(SocketCommandContext Context)
         {
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             await Context.Message.Channel.SendMessageAsync($"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, You owe **{UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt)} Credits**");
 
@@ -20,7 +20,7 @@ namespace DuckBot.Finance.CurrencyManager
 
         public static long GetUserCreditsDebt(SocketCommandContext Context)
         {
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             return userCreditStorage.UserInfo.UserBankingStorage.CreditDebt;
         }
@@ -78,11 +78,12 @@ namespace DuckBot.Finance.CurrencyManager
         public static void AddDebt(SocketCommandContext Context, long addAmount)
         {
             //Get user debt to list
-            var userCreditDebtStorage = XmlManager.FromXmlFile<UserStorage>(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            var userCreditDebtStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             //Calculate new debt balance
             long userCreditsDebtNew = userCreditDebtStorage.UserInfo.UserBankingStorage.CreditDebt + addAmount;
 
+            //Write new debt amount 
             var userRecord = new UserStorage
             {
                 UserId = userCreditDebtStorage.UserId,
@@ -94,7 +95,7 @@ namespace DuckBot.Finance.CurrencyManager
                 }
             };
 
-            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
         }
     }
 }

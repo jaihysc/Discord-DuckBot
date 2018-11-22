@@ -11,9 +11,9 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace DuckBot
+namespace DuckBot.Core
 {
-    class EventLogger : ModuleBase<Discord.Commands.SocketCommandContext>
+    class EventLogger : ModuleBase<SocketCommandContext>
     {
         internal static string rootLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 

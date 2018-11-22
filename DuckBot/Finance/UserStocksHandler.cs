@@ -28,7 +28,7 @@ namespace DuckBot.Finance
     {
         public static async Task BuyUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long buyAmount)
         {
-            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(CoreMethod.GetFileLocation(@"\MarketStocksValue.xml"));
 
             foreach (var stock in marketStockStorage.MarketStock)
             {
@@ -39,7 +39,7 @@ namespace DuckBot.Finance
                     bool buyStockExists = true;
 
                     //Get user portfolio
-                    var userStocksStorage = XmlManager.FromXmlFile<UserStockStorage>(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                    var userStocksStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
 
                     //Calculate stock price
                     long stockTotalCost = stock.StockPrice * buyAmount;
@@ -82,7 +82,7 @@ namespace DuckBot.Finance
 
 
                         //Add existing user stocks to list
-                        var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                        var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
                         List<UserStock> userStockStorageList = new List<UserStock>();
 
                         foreach (var userStock in userStockStorage.UserStock)
@@ -102,7 +102,7 @@ namespace DuckBot.Finance
                             UserStock = userStockStorageList
                         };
 
-                        XmlManager.ToXmlFile(userStockRecord, TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                        XmlManager.ToXmlFile(userStockRecord, CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
                     }
 
                     //Send warning if stock does not exist
@@ -116,14 +116,14 @@ namespace DuckBot.Finance
 
         public static async Task SellUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long sellAmount)
         {
-            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(CoreMethod.GetFileLocation(@"\MarketStocksValue.xml"));
 
             foreach (var stock in marketStockStorage.MarketStock)
             {
                 if (stock.StockTicker == tickerSymbol)
                 {
                     //Get user portfolio
-                    var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                    var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
 
                     //Check if user is selling more stocks than they have
                     try
@@ -184,7 +184,7 @@ namespace DuckBot.Finance
                                 UserStock = userStockStorageList
                             };
 
-                            XmlManager.ToXmlFile(userStockRecord, TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                            XmlManager.ToXmlFile(userStockRecord, CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
                         }
                     }
                     catch (Exception ex)
@@ -203,7 +203,7 @@ namespace DuckBot.Finance
             List<string> userStockBuyMarketValueList = new List<string>();
 
             //Get user portfolio
-            var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+            var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
 
             var embedBuilder = new EmbedBuilder()
                 .WithColor(new Color(40, 144, 175))
@@ -223,7 +223,7 @@ namespace DuckBot.Finance
             foreach (var userStock in userStockStorage.UserStock)
             {
                 //get stock market value
-                var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+                var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(CoreMethod.GetFileLocation(@"\MarketStocksValue.xml"));
 
                 long userStockMarketPrice = 0;
                 foreach (var marketStock in marketStockStorage.MarketStock)
@@ -254,7 +254,7 @@ namespace DuckBot.Finance
             List<string> userStockBuyMarketValueList = new List<string>();
 
             //Get market stock value from storage
-            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(CoreMethod.GetFileLocation(@"\MarketStocksValue.xml"));
 
             //Get is market stock closed
             string IsStockMarketOpen = "Closed";
@@ -302,8 +302,10 @@ namespace DuckBot.Finance
         {
             var stockResponse = OnlineStockHandler.GetOnlineStockInfo(stockTicker);
 
+            //If user has not entered invalid stock ticker
             if (stockResponse != null)
             {
+                //Create embed with stock information
                 var embedBuilder = new EmbedBuilder()
                     .WithTitle($"{stockResponse.CompanyName}")
                     .WithDescription($"Sector: {stockResponse.Sector} \n\n {stockResponse.PrimaryExchange}")
@@ -337,7 +339,7 @@ namespace DuckBot.Finance
 
         private static string GetStockMarketValue(string stockTicker)
         {
-            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(TaskMethods.GetFileLocation(@"\MarketStocksValue.xml"));
+            var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(CoreMethod.GetFileLocation(@"\MarketStocksValue.xml"));
 
             string stockValue = "";
             foreach (var stock in marketStockStorage.MarketStock)

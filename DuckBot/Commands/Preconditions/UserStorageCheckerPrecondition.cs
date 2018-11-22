@@ -15,7 +15,7 @@ namespace DuckBot.Commands.Preconditions
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider _services)
         {
             //Create xml user credit entry if user does not exist
-            if (!File.Exists(TaskMethods.GetFileLocation(@"\UserStorage") + @"\" + context.Message.Author.Id + ".xml"))
+            if (!File.Exists(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + context.Message.Author.Id + ".xml"))
             {
                 //Create user profile
                 UserXmlDataStorage.CreateNewUserXmlEntry(context as SocketCommandContext);
@@ -23,7 +23,7 @@ namespace DuckBot.Commands.Preconditions
 
             
             //Create user stock entry if stock entry does not exist
-            if (!File.Exists(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString() + @"\UserStockPortfolio.xml"))
+            if (!File.Exists(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString() + @"\UserStockPortfolio.xml"))
             {
                 //Create user profile
                 //Write user stock amount
@@ -35,8 +35,8 @@ namespace DuckBot.Commands.Preconditions
                     }
                 };
 
-                System.IO.Directory.CreateDirectory(TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString());
-                XmlManager.ToXmlFile(userStockRecord, TaskMethods.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                System.IO.Directory.CreateDirectory(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString());
+                XmlManager.ToXmlFile(userStockRecord, CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString() + @"\UserStockPortfolio.xml");
             }
             
             return PreconditionResult.FromSuccess();

@@ -49,7 +49,7 @@ namespace DuckBot.UserActions
         public static async Task DisplayCommandHelpMenu(SocketCommandContext Context, string inputCommand)
         {
             //Get command help list from storage
-            var commandHelpDefinitionStorage = XmlManager.FromXmlFile<HelpMenuCommands>(TaskMethods.GetFileLocation(@"CommandHelpDescription.xml"));
+            var commandHelpDefinitionStorage = XmlManager.FromXmlFile<HelpMenuCommands>(CoreMethod.GetFileLocation(@"CommandHelpDescription.xml"));
 
             //Create a boolean to warn user that command does not exist if false
             bool commandHelpDefinitionExists = false;
@@ -60,9 +60,6 @@ namespace DuckBot.UserActions
                 if (commandHelpDefinition.Command == inputCommand)
                 {
                     commandHelpDefinitionExists = true;
-
-                    //Send command definition to user
-                    //await Context.Channel.SendMessageAsync($"**Command** *{inputCommand}* || **Description:** {commandHelpDefinition.Description} || **Usage:** `{commandHelpDefinition.Usage}`");
 
                     var builder = new EmbedBuilder()
                     .WithDescription($"{commandHelpDefinition.Description} \n \n **Usage:** `{commandHelpDefinition.Usage}`")
@@ -90,18 +87,6 @@ namespace DuckBot.UserActions
             {
                 await Context.Channel.SendMessageAsync($"Command **{inputCommand}** could not be found");
             }
-
-            /*
-            var userRecord = new HelpMenuCommands
-            {
-                CommandHelpEntry = new List<HelpMenuCommandEntry>
-                {
-                    new HelpMenuCommandEntry {Command="help", Description="Displays the help menu", Usage=".d help"}
-                }
-            };
-
-            XmlManager.ToXmlFile(userRecord, TaskMethods.GetFileLocation(@"CommandHelpDescription.xml"));
-            */
         }
     }
 }

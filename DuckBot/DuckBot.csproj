@@ -146,7 +146,8 @@
     <Compile Include="Commands\Preconditions\BlacklistedUsersPrecondition.cs" />
     <Compile Include="Commands\Preconditions\UserStorageCheckerPrecondition.cs" />
     <Compile Include="Commands\Preconditions\WhitelistedUsersPrecondition.cs" />
-    <Compile Include="EventLogger.cs" />
+    <Compile Include="Core\EventLogger.cs" />
+    <Compile Include="Core\SetupManager.cs" />
     <Compile Include="Finance\CurrencyManager\UserBankingHandler.cs" />
     <Compile Include="Finance\CurrencyManager\UserCreditsHandler.cs" />
     <Compile Include="Finance\ConfigValues.cs" />
@@ -158,7 +159,6 @@
     <Compile Include="UserActions\ProhibitedWordsChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Commands\RestrictedCommandModule.cs" />
-    <Compile Include="TaskMethods.cs" />
     <Compile Include="Finance\UserGamblingHandler.cs" />
     <Compile Include="UserActions\UserBugReportHandler.cs" />
     <Compile Include="UserActions\UserDataManager.cs" />

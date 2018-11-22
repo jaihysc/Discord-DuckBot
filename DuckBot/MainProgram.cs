@@ -2,6 +2,7 @@ using Discord;
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot.Core;
 using DuckBot.Finance.ServiceThreads;
 using DuckBot.UserActions;
 using DuckBot_ClassLibrary;
@@ -19,6 +20,7 @@ namespace DuckBot
     public class MainProgram
     {
         public static string rootLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
         public static bool _stopThreads = false;
         public static string botCommandPrefix = ".d";
 
@@ -26,13 +28,22 @@ namespace DuckBot
         public static void Main(string[] args)
         {
             //Injection
-            //Declearation
+            CoreMethod.DeclareRootLocation(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+
+            //Runs setup if config files are not present
+            if (!File.Exists(rootLocation + @"\config.txt"))
+            {
+                SetupManager.GenerateConfigFile();
+            }
+
+            //Declearations
             HelperMethod.DeclareUpdateTimeContainer("--Last Update Time--");
             CoreMethod.DeclareRootLocation(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 
-            //Continously running threads declearation
+            //Continously running threads
             Thread updateUserBankingInterest = new Thread(new ThreadStart(UserBankingInterestUpdater.UpdateUserDebtInterest));
             Thread updateUserMarketStocks = new Thread(new ThreadStart(UserMarketStocksUpdater.UpdateMarketStocks));
+            
             //Start
             updateUserBankingInterest.Start();
             updateUserMarketStocks.Start();
@@ -110,7 +121,7 @@ namespace DuckBot
             
         }
 
-        //Event handlers
+        //Command Handler
         public async Task HandleCommandAsync(SocketMessage messageParam)
         {
             // Don't process the command if it was a system message, if sender is bot or ID is not ME!

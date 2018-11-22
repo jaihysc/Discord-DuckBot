@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -19,10 +20,7 @@ namespace DuckBot.Commands.Preconditions
             // If this command was executed by predefined users, return a failure
             List<ulong> blacklistedUsers = new List<ulong>();
 
-            //---START Blacklist entry below
-            blacklistedUsers.Add(423656753423581204);
-           // blacklistedUsers.Add(387953113585418240);
-            //---END blacklist entry
+            CoreMethod.ReadFromFileToList("UserBlacklist.txt").ForEach(u => blacklistedUsers.Add(ulong.Parse(u)));
 
             //Test if user is blacklisted
             bool userIsBlackListed = false;

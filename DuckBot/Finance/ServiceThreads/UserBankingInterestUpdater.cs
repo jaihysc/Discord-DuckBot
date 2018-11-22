@@ -44,7 +44,7 @@ namespace DuckBot.Finance.ServiceThreads
         public static void UserDebtInterestUpdater()
         {
             //Update user debt
-            foreach (string file in Directory.EnumerateFiles(TaskMethods.GetFileLocation(@"\UserStorage"), "*.xml"))
+            foreach (string file in Directory.EnumerateFiles(CoreMethod.GetFileLocation(@"\UserStorage"), "*.xml"))
             {
                 try
                 {
