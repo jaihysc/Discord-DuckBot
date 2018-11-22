@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using DuckBot.Commands.Preconditions;
+using DuckBot.Finance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,12 +38,12 @@ namespace DuckBot.Commands
             [Command("editRole boy")]
             public async Task ChangeGenderMaleRoleAsync([Remainder]ulong roleID)
             {
-                CommandModule.boyRoleId = roleID;
+                ConfigValues.boyRoleId = roleID;
             }
             [Command("editRole girl")]
             public async Task ChangeGenderFemaleRoleAsync([Remainder]ulong roleID)
             {
-                CommandModule.girlRole2Id = roleID;
+                ConfigValues.girlRole2Id = roleID;
             }
         }
     }

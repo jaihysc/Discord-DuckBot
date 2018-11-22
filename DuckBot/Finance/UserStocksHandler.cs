@@ -154,7 +154,7 @@ namespace DuckBot.Finance
                             UserCreditsHandler.AddCredits(
                                 Context,
                                 //Subtract tax deductions
-                                stockTotalWorth - await UserCreditsTaxHandler.TaxCollector(
+                                stockTotalWorth - await UserCreditsTaxHandler.TaxCollectorAsync(
                                     Context, 
                                     stockTotalWorth, 
                                     $"You sold **{sellAmount} {tickerSymbol}** stocks totaling **{UserBankingHandler.CreditCurrencyFormatter(stockTotalWorth)} Credits**"));

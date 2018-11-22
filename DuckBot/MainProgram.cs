@@ -3,6 +3,7 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot.Core;
+using DuckBot.Finance;
 using DuckBot.Finance.ServiceThreads;
 using DuckBot.UserActions;
 using DuckBot_ClassLibrary;
@@ -22,23 +23,18 @@ namespace DuckBot
         public static string rootLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         public static bool _stopThreads = false;
-        public static string botCommandPrefix = ".d";
 
         //Setup
         public static void Main(string[] args)
         {
             //Injection
-            CoreMethod.DeclareRootLocation(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            CoreMethod.DeclareRootLocation(rootLocation);
 
             //Runs setup if config files are not present
-            if (!File.Exists(rootLocation + @"\config.txt"))
+            if (!File.Exists(rootLocation + @"\Paths.txt"))
             {
                 SetupManager.GenerateConfigFile();
             }
-
-            //Declearations
-            HelperMethod.DeclareUpdateTimeContainer("--Last Update Time--");
-            CoreMethod.DeclareRootLocation(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
 
             //Continously running threads
             Thread updateUserBankingInterest = new Thread(new ThreadStart(UserBankingInterestUpdater.UpdateUserDebtInterest));
@@ -73,29 +69,29 @@ namespace DuckBot
 
             try
             {
-            //Get token
-            var configLocations = File.ReadAllLines(rootLocation + @"\Paths.txt");
-            var tokenLocation = configLocations.Where(p => p.Contains("BotToken.txt")).ToArray();
+                //Get token
+                var configLocations = File.ReadAllLines(rootLocation + @"\Paths.txt");
+                var tokenLocation = configLocations.Where(p => p.Contains("BotToken.txt")).ToArray();
 
-            string token = "";
-            foreach (var item in tokenLocation)
-            {
-                var tokenFile = File.ReadAllLines(item);
-                foreach (var item2 in tokenFile)
+                string token = "";
+                foreach (var item in tokenLocation)
                 {
-                    token = item2;
+                    var tokenFile = File.ReadAllLines(item);
+                    foreach (var item2 in tokenFile)
+                    {
+                        token = item2;
+                    }
                 }
-            }
 
-            //Connect to discord
-            await _client.LoginAsync(TokenType.Bot, token);
-            await _client.StartAsync();
+                //Connect to discord
+                await _client.LoginAsync(TokenType.Bot, token);
+                await _client.StartAsync();
 
             }
             catch (Exception) { Console.WriteLine("Unable to initialize!"); }
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            await _client.SetGameAsync($"Use {botCommandPrefix} help");
+            await _client.SetGameAsync($"Use {ConfigValues.botCommandPrefix} help");
 
             //
             //Event handlers
@@ -136,7 +132,7 @@ namespace DuckBot
             //integer to determine when commands start
             int argPos = 0;
 
-            if (!(message.HasStringPrefix(botCommandPrefix + " ", ref argPos) ||
+            if (!(message.HasStringPrefix(ConfigValues.botCommandPrefix + " ", ref argPos) ||
                 message.Author.IsBot))
                 return;
 
@@ -198,7 +194,7 @@ namespace DuckBot
 
         private async Task DeleteNonCommandsInCommandsChannel(SocketMessage message)
         {
-            if (message.Channel.Id == 504371769738526752 && !message.ToString().StartsWith(botCommandPrefix))
+            if (message.Channel.Id == 504371769738526752 && !message.ToString().StartsWith(ConfigValues.botCommandPrefix))
             {
                 var sentMessage = await message.Channel.GetMessagesAsync(1).Flatten();
                 await message.Channel.DeleteMessagesAsync(sentMessage);

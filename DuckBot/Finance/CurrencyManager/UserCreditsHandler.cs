@@ -38,7 +38,7 @@ namespace DuckBot.Finance.CurrencyManager
             }
             else
             {
-                long taxAmount = UserCreditsTaxHandler.TaxCollector(Context, Context.Guild.Id, Context.Message.Author.Id, amount);
+                long taxAmount = UserCreditsTaxHandler.TaxCollector(Context, amount);
 
                 var recipient = Context.Guild.GetUser(MentionUtils.ParseUser(targetUser));
 
@@ -46,11 +46,7 @@ namespace DuckBot.Finance.CurrencyManager
                 AddCredits(Context, -amount);
 
                 //AddCredits credits to receiver
-                AddCredits(
-                    Context,
-                    Context.Guild.Id, MentionUtils.ParseUser(targetUser),
-                    //Collect taxes!
-                    amount - UserCreditsTaxHandler.TaxCollector(Context, recipient.Guild.Id, recipient.Id, amount));
+                AddCredits(Context, Context.Guild.Id, MentionUtils.ParseUser(targetUser), amount - taxAmount);
 
                 //Send receipts to both parties
                 var embedBuilder = new EmbedBuilder()
@@ -124,13 +120,21 @@ namespace DuckBot.Finance.CurrencyManager
             XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
         }
 
-        public static void AddCredits(SocketCommandContext Context, long addAmount)
+        public static void AddCredits(SocketCommandContext Context, long addAmount, bool deductTaxes = false)
         {
             //Get user credit storage
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             //Calculate new credits
-            long userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
+            long userCreditsNew = 0;
+            if (deductTaxes == true)
+            {
+                userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(Context, userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount);
+            }
+            else if (deductTaxes == false)
+            {
+                userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
+            }
 
             //write new user credits to file
             var userRecord = new UserStorage
@@ -147,7 +151,7 @@ namespace DuckBot.Finance.CurrencyManager
             XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
         }
-        public static void AddCredits(SocketCommandContext Context, ulong guildID, ulong userID, long addAmount)
+        public static void AddCredits(SocketCommandContext Context, ulong guildID, ulong userID, long addAmount, bool deductTaxes = false)
         {
             var guild = Context.Client.GetGuild(guildID);
             var user = guild.GetUser(userID);
@@ -155,8 +159,16 @@ namespace DuckBot.Finance.CurrencyManager
             //Get user credits
             var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
 
-            //Calculate new balance
-            long userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
+            //Calculate new credits
+            long userCreditsNew = 0;
+            if (deductTaxes == true)
+            {
+                userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(Context, userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount);
+            }
+            else if (deductTaxes == false)
+            {
+                userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount;
+            }
 
             //write new user credits to file
             var userRecord = new UserStorage

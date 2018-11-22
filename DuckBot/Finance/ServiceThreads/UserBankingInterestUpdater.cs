@@ -12,9 +12,6 @@ namespace DuckBot.Finance.ServiceThreads
 {
     public class UserBankingInterestUpdater
     {
-        //Interest percentage expressed as a fraction
-        internal static double interestPercentage = 0.60;
-
         ///<Summary>
         ///Updates the user banking debt every set amount of milliseconds, wait duration hardcoded
         ///</Summary>
@@ -55,7 +52,7 @@ namespace DuckBot.Finance.ServiceThreads
                     long debtAmountNew;
                     try
                     {
-                        debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
+                        debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * ConfigValues.interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
                     }
                     catch (OverflowException)
                     {

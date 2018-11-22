@@ -15,9 +15,6 @@ namespace DuckBot.Core
 {
     class EventLogger : ModuleBase<SocketCommandContext>
     {
-        internal static string rootLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
-
         public static Task Log(LogMessage message)
         {
             //Logs server messages to console
@@ -61,7 +58,7 @@ namespace DuckBot.Core
             Console.BackgroundColor = ConsoleColor.DarkGray;
             Console.WriteLine(msg.ToString());
 
-            var configLocations = File.ReadAllLines(rootLocation + @"\Paths.txt");
+            var configLocations = File.ReadAllLines(MainProgram.rootLocation + @"\Paths.txt");
             var logLocation = configLocations.Where(p => p.Contains("BotOutputLog.txt")).ToArray();
 
             foreach (var item in logLocation)

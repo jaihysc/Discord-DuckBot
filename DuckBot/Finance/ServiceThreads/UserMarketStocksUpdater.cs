@@ -23,11 +23,6 @@ namespace DuckBot.Finance.ServiceThreads
 
     public class UserMarketStocksUpdater
     {
-        //User override values
-        public static bool overrideMarketDirection = false;
-        public static int marketDirection = 0;
-        public static int randNextMax = 2;
-
         /// <summary>
         /// Updates the user market stocks
         /// </summary>

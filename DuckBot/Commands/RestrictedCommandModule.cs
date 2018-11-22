@@ -13,8 +13,6 @@ namespace DuckBot.Commands
 {
     public class RestrictedCommandModule : ModuleBase<SocketCommandContext>
     {
-        internal static string guildRoleMessage = "";
-
         [Group("crossGuild")]
         [WhitelistedUsersPrecondition]
         [UserStorageCheckerPrecondition]
@@ -43,12 +41,12 @@ namespace DuckBot.Commands
                 [Command("editRole boy")]
                 public async Task ChangeGenderMaleRoleAsync([Remainder]ulong roleID)
                 {
-                    CommandModule.boyRoleId = roleID;
+                    ConfigValues.boyRoleId = roleID;
                 }
                 [Command("editRole girl")]
                 public async Task ChangeGenderFemaleRoleAsync([Remainder]ulong roleID)
                 {
-                    CommandModule.girlRole2Id = roleID;
+                    ConfigValues.girlRole2Id = roleID;
                 }
             }
 
@@ -119,6 +117,8 @@ namespace DuckBot.Commands
             [Command("printRoles")]
             public async Task PrintRolesAsync(ulong guildID)
             {
+                string guildRoleMessage = "";
+
                 var guild = Context.Client.GetGuild(guildID);
                 var rolesName = guild.Roles.ToArray();
                 var rolesId = guild.Roles.Select(x => x.Id);

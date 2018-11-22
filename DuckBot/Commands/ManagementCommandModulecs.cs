@@ -19,7 +19,7 @@ namespace DuckBot.Commands
             [Command("setGame")]
             public async Task SetGameAsync([Remainder]string game)
             {
-                MainProgram.botCommandPrefix = game;
+                ConfigValues.botCommandPrefix = game;
                 await Context.Client.SetGameAsync($"Use {game} help");
             }
 

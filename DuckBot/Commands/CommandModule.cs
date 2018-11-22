@@ -13,42 +13,18 @@ namespace DuckBot.Commands
     [UserStorageCheckerPrecondition]
     public class CommandModule : ModuleBase<SocketCommandContext>
     {
-        public static ulong boyRoleId = 380519578138050562;
-        public static ulong girlRole2Id = 406545739464835073;
-
         [Command("help")]
-        public async Task HelpAsync([Remainder]string inputCommand)
+        public async Task HelpAsync([Remainder]string inputCommand = null)
         {
-            await UserHelpHandler.DisplayCommandHelpMenu(Context, inputCommand);
+            if (!string.IsNullOrEmpty(inputCommand))
+            {
+                await UserHelpHandler.DisplayCommandHelpMenu(Context, inputCommand);
+            }
+            else
+            {
+                await UserHelpHandler.DisplayHelpMenu(Context);
+            }
         }
-        [Command("help")]
-        public async Task HelpAsync()
-        {
-            await UserHelpHandler.DisplayHelpMenu(Context);
-        }
-
-        //Genders
-        [Command("gender boy")]
-        public async Task SetGenderMaleAsync()
-        {
-            var user = Context.User;
-            var role = Context.Guild.Roles.FirstOrDefault(x => x.Id == boyRoleId);
-            var removeRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == girlRole2Id);
-
-            await (user as IGuildUser).AddRoleAsync(role);
-            await (user as IGuildUser).RemoveRoleAsync(removeRole);
-        }
-        [Command("gender girl")]
-        public async Task SetGenderFemaleAsync()
-        {
-            var user = Context.User;
-            var role = Context.Guild.Roles.FirstOrDefault(x => x.Id == girlRole2Id);
-            var removeRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == boyRoleId);
-
-            await (user as IGuildUser).AddRoleAsync(role);
-            await (user as IGuildUser).RemoveRoleAsync(removeRole);
-        }
-
 
         //Banking
         [Command("balance")]

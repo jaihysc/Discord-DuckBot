@@ -38,7 +38,7 @@ namespace DuckBot.Finance
                     //Write credits to file
                     UserCreditsHandler.SetCredits(
                         Context,
-                        userReturnAmount - await UserCreditsTaxHandler.TaxCollector(Context, returnAmount, $"You gambled **{UserBankingHandler.CreditCurrencyFormatter(gambleAmount)} credits** and made **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} credits**"));
+                        userReturnAmount - await UserCreditsTaxHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{UserBankingHandler.CreditCurrencyFormatter(gambleAmount)} credits** and made **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} credits**"));
                 }
             }
         }
