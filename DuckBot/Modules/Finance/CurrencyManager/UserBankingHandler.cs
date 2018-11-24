@@ -1,5 +1,5 @@
 ﻿using Discord.Commands;
-using DuckBot.UserActions;
+using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DuckBot.Finance.CurrencyManager
+namespace DuckBot.Modules.Finance.CurrencyManager
 {
     public class UserBankingHandler
     {

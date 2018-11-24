@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DuckBot.Commands.Preconditions
+namespace DuckBot.Modules.Commands.Preconditions
 {
     //Blacklist precondition
     public class BlacklistedUsersPrecondition : PreconditionAttribute

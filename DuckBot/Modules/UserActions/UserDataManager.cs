@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DuckBot.UserActions
+namespace DuckBot.Modules.UserActions
 {
     public class UserStorage
     {

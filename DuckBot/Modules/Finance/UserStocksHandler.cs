@@ -2,8 +2,8 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot;
-using DuckBot.Finance.CurrencyManager;
-using DuckBot.Finance.ServiceThreads;
+using DuckBot.Modules.Finance.CurrencyManager;
+using DuckBot.Modules.Finance.ServiceThreads;
 using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DuckBot.Finance
+namespace DuckBot.Modules.Finance
 {
     public class UserStockStorage
     {

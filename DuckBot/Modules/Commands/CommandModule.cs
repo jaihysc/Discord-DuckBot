@@ -1,13 +1,11 @@
-﻿using Discord;
-using Discord.Commands;
-using DuckBot.Commands.Preconditions;
-using DuckBot.Finance;
-using DuckBot.Finance.CurrencyManager;
-using DuckBot.UserActions;
-using System.Linq;
+﻿using Discord.Commands;
+using DuckBot.Modules.Commands.Preconditions;
+using DuckBot.Modules.Finance;
+using DuckBot.Modules.Finance.CurrencyManager;
+using DuckBot.Modules.UserActions;
 using System.Threading.Tasks;
 
-namespace DuckBot.Commands
+namespace DuckBot.Modules.Commands
 {
     [BlacklistedUsersPrecondition]
     [UserStorageCheckerPrecondition]

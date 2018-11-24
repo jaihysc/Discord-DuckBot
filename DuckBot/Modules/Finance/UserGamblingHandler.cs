@@ -3,10 +3,10 @@ using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
 using DuckBot_ClassLibrary;
-using DuckBot.UserActions;
-using DuckBot.Finance.CurrencyManager;
+using DuckBot.Modules.UserActions;
+using DuckBot.Modules.Finance.CurrencyManager;
 
-namespace DuckBot.Finance
+namespace DuckBot.Modules.Finance
 {
     public class UserGamblingHandler : ModuleBase<SocketCommandContext>
     {
@@ -134,7 +134,7 @@ namespace DuckBot.Finance
             if (userLastDailyCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime.AddHours(24) < DateTime.UtcNow)
             {
                 //Add credits
-                UserCreditsHandler.AddCredits(Context, ConfigValues.dailyAmount);
+                UserCreditsHandler.AddCredits(Context, FinanceConfigValues.dailyAmount);
 
 
                 //Write last use date
@@ -155,7 +155,7 @@ namespace DuckBot.Finance
 
 
                 //Send channel message confirmation
-                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + UserBankingHandler.CreditCurrencyFormatter(ConfigValues.dailyAmount) + " Credits!**");
+                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + UserBankingHandler.CreditCurrencyFormatter(FinanceConfigValues.dailyAmount) + " Credits!**");
 
             }
             else

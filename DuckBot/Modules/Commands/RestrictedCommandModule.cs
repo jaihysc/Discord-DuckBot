@@ -1,15 +1,15 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using DuckBot.Finance;
+using DuckBot.Modules.Finance;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using DuckBot.Commands.Preconditions;
-using DuckBot.Finance.CurrencyManager;
+using DuckBot.Modules.Commands.Preconditions;
+using DuckBot.Modules.Finance.CurrencyManager;
 
-namespace DuckBot.Commands
+namespace DuckBot.Modules.Commands
 {
     public class RestrictedCommandModule : ModuleBase<SocketCommandContext>
     {
@@ -41,12 +41,12 @@ namespace DuckBot.Commands
                 [Command("editRole boy")]
                 public async Task ChangeGenderMaleRoleAsync([Remainder]ulong roleID)
                 {
-                    ConfigValues.boyRoleId = roleID;
+                    CommandConfigValues.boyRoleId = roleID;
                 }
                 [Command("editRole girl")]
                 public async Task ChangeGenderFemaleRoleAsync([Remainder]ulong roleID)
                 {
-                    ConfigValues.girlRole2Id = roleID;
+                    CommandConfigValues.girlRole2Id = roleID;
                 }
             }
 

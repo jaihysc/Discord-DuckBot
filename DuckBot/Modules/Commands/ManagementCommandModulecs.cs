@@ -1,6 +1,6 @@
 ﻿using Discord.Commands;
-using DuckBot.Finance;
-using DuckBot.Finance.ServiceThreads;
+using DuckBot.Modules.Finance;
+using DuckBot.Modules.Finance.ServiceThreads;
 using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DuckBot.Commands
+namespace DuckBot.Modules.Commands
 {
     [RequireOwner]
     public class ManagementCommandModulecs : ModuleBase<SocketCommandContext>
@@ -19,7 +19,7 @@ namespace DuckBot.Commands
             [Command("setGame")]
             public async Task SetGameAsync([Remainder]string game)
             {
-                ConfigValues.botCommandPrefix = game;
+                MainProgram.botCommandPrefix = game;
                 await Context.Client.SetGameAsync($"Use {game} help");
             }
 
@@ -44,13 +44,13 @@ namespace DuckBot.Commands
             [Command("taxRate")]
             public async Task ChangeTaxRateAsync(double taxRate)
             {
-                ConfigValues.taxPercentage = taxRate;
+                FinanceConfigValues.taxPercentage = taxRate;
             }
 
             [Command("maxBorrow")]
             public async Task ChangeMaxBorrowLimitAsync(long maxBorrow)
             {
-                ConfigValues.maxBorrowAmount = maxBorrow;
+                FinanceConfigValues.maxBorrowAmount = maxBorrow;
             }
 
             //Duck access moderation

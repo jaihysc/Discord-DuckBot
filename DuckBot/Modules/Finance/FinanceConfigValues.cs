@@ -4,15 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DuckBot.Finance
+namespace DuckBot.Modules.Finance
 {
-    public class ConfigValues
+    public class FinanceConfigValues
     {
-        //Main
-        //
-
-        public static string botCommandPrefix = ".d";
-
         //Banking
         //
 
@@ -25,9 +20,5 @@ namespace DuckBot.Finance
    
         public static long maxBorrowAmount = 5000000;
 
-        //Misc
-        //
-        public static ulong boyRoleId = 380519578138050562;
-        public static ulong girlRole2Id = 406545739464835073;
     }
 }

@@ -1,12 +1,12 @@
 ﻿using Discord;
 using Discord.Commands;
-using DuckBot.UserActions;
+using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace DuckBot.Finance.CurrencyManager
+namespace DuckBot.Modules.Finance.CurrencyManager
 {
     public class UserCreditsHandler
     {
@@ -70,7 +70,7 @@ namespace DuckBot.Finance.CurrencyManager
 
                     .AddInlineField("​", "​")
                     .AddInlineField("​", "​")
-                    .AddInlineField("Deductions", $"{UserBankingHandler.CreditCurrencyFormatter(taxAmount)} ({ConfigValues.taxPercentage * 100}% Tax) \n \n -------------- \n {UserBankingHandler.CreditCurrencyFormatter(amount - taxAmount)}");
+                    .AddInlineField("Deductions", $"{UserBankingHandler.CreditCurrencyFormatter(taxAmount)} ({FinanceConfigValues.taxPercentage * 100}% Tax) \n \n -------------- \n {UserBankingHandler.CreditCurrencyFormatter(amount - taxAmount)}");
 
                 var embed = embedBuilder.Build();
 

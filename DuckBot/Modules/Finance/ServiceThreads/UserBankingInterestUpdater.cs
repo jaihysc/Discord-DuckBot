@@ -1,4 +1,4 @@
-﻿using DuckBot.UserActions;
+﻿using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DuckBot.Finance.ServiceThreads
+namespace DuckBot.Modules.Finance.ServiceThreads
 {
     public class UserBankingInterestUpdater
     {
@@ -52,7 +52,7 @@ namespace DuckBot.Finance.ServiceThreads
                     long debtAmountNew;
                     try
                     {
-                        debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * ConfigValues.interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
+                        debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * FinanceConfigValues.interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
                     }
                     catch (OverflowException)
                     {

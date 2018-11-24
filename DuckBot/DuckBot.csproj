@@ -140,36 +140,40 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\CommandModule.cs" />
-    <Compile Include="Commands\ElevatedCommandModule.cs" />
-    <Compile Include="Commands\ManagementCommandModulecs.cs" />
-    <Compile Include="Commands\MiscCommandModule.cs" />
-    <Compile Include="Commands\Preconditions\BlacklistedUsersPrecondition.cs" />
-    <Compile Include="Commands\Preconditions\UserStorageCheckerPrecondition.cs" />
-    <Compile Include="Commands\Preconditions\WhitelistedUsersPrecondition.cs" />
+    <Compile Include="Modules\Commands\CommandConfigValues.cs" />
+    <Compile Include="Modules\Commands\CommandModule.cs" />
+    <Compile Include="Modules\Commands\ElevatedCommandModule.cs" />
+    <Compile Include="Modules\Commands\ManagementCommandModulecs.cs" />
+    <Compile Include="Modules\Commands\MiscCommandModule.cs" />
+    <Compile Include="Modules\Commands\Preconditions\BlacklistedUsersPrecondition.cs" />
+    <Compile Include="Modules\Commands\Preconditions\UserStorageCheckerPrecondition.cs" />
+    <Compile Include="Modules\Commands\Preconditions\WhitelistedUsersPrecondition.cs" />
     <Compile Include="Core\EventLogger.cs" />
     <Compile Include="Core\SetupManager.cs" />
-    <Compile Include="Finance\CurrencyManager\UserBankingHandler.cs" />
-    <Compile Include="Finance\CurrencyManager\UserCreditsHandler.cs" />
-    <Compile Include="Finance\ConfigValues.cs" />
-    <Compile Include="Finance\CurrencyManager\UserCreditTaxHandler.cs" />
-    <Compile Include="Finance\CurrencyManager\UserDebtHandler.cs" />
-    <Compile Include="Finance\ServiceThreads\UserBankingInterestUpdater.cs" />
-    <Compile Include="Finance\ServiceThreads\UserMarketStocksUpdater.cs" />
+    <Compile Include="Modules\Finance\CurrencyManager\UserBankingHandler.cs" />
+    <Compile Include="Modules\Finance\CurrencyManager\UserCreditsHandler.cs" />
+    <Compile Include="Modules\Finance\FinanceConfigValues.cs" />
+    <Compile Include="Modules\Finance\CurrencyManager\UserCreditTaxHandler.cs" />
+    <Compile Include="Modules\Finance\CurrencyManager\UserDebtHandler.cs" />
+    <Compile Include="Modules\Finance\ServiceThreads\UserBankingInterestUpdater.cs" />
+    <Compile Include="Modules\Finance\ServiceThreads\UserMarketStocksUpdater.cs" />
     <Compile Include="MainProgram.cs" />
-    <Compile Include="UserActions\ProhibitedWordsChecker.cs" />
+    <Compile Include="Modules\UserActions\ProhibitedWordsChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Commands\RestrictedCommandModule.cs" />
-    <Compile Include="Finance\UserGamblingHandler.cs" />
-    <Compile Include="UserActions\UserBugReportHandler.cs" />
-    <Compile Include="UserActions\UserDataManager.cs" />
-    <Compile Include="UserActions\UserHelpHandler.cs" />
-    <Compile Include="UserActions\UserJoinHandler.cs" />
-    <Compile Include="Finance\UserStocksHandler.cs" />
+    <Compile Include="Modules\Commands\RestrictedCommandModule.cs" />
+    <Compile Include="Modules\Finance\UserGamblingHandler.cs" />
+    <Compile Include="Modules\UserActions\UserBugReportHandler.cs" />
+    <Compile Include="Modules\UserActions\UserDataManager.cs" />
+    <Compile Include="Modules\UserActions\UserHelpHandler.cs" />
+    <Compile Include="Modules\UserActions\UserJoinHandler.cs" />
+    <Compile Include="Modules\Finance\UserStocksHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Modules\Moderation\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

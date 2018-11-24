@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DuckBot.Finance.ServiceThreads
+namespace DuckBot.Modules.Finance.ServiceThreads
 {
     public class MarketStockStorage
     {

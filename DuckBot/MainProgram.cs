@@ -3,9 +3,9 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot.Core;
-using DuckBot.Finance;
-using DuckBot.Finance.ServiceThreads;
-using DuckBot.UserActions;
+using DuckBot.Modules.Finance;
+using DuckBot.Modules.Finance.ServiceThreads;
+using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -23,6 +23,8 @@ namespace DuckBot
         public static string rootLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
         public static bool _stopThreads = false;
+        public static string botCommandPrefix = ".d";
+
 
         //Setup
         public static void Main(string[] args)
@@ -91,7 +93,7 @@ namespace DuckBot
             catch (Exception) { Console.WriteLine("Unable to initialize!"); }
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            await _client.SetGameAsync($"Use {ConfigValues.botCommandPrefix} help");
+            await _client.SetGameAsync($"Use {MainProgram.botCommandPrefix} help");
 
             //
             //Event handlers
@@ -132,7 +134,7 @@ namespace DuckBot
             //integer to determine when commands start
             int argPos = 0;
 
-            if (!(message.HasStringPrefix(ConfigValues.botCommandPrefix + " ", ref argPos) ||
+            if (!(message.HasStringPrefix(MainProgram.botCommandPrefix + " ", ref argPos) ||
                 message.Author.IsBot))
                 return;
 
@@ -194,7 +196,7 @@ namespace DuckBot
 
         private async Task DeleteNonCommandsInCommandsChannel(SocketMessage message)
         {
-            if (message.Channel.Id == 504371769738526752 && !message.ToString().StartsWith(ConfigValues.botCommandPrefix))
+            if (message.Channel.Id == 504371769738526752 && !message.ToString().StartsWith(MainProgram.botCommandPrefix))
             {
                 var sentMessage = await message.Channel.GetMessagesAsync(1).Flatten();
                 await message.Channel.DeleteMessagesAsync(sentMessage);

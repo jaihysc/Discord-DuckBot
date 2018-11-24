@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace DuckBot.Commands.Preconditions
+namespace DuckBot.Modules.Commands.Preconditions
 {
     //Whitelist precondition
     public class WhitelistedUsersPrecondition : PreconditionAttribute

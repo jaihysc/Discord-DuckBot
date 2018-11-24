@@ -1,12 +1,12 @@
 ﻿using Discord;
 using Discord.Commands;
-using DuckBot.UserActions;
+using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace DuckBot.Finance.CurrencyManager
+namespace DuckBot.Modules.Finance.CurrencyManager
 {
     public class UserDebtHandler
     {
@@ -28,9 +28,9 @@ namespace DuckBot.Finance.CurrencyManager
 
         public static async Task BorrowCredits(SocketCommandContext Context, long borrowAmount)
         {
-            if (GetUserCreditsDebt(Context) + borrowAmount > ConfigValues.maxBorrowAmount)
+            if (GetUserCreditsDebt(Context) + borrowAmount > FinanceConfigValues.maxBorrowAmount)
             {
-                await Context.Message.Channel.SendMessageAsync($"You have exceeded your credit limit of **{UserBankingHandler.CreditCurrencyFormatter(ConfigValues.maxBorrowAmount)} Credits**");
+                await Context.Message.Channel.SendMessageAsync($"You have exceeded your credit limit of **{UserBankingHandler.CreditCurrencyFormatter(FinanceConfigValues.maxBorrowAmount)} Credits**");
             }
             else if (borrowAmount <= 0)
             {

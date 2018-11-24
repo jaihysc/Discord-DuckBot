@@ -2,7 +2,7 @@
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
-using DuckBot.Finance;
+using DuckBot.Modules.Finance;
 using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -13,7 +13,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace DuckBot.UserActions
+namespace DuckBot.Modules.UserActions
 {
     class ProhibitedWordsChecker : ModuleBase<SocketCommandContext>
     {

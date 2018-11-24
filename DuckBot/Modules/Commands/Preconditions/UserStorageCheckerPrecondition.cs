@@ -1,13 +1,13 @@
 ﻿using Discord.Commands;
-using DuckBot.Finance;
-using DuckBot.UserActions;
+using DuckBot.Modules.Finance;
+using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace DuckBot.Commands.Preconditions
+namespace DuckBot.Modules.Commands.Preconditions
 {
     class UserStorageCheckerPrecondition : PreconditionAttribute
     {
