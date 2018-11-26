@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DuckBot.Modules.Finance
+namespace DuckBot.Modules.UserFinance
 {
     public class UserStockStorage
     {

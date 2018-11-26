@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 using DuckBot_ClassLibrary;
 using DuckBot.Modules.UserActions;
 using DuckBot.Modules.Finance.CurrencyManager;
+using DuckBot.Modules.Finance;
 
-namespace DuckBot.Modules.Finance
+namespace DuckBot.Modules.UserFinance
 {
     public class UserGamblingHandler : ModuleBase<SocketCommandContext>
     {
@@ -43,9 +44,9 @@ namespace DuckBot.Modules.Finance
             }
         }
 
+        static Random rand = new Random();
         private static long CalculateUserGamblingOutcome(long gambleAmount)
         {
-            Random rand = new Random();
             long returnAmount = 0;
 
             int randomNumber = rand.Next(1000000);

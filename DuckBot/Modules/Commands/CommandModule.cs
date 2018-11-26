@@ -1,8 +1,10 @@
 ﻿using Discord.Commands;
 using DuckBot.Modules.Commands.Preconditions;
+using DuckBot.Modules.CsgoCaseUnboxing;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.UserActions;
+using DuckBot.Modules.UserFinance;
 using System.Threading.Tasks;
 
 namespace DuckBot.Modules.Commands
@@ -75,7 +77,6 @@ namespace DuckBot.Modules.Commands
             public async Task PlaySlotAsync(long gambleAmount)
             {
                 await UserGamblingHandler.UserGambling(Context, Context.Message, gambleAmount);
-
             }
         }
 
@@ -89,38 +90,44 @@ namespace DuckBot.Modules.Commands
             [Alias("b")]
             public async Task UserStockBuyAsync(string tickerSymbol, long amount)
             {
-                 await UserStocksHandler.BuyUserStocksAsync(Context, tickerSymbol, amount);
+                await UserStocksHandler.BuyUserStocksAsync(Context, tickerSymbol, amount);
             }
             [Command("sell")]
             [Alias("s")]
             public async Task UserStockSellAsync(string tickerSymbol, long amount)
             {
-                 await UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
-
+                await UserStocksHandler.SellUserStocksAsync(Context, tickerSymbol, amount);
             }
             [Command("portfolio")]
             [Alias("p")]
             public async Task UserStockPortfolioAsync()
             {
-
                 await UserStocksHandler.DisplayUserStocksAsync(Context);
-
             }
             [Command("market")]
             [Alias("m")]
             public async Task DisplayMarketStocksAsync()
             {
-
                 await UserStocksHandler.DisplayMarketStocksAsync(Context);
-
             }
             [Command("market")]
             [Alias("m")]
             public async Task DisplayMarketStockInfoAsync(string stockTicker)
             {
-
                 await UserStocksHandler.DisplayMarketStockInfoAsync(Context, stockTicker);
+            }
+        }
 
+        //Stocks
+        [Group("case")]
+        [Alias("c")]
+        public class Case : ModuleBase<SocketCommandContext>
+        {
+            [Command("open")]
+            [Alias("o")]
+            public async Task OpenCaseAsync()
+            {
+                await UnboxingHandler.OpenCase(Context);
             }
         }
     }

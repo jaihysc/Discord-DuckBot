@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.UserActions;
+using DuckBot.Modules.UserFinance;
 using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;

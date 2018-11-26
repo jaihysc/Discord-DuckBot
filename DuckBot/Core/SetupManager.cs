@@ -68,6 +68,11 @@ namespace DuckBot.Core
             Console.WriteLine(@"Example: C:\DuckBot\UserStocks");
             paths.Add(Console.ReadLine());
 
+            Console.WriteLine();
+            Console.WriteLine("Path where CS:GO skin data will be stored");
+            Console.WriteLine(@"Example: C:\DuckBot\skinData.json");
+            paths.Add(Console.ReadLine());
+
             try
             {
                 File.WriteAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\config.txt", "");

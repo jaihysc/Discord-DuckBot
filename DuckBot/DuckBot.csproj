@@ -150,6 +150,7 @@
     <Compile Include="Modules\Commands\Preconditions\WhitelistedUsersPrecondition.cs" />
     <Compile Include="Core\EventLogger.cs" />
     <Compile Include="Core\SetupManager.cs" />
+    <Compile Include="Modules\CsgoCaseUnboxing\CsgoCaseUnboxingHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserBankingHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserCreditsHandler.cs" />
     <Compile Include="Modules\Finance\FinanceConfigValues.cs" />
@@ -158,22 +159,21 @@
     <Compile Include="Modules\Finance\ServiceThreads\UserBankingInterestUpdater.cs" />
     <Compile Include="Modules\Finance\ServiceThreads\UserMarketStocksUpdater.cs" />
     <Compile Include="MainProgram.cs" />
+    <Compile Include="Modules\Moderation\ModerationManager.cs" />
     <Compile Include="Modules\UserActions\ProhibitedWordsChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Modules\Commands\RestrictedCommandModule.cs" />
-    <Compile Include="Modules\Finance\UserGamblingHandler.cs" />
+    <Compile Include="Modules\UserFinance\UserGamblingHandler.cs" />
     <Compile Include="Modules\UserActions\UserBugReportHandler.cs" />
     <Compile Include="Modules\UserActions\UserDataManager.cs" />
     <Compile Include="Modules\UserActions\UserHelpHandler.cs" />
     <Compile Include="Modules\UserActions\UserJoinHandler.cs" />
-    <Compile Include="Modules\Finance\UserStocksHandler.cs" />
+    <Compile Include="Modules\UserFinance\UserStocksHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Modules\Moderation\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

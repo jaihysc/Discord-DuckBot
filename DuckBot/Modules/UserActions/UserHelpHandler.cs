@@ -15,7 +15,7 @@ namespace DuckBot.Modules.UserActions
         public static async Task DisplayHelpMenu(SocketCommandContext Context)
         {
             //https://leovoel.github.io/embed-visualizer/
-            var builder = new EmbedBuilder()
+            var embedBuilder = new EmbedBuilder()
                 .WithDescription(" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki/Main). \n \n Prefix: `.d`")
                 .WithColor(new Color(253, 184, 20))
                 .WithFooter(footer => {
@@ -29,9 +29,10 @@ namespace DuckBot.Modules.UserActions
                 })
                 .AddField("Currency Commands", "`balance` `daily` `debt` `borrow` `return` `moneyTransfer` ")
                 .AddField("Game Commands", "`Prefix: game` | `slot`")
-                .AddField("Stock Commands", "`Prefix: stock` | `portfolio` `market` `buy` `sell`");
+                .AddField("Stock Commands", "`Prefix: stock` | `portfolio` `market` `buy` `sell`")
+                .AddField("Case Commands", "`Prefix: case` | `open`"); ;
 
-            var embed = builder.Build();
+            var embed = embedBuilder.Build();
 
             await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
         }
