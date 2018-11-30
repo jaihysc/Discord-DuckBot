@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using Discord.WebSocket;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
@@ -13,6 +14,9 @@ namespace DuckBot.Modules.Finance.CurrencyManager
 {
     public class UserBankingHandler
     {
+        /// <summary>
+        /// This checks if a user profile exists, if not, it will create a profile
+        /// </summary>
         public static void CheckIfUserCreditProfileExists(SocketCommandContext Context)
         {
             //Create txt user credit entry if user does not exist
@@ -20,6 +24,16 @@ namespace DuckBot.Modules.Finance.CurrencyManager
             {
                 //Create user profile
                 UserXmlDataStorage.CreateNewUserXmlEntry(Context);
+            }
+        }
+
+        public static void CheckIfUserCreditProfileExists(SocketGuildUser user)
+        {
+            //Create txt user credit entry if user does not exist
+            if (!File.Exists(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml"))
+            {
+                //Create user profile
+                UserXmlDataStorage.CreateNewUserXmlEntry(user);
             }
         }
 

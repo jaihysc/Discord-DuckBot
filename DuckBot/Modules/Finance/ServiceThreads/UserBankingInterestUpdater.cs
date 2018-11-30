@@ -1,4 +1,5 @@
-﻿using DuckBot.Modules.UserActions;
+﻿using DuckBot.Modules.Finance.CurrencyManager;
+using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
@@ -47,8 +48,30 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                 {
                     var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(file);
 
-                    //Calculate new debt with interest
+                    //Calculate forcefully deduct amount
+                    long deductionAmount = 0;
+                    //Set deduction to 1 in the event debt is less than 5
+                    if (userCreditStorage.UserInfo.UserBankingStorage.Credit == 0)
+                    {
+                        deductionAmount = 1;
+                    }
+                    else
+                    {
+                        deductionAmount = Convert.ToInt64(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * FinanceConfigValues.taxPercentage);
+                    }
 
+                    //Calculate new credits
+                    long userCreditsNew = 0;
+                    //Check if user has sufficient credits
+                    if (userCreditStorage.UserInfo.UserBankingStorage.Credit - deductionAmount > 0)
+                    {
+                        userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit - deductionAmount;
+                    }
+
+
+
+                    //
+                    //Calculate new debt with interest
                     long debtAmountNew;
                     try
                     {
@@ -59,6 +82,7 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                         debtAmountNew = long.MaxValue;
                     }
 
+
                     //Write to file
                     var userRecord = new UserStorage
                     {
@@ -66,7 +90,7 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                         UserInfo = new UserInfo
                         {
                             UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime },
-                            UserBankingStorage = new UserBankingStorage { Credit = userCreditStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = debtAmountNew },
+                            UserBankingStorage = new UserBankingStorage { Credit = userCreditsNew, CreditDebt = debtAmountNew },
                             UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
                         }
                     };

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Modules.Commands
 {
+    [Ratelimit(1, 5, Measure.Seconds)]
     [BlacklistedUsersPrecondition]
     [UserStorageCheckerPrecondition]
     public class CommandModule : ModuleBase<SocketCommandContext>
@@ -31,12 +32,15 @@ namespace DuckBot.Modules.Commands
         [Alias("bal")]
         public async Task SlotBalanceAsync()
         {
-            await UserCreditsHandler.DisplayUserCredits(Context);
+            long userCredits = UserCreditsHandler.GetUserCredits(Context);
+
+            await Context.Message.Channel.SendMessageAsync(
+                $"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**," +
+                $" You have **{UserBankingHandler.CreditCurrencyFormatter(userCredits)} Credits**");
         }
         [Command("daily")]
         public async Task SlotDailyCreditsAsync()
         {
-
             await UserGamblingHandler.SlotDailyCreditsAsync(Context);
         }
 
@@ -44,7 +48,6 @@ namespace DuckBot.Modules.Commands
         [Alias("mT")]
         public async Task MoneyTransferAsync(string targetUser, long amount)
         {
-
             await UserCreditsHandler.TransferCredits(Context, targetUser, amount);
         }
 

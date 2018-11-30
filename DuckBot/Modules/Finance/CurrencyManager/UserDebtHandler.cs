@@ -24,6 +24,12 @@ namespace DuckBot.Modules.Finance.CurrencyManager
 
             return userCreditStorage.UserInfo.UserBankingStorage.CreditDebt;
         }
+        public static long GetUserCreditsDebt(ulong UserId)
+        {
+            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + UserId + ".xml");
+
+            return userCreditStorage.UserInfo.UserBankingStorage.CreditDebt;
+        }
 
 
         public static async Task BorrowCredits(SocketCommandContext Context, long borrowAmount)

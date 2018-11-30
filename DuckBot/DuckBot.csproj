@@ -146,11 +146,13 @@
     <Compile Include="Modules\Commands\ManagementCommandModulecs.cs" />
     <Compile Include="Modules\Commands\MiscCommandModule.cs" />
     <Compile Include="Modules\Commands\Preconditions\BlacklistedUsersPrecondition.cs" />
+    <Compile Include="Modules\Commands\Preconditions\UserRateLimitPrecondition.cs" />
     <Compile Include="Modules\Commands\Preconditions\UserStorageCheckerPrecondition.cs" />
     <Compile Include="Modules\Commands\Preconditions\WhitelistedUsersPrecondition.cs" />
     <Compile Include="Core\EventLogger.cs" />
     <Compile Include="Core\SetupManager.cs" />
     <Compile Include="Modules\CsgoCaseUnboxing\CsgoCaseUnboxingHandler.cs" />
+    <Compile Include="Modules\CsgoCaseUnboxing\CsgoItemPriceHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserBankingHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserCreditsHandler.cs" />
     <Compile Include="Modules\Finance\FinanceConfigValues.cs" />

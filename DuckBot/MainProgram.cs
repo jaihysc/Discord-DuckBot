@@ -143,6 +143,7 @@ namespace DuckBot
 
             //COMMAND LOGGING
             // Inform the user if the command fails
+            /*
             if (!result.IsSuccess)
             {
                 var guild = _client.GetGuild(384492615745142784);
@@ -161,6 +162,7 @@ namespace DuckBot
                     await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
                 }
             }
+            */
 
             /*
             //Logs command if successful

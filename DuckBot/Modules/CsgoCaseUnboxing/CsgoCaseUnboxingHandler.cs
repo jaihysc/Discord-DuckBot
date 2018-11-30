@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot_ClassLibrary;
 using Newtonsoft.Json;
 using System;
@@ -13,15 +14,28 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
 {
     public class UnboxingHandler
     {
+        /// <summary>
+        /// Opens a virtual CS:GO case, result is sent to Context channel in a method
+        /// </summary>
+        /// <param name="Context">Command context used to determine channel to send result</param>
+        /// <returns></returns>
         public static async Task OpenCase(SocketCommandContext Context)
         {
-            var itemProcess = new ItemDropProcessing();
-            var result = itemProcess.CalculateItemRarity();
+            //Test if user has enough credits
+            if (UserCreditsHandler.AddCredits(Context, -300) == true)
+            {
+                var itemProcess = new ItemDropProcessing();
+                var result = itemProcess.CalculateItemRarity();
 
-            SkinItem skinItem = itemProcess.GetItemQuality(result, GetRootWeaponSkin());
+                SkinItem skinItem = itemProcess.GetItem(result, GetRootWeaponSkin());
 
-            var unboxHandler = new UnboxingHandler();
-            await unboxHandler.SendOpenedCaseInfo(Context, skinItem);
+                var unboxHandler = new UnboxingHandler();
+                await unboxHandler.SendOpenedCaseInfo(Context, skinItem);
+            }
+            else
+            {
+                await Context.Channel.SendMessageAsync(Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5) + "You do not have enough credits to unbox a case");
+            }
         }
 
         private async Task SendOpenedCaseInfo(SocketCommandContext Context, SkinItem skinItem)
@@ -60,7 +74,7 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
         }
     }
 
-    public class ItemDropProcessing
+    internal class ItemDropProcessing
     {
         static Random rand = new Random();
         public ItemRarity CalculateItemRarity()
@@ -89,7 +103,7 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             }
         }
 
-        public SkinItem GetItemQuality(ItemRarity itemRarity, RootWeaponSkin rootObject)
+        public SkinItem GetItem(ItemRarity itemRarity, RootWeaponSkin rootObject)
         {
             string filterQualityColor = "";
             string filterNameColor = "";
@@ -108,9 +122,9 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             var sortedResult = rootObject.items
                 .Where(e => e.quality_color.ToLower().Contains(filterQualityColor.ToLower()))
                 .Where(e => e.name_color.ToLower().Contains(filterNameColor.ToLower()))
+                .Where(e => !e.market_name.ToLower().Contains("stattrak"))
                 .Where(e => !e.market_name.ToLower().Contains("sticker"))
                 .Where(e => !e.market_name.ToLower().Contains("graffiti")).ToArray();
-            //.Where(e => e.market_name.ToLower().Contains("trak"));
 
             var returnResult = sortedResult[rand.Next(sortedResult.Count())];
 
@@ -120,11 +134,10 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             {
                 var statTrakItems = rootObject.items
                     .Where(e => e.market_name.Contains(returnResult.market_name))
-                    .Where(e => e.market_name.ToLower().Contains("stat"));
+                    .Where(e => e.market_name.ToLower().Contains("stattrak"));
 
                 foreach (var item in statTrakItems)
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
                     returnResult = item;
                 }
             }
