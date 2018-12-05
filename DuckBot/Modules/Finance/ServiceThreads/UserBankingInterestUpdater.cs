@@ -1,4 +1,5 @@
-﻿using DuckBot.Modules.Finance.CurrencyManager;
+﻿using DuckBot.Core;
+using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
@@ -57,7 +58,7 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                     }
                     else
                     {
-                        deductionAmount = Convert.ToInt64(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * FinanceConfigValues.taxPercentage);
+                        deductionAmount = Convert.ToInt64(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("taxRate")));
                     }
 
                     //Calculate new credits
@@ -75,7 +76,7 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                     long debtAmountNew;
                     try
                     {
-                        debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * FinanceConfigValues.interestPercentage) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
+                        debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("interestRate"))) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
                     }
                     catch (OverflowException)
                     {

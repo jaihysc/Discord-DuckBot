@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DuckBot.Core;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
@@ -87,7 +88,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
 
                     .AddInlineField("​", "​")
                     .AddInlineField("​", "​")
-                    .AddInlineField("Deductions", $"{UserBankingHandler.CreditCurrencyFormatter(taxAmount)} ({FinanceConfigValues.taxPercentage * 100}% Tax) \n \n -------------- \n {UserBankingHandler.CreditCurrencyFormatter(amount - taxAmount)}");
+                    .AddInlineField("Deductions", $"{UserBankingHandler.CreditCurrencyFormatter(taxAmount)} ({double.Parse(SettingsManager.RetrieveFromConfigFile("taxRate")) * 100}% Tax) \n \n -------------- \n {UserBankingHandler.CreditCurrencyFormatter(amount - taxAmount)}");
 
                 var embed = embedBuilder.Build();
 
@@ -117,6 +118,28 @@ namespace DuckBot.Modules.Finance.CurrencyManager
             };
 
             XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+        }
+        /// <summary>
+        /// Sets input amount to user balance
+        /// </summary>
+        /// <param name="userId">Target user ID</param>
+        /// <param name="setAmount">Amount to set credits balance to</param>
+        public static void SetCredits(ulong userId, long setAmount)
+        {
+            var otherCreditStorageUsers = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + userId + ".xml");
+
+            var userRecord = new UserStorage
+            {
+                UserId = otherCreditStorageUsers.UserId,
+                UserInfo = new UserInfo
+                {
+                    UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = otherCreditStorageUsers.UserInfo.UserDailyLastUseStorage.DateTime },
+                    UserBankingStorage = new UserBankingStorage { Credit = setAmount, CreditDebt = otherCreditStorageUsers.UserInfo.UserBankingStorage.CreditDebt },
+                    UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = otherCreditStorageUsers.UserInfo.UserProhibitedWordsStorage.SwearCount }
+                }
+            };
+
+            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + userId + ".xml");
         }
         /// <summary>
         /// Sets input amount to user balance

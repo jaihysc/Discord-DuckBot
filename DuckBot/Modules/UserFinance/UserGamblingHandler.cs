@@ -6,6 +6,7 @@ using DuckBot_ClassLibrary;
 using DuckBot.Modules.UserActions;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.Finance;
+using DuckBot.Core;
 
 namespace DuckBot.Modules.UserFinance
 {
@@ -135,7 +136,7 @@ namespace DuckBot.Modules.UserFinance
             if (userLastDailyCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime.AddHours(24) < DateTime.UtcNow)
             {
                 //Add credits
-                UserCreditsHandler.AddCredits(Context, FinanceConfigValues.dailyAmount);
+                UserCreditsHandler.AddCredits(Context, long.Parse(SettingsManager.RetrieveFromConfigFile("dailyAmount")));
 
 
                 //Write last use date
@@ -156,7 +157,7 @@ namespace DuckBot.Modules.UserFinance
 
 
                 //Send channel message confirmation
-                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + UserBankingHandler.CreditCurrencyFormatter(FinanceConfigValues.dailyAmount) + " Credits!**");
+                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + UserBankingHandler.CreditCurrencyFormatter(long.Parse(SettingsManager.RetrieveFromConfigFile("dailyAmount"))) + " Credits!**");
 
             }
             else

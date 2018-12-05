@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using DuckBot.Core;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.Finance.ServiceThreads;
+using DuckBot.Modules.Moderation;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
@@ -41,7 +42,7 @@ namespace DuckBot
             //Continously running threads
             Thread updateUserBankingInterest = new Thread(new ThreadStart(UserBankingInterestUpdater.UpdateUserDebtInterest));
             Thread updateUserMarketStocks = new Thread(new ThreadStart(UserMarketStocksUpdater.UpdateMarketStocks));
-            
+
             //Start
             updateUserBankingInterest.Start();
             updateUserMarketStocks.Start();
@@ -69,6 +70,7 @@ namespace DuckBot
                 //BuildsServiceProvider
                 .BuildServiceProvider();
 
+            //Bot init
             try
             {
                 //Get token
@@ -90,10 +92,15 @@ namespace DuckBot
                 await _client.StartAsync();
 
             }
-            catch (Exception) { Console.WriteLine("Unable to initialize!"); }
+            catch (Exception)
+            {
+                throw new Exception("Unable to initialize!");
+            }
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
-            await _client.SetGameAsync($"Use {MainProgram.botCommandPrefix} help");
+
+            //Set help text playing
+            await _client.SetGameAsync($"Use {botCommandPrefix} help");
 
             //
             //Event handlers
@@ -103,9 +110,9 @@ namespace DuckBot
             _client.Log += EventLogger.Log;
             _client.MessageReceived += EventLogger.LogUserMessage;
 
-            //Messaged received
+            //Message received
             _client.MessageReceived += MessageReceived;
-            _client.MessageReceived += DeleteNonCommandsInCommandsChannel;
+            _client.MessageReceived += ModerationManager.ModerationManagerMessageReceived;
 
             //User joined
             _client.UserJoined += UserJoinHandler.DisplayUserGenderChoice;
@@ -116,7 +123,7 @@ namespace DuckBot
 
             //All commands before this
             await Task.Delay(-1);
-            
+
         }
 
         //Command Handler
@@ -143,7 +150,7 @@ namespace DuckBot
 
             //COMMAND LOGGING
             // Inform the user if the command fails
-            /*
+
             if (!result.IsSuccess)
             {
                 var guild = _client.GetGuild(384492615745142784);
@@ -157,12 +164,15 @@ namespace DuckBot
                 {
                     await context.Channel.SendMessageAsync($"Invalid command usage, use `.d help <command>` for correct command usage");
                 }
+                else if (result.Error == CommandError.UnmetPrecondition)
+                {
+                    //await context.Channel.SendMessageAsync($"Woah, Slow down (Ratelimited)");
+                }
                 else
                 {
                     await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
                 }
             }
-            */
 
             /*
             //Logs command if successful
@@ -174,7 +184,7 @@ namespace DuckBot
                 await channel.SendMessageAsync($"[Log] `{message}`  >|  {result.ToString()}");
             }
             */
-            
+
         }
 
         private async Task MessageReceived(SocketMessage message)
@@ -194,15 +204,6 @@ namespace DuckBot
                 await message.Channel.SendMessageAsync("Hey! How dare you fish in my pond, no regard for our species and our survival");
             }
 
-        }
-
-        private async Task DeleteNonCommandsInCommandsChannel(SocketMessage message)
-        {
-            if (message.Channel.Id == 504371769738526752 && !message.ToString().StartsWith(MainProgram.botCommandPrefix))
-            {
-                var sentMessage = await message.Channel.GetMessagesAsync(1).Flatten();
-                await message.Channel.DeleteMessagesAsync(sentMessage);
-            }
         }
     }
 }

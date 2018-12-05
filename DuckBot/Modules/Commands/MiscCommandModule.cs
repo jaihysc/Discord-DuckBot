@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DuckBot.Core;
 using DuckBot.Modules.Finance;
 using System;
 using System.Collections.Generic;
@@ -16,8 +17,8 @@ namespace DuckBot.Modules.Commands
         public async Task SetGenderMaleAsync()
         {
             var user = Context.User;
-            var role = Context.Guild.Roles.FirstOrDefault(x => x.Id == CommandConfigValues.boyRoleId);
-            var removeRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == CommandConfigValues.girlRole2Id);
+            var role = Context.Guild.Roles.FirstOrDefault(x => x.Id == ulong.Parse(SettingsManager.RetrieveFromConfigFile("boyRoleId")));
+            var removeRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == ulong.Parse(SettingsManager.RetrieveFromConfigFile("girlRoleId")));
 
             await (user as IGuildUser).AddRoleAsync(role);
             await (user as IGuildUser).RemoveRoleAsync(removeRole);
@@ -26,8 +27,8 @@ namespace DuckBot.Modules.Commands
         public async Task SetGenderFemaleAsync()
         {
             var user = Context.User;
-            var role = Context.Guild.Roles.FirstOrDefault(x => x.Id == CommandConfigValues.girlRole2Id);
-            var removeRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == CommandConfigValues.boyRoleId);
+            var role = Context.Guild.Roles.FirstOrDefault(x => x.Id == ulong.Parse(SettingsManager.RetrieveFromConfigFile("girlRoleId")));
+            var removeRole = Context.Guild.Roles.FirstOrDefault(x => x.Id == ulong.Parse(SettingsManager.RetrieveFromConfigFile("boyRoleId")));
 
             await (user as IGuildUser).AddRoleAsync(role);
             await (user as IGuildUser).RemoveRoleAsync(removeRole);

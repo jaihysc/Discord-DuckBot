@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DuckBot.Core;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using System;
@@ -12,7 +13,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
     {
         public static long TaxCollector(SocketCommandContext Context, long inputCredits)
         {
-            double taxSubtractions = inputCredits * FinanceConfigValues.taxPercentage;
+            double taxSubtractions = inputCredits * double.Parse(SettingsManager.RetrieveFromConfigFile("taxRate"));
 
             if (taxSubtractions < 0)
             {
@@ -25,7 +26,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
         }
         public static async Task<long> TaxCollectorAsync(SocketCommandContext Context, long inputCredits, string sendMessage)
         {
-            double taxSubtractions = inputCredits * FinanceConfigValues.taxPercentage;
+            double taxSubtractions = inputCredits * double.Parse(SettingsManager.RetrieveFromConfigFile("taxRate"));
 
             if (taxSubtractions < 0)
             {
@@ -42,7 +43,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
             var guild = Context.Client.GetGuild(guildID);
             var user = guild.GetUser(userID);
 
-            double taxSubtractions = inputCredits * FinanceConfigValues.taxPercentage; ;
+            double taxSubtractions = inputCredits * double.Parse(SettingsManager.RetrieveFromConfigFile("taxRate")); ;
 
             if (taxSubtractions < 0)
             {

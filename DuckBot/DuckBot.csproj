@@ -140,7 +140,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Modules\Commands\CommandConfigValues.cs" />
+    <Compile Include="Core\SettingsManager.cs" />
     <Compile Include="Modules\Commands\CommandModule.cs" />
     <Compile Include="Modules\Commands\ElevatedCommandModule.cs" />
     <Compile Include="Modules\Commands\ManagementCommandModulecs.cs" />
@@ -155,7 +155,6 @@
     <Compile Include="Modules\CsgoCaseUnboxing\CsgoItemPriceHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserBankingHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserCreditsHandler.cs" />
-    <Compile Include="Modules\Finance\FinanceConfigValues.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserCreditTaxHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserDebtHandler.cs" />
     <Compile Include="Modules\Finance\ServiceThreads\UserBankingInterestUpdater.cs" />

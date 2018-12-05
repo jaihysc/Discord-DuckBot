@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Modules.Commands
 {
-    [Ratelimit(1, 5, Measure.Seconds)]
+    [Ratelimit(1, 3, Measure.Seconds)]
     [BlacklistedUsersPrecondition]
     [UserStorageCheckerPrecondition]
     public class CommandModule : ModuleBase<SocketCommandContext>

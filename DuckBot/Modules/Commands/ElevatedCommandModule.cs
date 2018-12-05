@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DuckBot.Core;
 using DuckBot.Modules.Commands.Preconditions;
 using DuckBot.Modules.Finance;
 using System;
@@ -36,14 +37,14 @@ namespace DuckBot.Modules.Commands
 
             //Modify assigning role names
             [Command("editRole boy")]
-            public async Task ChangeGenderMaleRoleAsync([Remainder]ulong roleID)
+            public async Task ChangeMaleRoleAsync([Remainder]ulong roleID)
             {
-                CommandConfigValues.boyRoleId = roleID;
+                SettingsManager.WriteToConfigFile("boyRoleId", roleID.ToString());
             }
             [Command("editRole girl")]
-            public async Task ChangeGenderFemaleRoleAsync([Remainder]ulong roleID)
+            public async Task ChangeFemaleRoleAsync([Remainder]ulong roleID)
             {
-                CommandConfigValues.girlRole2Id = roleID;
+                SettingsManager.WriteToConfigFile("girlRoleId", roleID.ToString());
             }
         }
     }

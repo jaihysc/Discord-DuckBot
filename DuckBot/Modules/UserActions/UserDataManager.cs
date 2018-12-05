@@ -1,5 +1,6 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot.Core;
 using DuckBot_ClassLibrary;
 using System;
 using System.Collections.Generic;
@@ -37,8 +38,6 @@ namespace DuckBot.Modules.UserActions
 
     public class UserXmlDataStorage
     {
-        internal static long startAmount = 10000;
-
         public static void CreateNewUserXmlEntry(SocketCommandContext Context)
         {
             var userRecord = new UserStorage
@@ -47,7 +46,7 @@ namespace DuckBot.Modules.UserActions
                 UserInfo = new UserInfo
                 {
                     UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = DateTime.UtcNow.AddYears(-1) },
-                    UserBankingStorage = new UserBankingStorage { Credit = startAmount, CreditDebt = 0 },
+                    UserBankingStorage = new UserBankingStorage { Credit = long.Parse(SettingsManager.RetrieveFromConfigFile("startAmount")), CreditDebt = 0 },
                     UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = 0 }
                 }
             };
@@ -65,11 +64,10 @@ namespace DuckBot.Modules.UserActions
                 UserInfo = new UserInfo
                 {
                     UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = DateTime.UtcNow.AddYears(-1) },
-                    UserBankingStorage = new UserBankingStorage { Credit = startAmount, CreditDebt = 0 },
+                    UserBankingStorage = new UserBankingStorage { Credit = long.Parse(SettingsManager.RetrieveFromConfigFile("startAmount")), CreditDebt = 0 },
                     UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = 0 }
                 }
             };
-            //var a = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
             XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml");
 

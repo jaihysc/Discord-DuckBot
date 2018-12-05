@@ -27,18 +27,23 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
                 var itemProcess = new ItemDropProcessing();
                 var result = itemProcess.CalculateItemRarity();
 
+                //Get item
                 SkinItem skinItem = itemProcess.GetItem(result, GetRootWeaponSkin());
 
+                //Add money for skin quality
+                long skinMarketValue = itemProcess.GiveItemQualityCredits(Context, result);
+
+                //Send item into
                 var unboxHandler = new UnboxingHandler();
-                await unboxHandler.SendOpenedCaseInfo(Context, skinItem);
+                await unboxHandler.SendOpenedCaseInfo(Context, skinItem, skinMarketValue);
             }
             else
             {
-                await Context.Channel.SendMessageAsync(Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5) + "You do not have enough credits to unbox a case");
+                await Context.Channel.SendMessageAsync("**" +Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5) + ", **You do not have enough credits to unbox a case");
             }
         }
 
-        private async Task SendOpenedCaseInfo(SocketCommandContext Context, SkinItem skinItem)
+        private async Task SendOpenedCaseInfo(SocketCommandContext Context, SkinItem skinItem, long skinMarketValue)
         {
             var embedBuilder = new EmbedBuilder()
                 .WithColor(new Color(Convert.ToUInt32(skinItem.quality_color, 16)))
@@ -53,7 +58,7 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
                         .WithName("Case Unboxing")
                         .WithIconUrl("https://i.redd.it/1s0j5e4fhws01.png");
                 })
-                .AddField(skinItem.market_name, "\u200b")
+                .AddField(skinItem.market_name, $"Market Value: {skinMarketValue}")
                 .WithImageUrl("http:" + skinItem.icon_url);
 
             var embed = embedBuilder.Build();
@@ -108,14 +113,14 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             string filterQualityColor = "";
             string filterNameColor = "";
 
-            if (itemRarity == ItemRarity.White) { filterQualityColor = "B0C3D9"; filterNameColor = "D2D2D2"; Console.ForegroundColor = ConsoleColor.White; }
-            if (itemRarity == ItemRarity.LightBlue) { filterQualityColor = "5E98D9"; filterNameColor = "D2D2D2"; Console.ForegroundColor = ConsoleColor.Cyan; }
-            if (itemRarity == ItemRarity.DarkerBlue) { filterQualityColor = "4B69FF"; filterNameColor = "D2D2D2"; Console.ForegroundColor = ConsoleColor.Blue; }
-            if (itemRarity == ItemRarity.Purple) { filterQualityColor = "8847FF"; filterNameColor = "D2D2D2"; Console.ForegroundColor = ConsoleColor.DarkMagenta; }
-            if (itemRarity == ItemRarity.Pink) { filterQualityColor = "D32CE6"; filterNameColor = "D2D2D2"; Console.ForegroundColor = ConsoleColor.Magenta; }
-            if (itemRarity == ItemRarity.Red) { filterQualityColor = "EB4B4B"; filterNameColor = "D2D2D2"; Console.ForegroundColor = ConsoleColor.Red; }
-            if (itemRarity == ItemRarity.Gold) { filterQualityColor = "EB4B4B"; filterNameColor = "8650AC"; Console.ForegroundColor = ConsoleColor.Yellow; }
-            if (itemRarity == ItemRarity.Yellow) { filterQualityColor = "E4AE39"; filterNameColor = "D2D2D2"; Console.ForegroundColor = ConsoleColor.DarkYellow; }
+            if (itemRarity == ItemRarity.White) { filterQualityColor = "B0C3D9"; filterNameColor = "D2D2D2"; }
+            if (itemRarity == ItemRarity.LightBlue) { filterQualityColor = "5E98D9"; filterNameColor = "D2D2D2"; }
+            if (itemRarity == ItemRarity.DarkerBlue) { filterQualityColor = "4B69FF"; filterNameColor = "D2D2D2"; }
+            if (itemRarity == ItemRarity.Purple) { filterQualityColor = "8847FF"; filterNameColor = "D2D2D2"; }
+            if (itemRarity == ItemRarity.Pink) { filterQualityColor = "D32CE6"; filterNameColor = "D2D2D2"; }
+            if (itemRarity == ItemRarity.Red) { filterQualityColor = "EB4B4B"; filterNameColor = "D2D2D2"; }
+            if (itemRarity == ItemRarity.Gold) { filterQualityColor = "EB4B4B"; filterNameColor = "8650AC"; }
+            if (itemRarity == ItemRarity.Yellow) { filterQualityColor = "E4AE39"; filterNameColor = "D2D2D2"; }
 
 
 
@@ -145,6 +150,22 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
 
             return returnResult;
         }
+
+        public long GiveItemQualityCredits(SocketCommandContext Context, ItemRarity itemRarity)
+        {
+            //Give credits on item quality
+            if (itemRarity == ItemRarity.White) { UserCreditsHandler.AddCredits(Context , 3); return 3; }
+            if (itemRarity == ItemRarity.LightBlue) { UserCreditsHandler.AddCredits(Context, 10); return 10; }
+            if (itemRarity == ItemRarity.DarkerBlue) { UserCreditsHandler.AddCredits(Context, 50); return 50; }
+            if (itemRarity == ItemRarity.Purple) { UserCreditsHandler.AddCredits(Context, 300); return 300; }
+            if (itemRarity == ItemRarity.Pink) { UserCreditsHandler.AddCredits(Context, 6000); return 6000; }
+            if (itemRarity == ItemRarity.Red) { UserCreditsHandler.AddCredits(Context, 60000); return 60000; }
+            if (itemRarity == ItemRarity.Gold) { UserCreditsHandler.AddCredits(Context, 1000000); return 1000000; }
+            if (itemRarity == ItemRarity.Yellow) { UserCreditsHandler.AddCredits(Context, 5000000); return 5000000; } 
+
+            return 0;
+        }
+
 
         public enum ItemRarity { White, LightBlue, DarkerBlue, Purple, Pink, Red, Gold, Yellow }
     }

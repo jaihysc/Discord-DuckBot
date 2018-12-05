@@ -1,5 +1,8 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
+using DuckBot.Core;
 using DuckBot.Modules.Finance;
+using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.Finance.ServiceThreads;
 using DuckBot_ClassLibrary;
 using System;
@@ -23,6 +26,32 @@ namespace DuckBot.Modules.Commands
                 await Context.Client.SetGameAsync($"Use {game} help");
             }
 
+            [Command("logAllMessages")]
+            public async Task LogAllMessagesAsync(ulong guildID, ulong retrieveTargetChannelID, string path)
+            {
+                if (Context.Message.Author.Id == 285266023475838976)
+                {
+                    var guild = Context.Client.GetGuild(guildID);
+                    var chnl = guild.GetTextChannel(retrieveTargetChannelID);
+                    var messages = await chnl.GetMessagesAsync(9999999).Flatten();
+                    var logMessage = messages.Reverse();
+                    foreach (var item in logMessage)
+                    {
+                        try
+                        {
+                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(path, true))
+                            {
+                                file.WriteLine(item);
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            await Context.User.SendMessageAsync("Unable to log message to specified file path");
+                        }
+                    }
+                }
+            }
+
             [Command("stopService")]
             public async Task StopServicesAsync()
             {
@@ -41,17 +70,43 @@ namespace DuckBot.Modules.Commands
                 UserBankingInterestUpdater.UserDebtInterestUpdater();
             }
 
-            [Command("taxRate")]
-            public async Task ChangeTaxRateAsync(double taxRate)
+            [Command("setCredits")]
+            public async Task SetCreditsAsync(ulong userID, long setAmount)
             {
-                FinanceConfigValues.taxPercentage = taxRate;
+                UserCreditsHandler.SetCredits(userID, setAmount);
+            }
+
+
+
+            //Configuable commands
+            [Command("taxRate")]
+            public async Task ChangeTaxRateAsync(double rate)
+            {
+                SettingsManager.WriteToConfigFile("taxRate", rate.ToString());
+            }
+            [Command("interestRate")]
+            public async Task ChangeInterestRateAsync(double rate)
+            {
+                SettingsManager.WriteToConfigFile("interestRate", rate.ToString());
             }
 
             [Command("maxBorrow")]
-            public async Task ChangeMaxBorrowLimitAsync(long maxBorrow)
+            public async Task ChangeMaxBorrowLimitAsync(long amount)
             {
-                FinanceConfigValues.maxBorrowAmount = maxBorrow;
+                SettingsManager.WriteToConfigFile("maxBorrow", amount.ToString());
             }
+            [Command("dailyAmount")]
+            public async Task ChangeDailyAmountAsync(long amount)
+            {
+                SettingsManager.WriteToConfigFile("dailyAmount", amount.ToString());
+            }
+            [Command("startAmount")]
+            public async Task ChangeStartAmountAsync(long amount)
+            {
+                SettingsManager.WriteToConfigFile("startAmount", amount.ToString());
+            }
+
+
 
             //Duck access moderation
             [Command("op")]

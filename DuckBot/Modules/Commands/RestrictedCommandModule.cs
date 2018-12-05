@@ -8,17 +8,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using DuckBot.Modules.Commands.Preconditions;
 using DuckBot.Modules.Finance.CurrencyManager;
+using DuckBot.Core;
 
 namespace DuckBot.Modules.Commands
 {
     public class RestrictedCommandModule : ModuleBase<SocketCommandContext>
     {
         [Group("crossGuild")]
+        [Alias("c")]
         [WhitelistedUsersPrecondition]
         [UserStorageCheckerPrecondition]
         public class CrossGuild : ModuleBase<SocketCommandContext>
         {
             [Group("elevated")]
+            [Alias("e")]
             public class Elevated : ModuleBase<SocketCommandContext>
             {
                 [Command("clean")]
@@ -35,18 +38,6 @@ namespace DuckBot.Modules.Commands
                     {
                         await Context.Channel.DeleteMessagesAsync(messages);
                     }
-                }
-
-                //Modify assigning role names
-                [Command("editRole boy")]
-                public async Task ChangeGenderMaleRoleAsync([Remainder]ulong roleID)
-                {
-                    CommandConfigValues.boyRoleId = roleID;
-                }
-                [Command("editRole girl")]
-                public async Task ChangeGenderFemaleRoleAsync([Remainder]ulong roleID)
-                {
-                    CommandConfigValues.girlRole2Id = roleID;
                 }
             }
 
@@ -181,42 +172,6 @@ namespace DuckBot.Modules.Commands
 
                 var user = guild.GetUser(userID);
                 await (user as IGuildUser).RemoveRoleAsync(role);
-            }
-
-
-            [Command("logAllMessages")]
-            [WhitelistedUsersPrecondition]
-            public async Task LogAllMessagesAsync(ulong guildID, ulong retrieveTargetChannelID, string path)
-            {
-                if (Context.Message.Author.Id == 285266023475838976)
-                {
-                    var guild = Context.Client.GetGuild(guildID);
-                    var chnl = guild.GetTextChannel(retrieveTargetChannelID);
-                    var messages = await chnl.GetMessagesAsync(9999999).Flatten();
-                    var logMessage = messages.Reverse();
-                    foreach (var item in logMessage)
-                    {
-                        try
-                        {
-                            using (System.IO.StreamWriter file = new System.IO.StreamWriter(path, true))
-                            {
-                                file.WriteLine(item);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            await Context.User.SendMessageAsync("Unable to log message to specified file path");
-                        }
-                    }
-                }
-            }
-
-
-            //Gambling
-            [Command("setCredits")]
-            public async Task SetCreditsAsync(ulong guildID, ulong userID, long setAmount)
-            {
-                UserCreditsHandler.SetCredits(Context, guildID, userID, setAmount);
             }
         }
     }
