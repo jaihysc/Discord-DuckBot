@@ -26,6 +26,18 @@ namespace DuckBot.Modules.Commands
                 await UserHelpHandler.DisplayHelpMenu(Context);
             }
         }
+        [Command("@help")]
+        public async Task ModHelpAsync([Remainder]string inputCommand = null)
+        {
+            if (!string.IsNullOrEmpty(inputCommand))
+            {
+                await UserHelpHandler.DisplayCommandHelpMenu(Context, "elevated " + inputCommand);
+            }
+            else
+            {
+                await UserHelpHandler.DisplayModerationHelpMenu(Context);
+            }
+        }
 
         //Banking
         [Command("balance")]

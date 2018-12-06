@@ -160,6 +160,7 @@
     <Compile Include="Modules\Finance\ServiceThreads\UserBankingInterestUpdater.cs" />
     <Compile Include="Modules\Finance\ServiceThreads\UserMarketStocksUpdater.cs" />
     <Compile Include="MainProgram.cs" />
+    <Compile Include="Modules\Moderation\GuildRolesManager.cs" />
     <Compile Include="Modules\Moderation\ModerationManager.cs" />
     <Compile Include="Modules\UserActions\ProhibitedWordsChecker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -158,10 +158,10 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             if (itemRarity == ItemRarity.LightBlue) { UserCreditsHandler.AddCredits(Context, 10); return 10; }
             if (itemRarity == ItemRarity.DarkerBlue) { UserCreditsHandler.AddCredits(Context, 50); return 50; }
             if (itemRarity == ItemRarity.Purple) { UserCreditsHandler.AddCredits(Context, 300); return 300; }
-            if (itemRarity == ItemRarity.Pink) { UserCreditsHandler.AddCredits(Context, 6000); return 6000; }
-            if (itemRarity == ItemRarity.Red) { UserCreditsHandler.AddCredits(Context, 60000); return 60000; }
-            if (itemRarity == ItemRarity.Gold) { UserCreditsHandler.AddCredits(Context, 1000000); return 1000000; }
-            if (itemRarity == ItemRarity.Yellow) { UserCreditsHandler.AddCredits(Context, 5000000); return 5000000; } 
+            if (itemRarity == ItemRarity.Pink) { UserCreditsHandler.AddCredits(Context, 900); return 900; }
+            if (itemRarity == ItemRarity.Red) { UserCreditsHandler.AddCredits(Context, 6000); return 6000; }
+            if (itemRarity == ItemRarity.Gold) { UserCreditsHandler.AddCredits(Context, 100000); return 100000; }
+            if (itemRarity == ItemRarity.Yellow) { UserCreditsHandler.AddCredits(Context, 500000); return 500000; } 
 
             return 0;
         }

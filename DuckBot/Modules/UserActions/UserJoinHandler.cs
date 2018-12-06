@@ -17,10 +17,8 @@ namespace DuckBot.Modules.UserActions
         {
             var builder = new EmbedBuilder()
             .WithTitle("Welcome " + joinedUser.ToString())
-            //.WithDescription(joinedUser.Mention)
             .WithColor(new Color(0x99BEBA))
-            .AddField("As this is a sexist server, please select your gender below", "Use `.d gender boy` or Use `.d gender girl`");
-            //.AddInlineField("<:thonkang:219069250692841473>", "these last two")
+            .AddField("As this is a sexist server, please select your gender below", "Use `.d role list` for a list of possible roles. If it is blank, tell <@!257225194391732237> to hurry up and add some");
 
             var embed = builder.Build();
 

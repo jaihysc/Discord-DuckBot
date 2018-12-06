@@ -112,7 +112,12 @@ namespace DuckBot.Modules.Commands
             [Command("op")]
             public async Task WhiteListUserAsync(ulong userId)
             {
-                CoreMethod.WriteStringToFile(userId.ToString(), false, CoreMethod.GetFileLocation("UserWhitelist.txt"));
+                //If user does not exist in op list, add
+                if (!CoreMethod.ReadFromFileToList(CoreMethod.GetFileLocation("UserWhitelist.txt")).Contains(userId.ToString()))
+                {
+                    CoreMethod.WriteStringToFile(userId.ToString(), false, CoreMethod.GetFileLocation("UserWhitelist.txt"));
+                }
+
             }
 
             [Command("unop")]
@@ -126,7 +131,12 @@ namespace DuckBot.Modules.Commands
             [Command("block")]
             public async Task BlackListUserAsync(ulong userId)
             {
-                CoreMethod.WriteStringToFile(userId.ToString(), false, CoreMethod.GetFileLocation("UserBlacklist.txt"));
+                //If user does not exist in block list, block
+                if (!CoreMethod.ReadFromFileToList(CoreMethod.GetFileLocation("UserBlacklist.txt")).Contains(userId.ToString()))
+                {
+                    CoreMethod.WriteStringToFile(userId.ToString(), false, CoreMethod.GetFileLocation("UserBlacklist.txt"));
+                }
+                
             }
 
             [Command("unblock")]

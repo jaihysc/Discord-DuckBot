@@ -20,7 +20,7 @@ namespace DuckBot.Modules.UserActions
                 .WithColor(new Color(253, 184, 20))
                 .WithFooter(footer => {
                     footer
-                        .WithText("To check command usage, type .d help <command> // Sent by " + Context.Message.Author.ToString());
+                        .WithText("To check command usage, type .d help <command> // Use .d @help for moderation commands // Sent by " + Context.Message.Author.ToString());
                 })
                 .WithAuthor(author => {
                     author
@@ -30,7 +30,32 @@ namespace DuckBot.Modules.UserActions
                 .AddField("Currency Commands", "`balance` `daily` `debt` `borrow` `return` `moneyTransfer` ")
                 .AddField("Game Commands", "`Prefix: game` | `slot`")
                 .AddField("Stock Commands", "`Prefix: stock` | `portfolio` `market` `buy` `sell`")
-                .AddField("Case Commands", "`Prefix: case` | `open`"); ;
+                .AddField("Case Commands", "`Prefix: case` | `open`")
+                .AddField("Role Commands", "`Prefix: role` | `list` `add` `remove`");
+
+            var embed = embedBuilder.Build();
+
+            await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
+        }
+
+        public static async Task DisplayModerationHelpMenu(SocketCommandContext Context)
+        {
+            var embedBuilder = new EmbedBuilder()
+                .WithDescription(" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki/Main). \n \n Prefix: `.d elevated` \n Requires permission `Administrator`")
+                .WithColor(new Color(252, 144, 0))
+                .WithFooter(footer =>
+                {
+                    footer
+                        .WithText("To check command usage, type .d @help <command> // Use .d help for standard commands // Sent by " + Context.Message.Author.ToString());
+                })
+                .WithAuthor(author =>
+                {
+                    author
+                        .WithName("Duck Moderation Help")
+                        .WithIconUrl("https://ubisafe.org/images/duck-transparent-jpeg-5.png");
+                })
+                .AddField("Channel Commands", "`clean`")
+                .AddField("Role Commands", "`Prefix: role` | `add` `remove`");
 
             var embed = embedBuilder.Build();
 
@@ -43,9 +68,11 @@ namespace DuckBot.Modules.UserActions
         }
         public class HelpMenuCommandEntry
         {
-            public string Command { get; set; }
-            public string Description { get; set; }
-            public string Usage { get; set; }
+            public string CommandName { get; set; }
+            public string CommandDescription { get; set; }
+            public string CommandRequiredPermissions { get; set; }
+            public string CommandUsage { get; set; }
+            public string CommandUsageDefinition { get; set; }
         }
         public static async Task DisplayCommandHelpMenu(SocketCommandContext Context, string inputCommand)
         {
@@ -58,12 +85,12 @@ namespace DuckBot.Modules.UserActions
             //Search commandHelpDefinitionStorage for command definition
             foreach (var commandHelpDefinition in commandHelpDefinitionStorage.CommandHelpEntry)
             {
-                if (commandHelpDefinition.Command == inputCommand)
+                if (commandHelpDefinition.CommandName == inputCommand)
                 {
                     commandHelpDefinitionExists = true;
 
-                    var builder = new EmbedBuilder()
-                    .WithDescription($"{commandHelpDefinition.Description} \n \n **Usage:** `{commandHelpDefinition.Usage}`")
+                    var embedBuilder = new EmbedBuilder()
+                    .WithDescription($"**{commandHelpDefinition.CommandDescription}**")
                     .WithColor(new Color(253, 88, 20))
                     .WithFooter(footer =>
                     {
@@ -77,7 +104,19 @@ namespace DuckBot.Modules.UserActions
                             .WithIconUrl("https://ubisafe.org/images/duck-transparent-jpeg-5.png");
                     });
 
-                    var embed = builder.Build();
+                    if (!string.IsNullOrEmpty(commandHelpDefinition.CommandRequiredPermissions))
+                    {
+                        embedBuilder.AddField("Permissions required", $"`{commandHelpDefinition.CommandRequiredPermissions}`");
+                    }
+
+                    embedBuilder.AddField("Usage", $"`{commandHelpDefinition.CommandUsage}`");
+
+                    if (!string.IsNullOrEmpty(commandHelpDefinition.CommandUsageDefinition))
+                    {
+                        embedBuilder.AddField("Definitions", commandHelpDefinition.CommandUsageDefinition);
+                    }
+
+                    var embed = embedBuilder.Build();
 
                     await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
                 }
