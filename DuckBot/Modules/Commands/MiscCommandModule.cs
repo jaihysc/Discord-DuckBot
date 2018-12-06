@@ -54,7 +54,7 @@ namespace DuckBot.Modules.Commands
             await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
         }
         [Command("add")]
-        public async Task AddRoleFromListAsync(string roleName)
+        public async Task AddRoleFromListAsync([Remainder]string roleName)
         {
             //Get roles for guild
             var returnGuildRoles = GuildRolesManager.GetGuildRoles(Context.Guild.Id);
@@ -69,7 +69,7 @@ namespace DuckBot.Modules.Commands
             await (Context.User as IGuildUser).AddRoleAsync(selectedRole);
         }
         [Command("remove")]
-        public async Task RemoveRoleFromListAsync(string roleName)
+        public async Task RemoveRoleFromListAsync([Remainder]string roleName)
         {
             //Get roles for guild
             var returnGuildRoles = GuildRolesManager.GetGuildRoles(Context.Guild.Id);

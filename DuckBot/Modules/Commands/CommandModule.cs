@@ -133,7 +133,7 @@ namespace DuckBot.Modules.Commands
             }
         }
 
-        //Stocks
+        //Cases
         [Group("case")]
         [Alias("c")]
         public class Case : ModuleBase<SocketCommandContext>
