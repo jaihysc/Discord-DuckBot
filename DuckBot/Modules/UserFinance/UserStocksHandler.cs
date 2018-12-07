@@ -5,6 +5,7 @@ using DuckBot;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.Finance.ServiceThreads;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using System;
 using System.Collections.Generic;
 using System.IO;

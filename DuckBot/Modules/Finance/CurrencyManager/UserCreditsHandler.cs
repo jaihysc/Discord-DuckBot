@@ -3,6 +3,7 @@ using Discord.Commands;
 using DuckBot.Core;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using System;
 using System.IO;
 using System.Threading.Tasks;
@@ -53,7 +54,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
             }
             else
             {
-                long taxAmount = UserCreditsTaxHandler.TaxCollector(Context, amount);
+                long taxAmount = UserCreditsTaxHandler.TaxCollector(amount);
 
                 var recipient = Context.Guild.GetUser(MentionUtils.ParseUser(targetUser));
 
@@ -191,7 +192,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
                 long userCreditsNew = 0;
                 if (deductTaxes == true)
                 {
-                    userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(Context, userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount);
+                    userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount);
                 }
                 else if (deductTaxes == false)
                 {
@@ -282,7 +283,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
                 long userCreditsNew = 0;
                 if (deductTaxes == true)
                 {
-                    userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(Context, userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount);
+                    userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount);
                 }
                 else if (deductTaxes == false)
                 {

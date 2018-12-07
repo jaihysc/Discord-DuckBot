@@ -3,6 +3,7 @@ using Discord.Commands;
 using DuckBot.Core;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using System;
 using System.IO;
 using System.Threading.Tasks;

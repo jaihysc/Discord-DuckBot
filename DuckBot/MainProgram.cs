@@ -8,6 +8,7 @@ using DuckBot.Modules.Finance.ServiceThreads;
 using DuckBot.Modules.Moderation;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Globalization;
@@ -158,7 +159,25 @@ namespace DuckBot
 
                 if (result.Error == CommandError.UnknownCommand)
                 {
-                    await context.Channel.SendMessageAsync("Invalid command, use `.d help` for a list of commands");
+                    //Find similar commands
+                    var commandHelpDefinitionStorage = XmlManager.FromXmlFile<UserHelpHandler.HelpMenuCommands>(CoreMethod.GetFileLocation(@"CommandHelpDescription.xml"));
+                    string similarItemsString = UserHelpHandler.FindSimilarCommands(
+                        commandHelpDefinitionStorage.CommandHelpEntry.Select(i => i.CommandName).ToList(), 
+                        message.ToString(),
+                        //Add length of bot command prefix to fuzzy search index
+                        5 + botCommandPrefix.Length);
+
+                    //If no similar matches are found, send nothing
+                    if (string.IsNullOrEmpty(similarItemsString))
+                    {
+                        await context.Channel.SendMessageAsync("Invalid command, use `.d help` for a list of commands");
+                    }
+                    //If similar matches are found, send suggestions
+                    else
+                    {
+                        await context.Channel.SendMessageAsync($"Invalid command, use `.d help` for a list of commands. Did you mean: \n {similarItemsString}");
+                    }
+                    
                 }
                 else if (result.Error == CommandError.BadArgCount)
                 {

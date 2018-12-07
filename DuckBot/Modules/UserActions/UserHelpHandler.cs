@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,11 +19,13 @@ namespace DuckBot.Modules.UserActions
             var embedBuilder = new EmbedBuilder()
                 .WithDescription(" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki/Main). \n \n Prefix: `.d`")
                 .WithColor(new Color(253, 184, 20))
-                .WithFooter(footer => {
+                .WithFooter(footer =>
+                {
                     footer
                         .WithText("To check command usage, type .d help <command> // Use .d @help for moderation commands // Sent by " + Context.Message.Author.ToString());
                 })
-                .WithAuthor(author => {
+                .WithAuthor(author =>
+                {
                     author
                         .WithName("Duck Help")
                         .WithIconUrl("https://ubisafe.org/images/duck-transparent-jpeg-5.png");
@@ -74,6 +77,7 @@ namespace DuckBot.Modules.UserActions
             public string CommandUsage { get; set; }
             public string CommandUsageDefinition { get; set; }
         }
+
         public static async Task DisplayCommandHelpMenu(SocketCommandContext Context, string inputCommand)
         {
             //Get command help list from storage
@@ -125,8 +129,47 @@ namespace DuckBot.Modules.UserActions
             //Send warning if command definition could not be found
             if (commandHelpDefinitionExists == false)
             {
-                await Context.Channel.SendMessageAsync($"Command **{inputCommand}** could not be found");
+                string similarItemsString = FindSimilarCommands(commandHelpDefinitionStorage.CommandHelpEntry.Select(i => i.CommandName).ToList(), inputCommand);
+
+                //If no similar matches are found, send nothing
+                if (string.IsNullOrEmpty(similarItemsString))
+                {
+                    await Context.Channel.SendMessageAsync($"Command **{inputCommand}** could not be found");
+                }
+                //If similar matches are found, send suggestions
+                else
+                {
+                    await Context.Channel.SendMessageAsync($"Command **{inputCommand}** could not be found. Did you mean: \n {similarItemsString}");
+                }
+
             }
+        }
+
+        /// <summary>
+        /// Try to find similar help items based on input
+        /// </summary>
+        /// <param name="storedCommands">String list of stored strings</param>
+        /// <param name="inputCommand">Input string to check</param>
+        /// <returns></returns>
+        public static string FindSimilarCommands(List<string> storedCommands, string inputCommand, int fuzzyIndex=6)
+        {
+            //Filter out command names to string
+            string similarItemsString = "";
+
+            foreach (var item in storedCommands)
+            {
+                //If fuzzy search difference is less than 6
+                if (FuzzySearchManager.Compute(item.ToLower(), inputCommand.ToLower()) < fuzzyIndex)
+                {
+                    //Concat items in list together
+                    similarItemsString = string.Concat(similarItemsString, "\n", item);
+                }
+
+            }
+
+            return similarItemsString;
         }
     }
 }
+
+

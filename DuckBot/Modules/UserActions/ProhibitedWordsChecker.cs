@@ -4,6 +4,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot.Modules.Finance;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;

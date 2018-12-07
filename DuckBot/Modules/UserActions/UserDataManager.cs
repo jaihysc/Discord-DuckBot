@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using DuckBot.Core;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using System;
 using System.Collections.Generic;
 using System.Linq;

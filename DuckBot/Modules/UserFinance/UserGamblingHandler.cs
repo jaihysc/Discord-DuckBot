@@ -2,11 +2,11 @@
 using Discord.WebSocket;
 using System;
 using System.Threading.Tasks;
-using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using DuckBot.Modules.UserActions;
 using DuckBot.Modules.Finance.CurrencyManager;
-using DuckBot.Modules.Finance;
 using DuckBot.Core;
+using DuckBot_ClassLibrary;
 
 namespace DuckBot.Modules.UserFinance
 {
@@ -50,7 +50,7 @@ namespace DuckBot.Modules.UserFinance
         {
             long returnAmount = 0;
 
-            int randomNumber = rand.Next(1000000);
+            double randomNumber = rand.Next(2000000);
 
             //Change this number to change the change of winning
             int randomNumber2 = rand.Next(5);

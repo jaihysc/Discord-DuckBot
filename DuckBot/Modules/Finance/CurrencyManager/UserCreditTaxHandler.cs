@@ -11,7 +11,12 @@ namespace DuckBot.Modules.Finance.CurrencyManager
 {
     public class UserCreditsTaxHandler
     {
-        public static long TaxCollector(SocketCommandContext Context, long inputCredits)
+        /// <summary>
+        /// Returns tax deductions
+        /// </summary>
+        /// <param name="inputCredits">Amount to find tax on</param>
+        /// <returns>Tax deduction amount</returns>
+        public static long TaxCollector(long inputCredits)
         {
             double taxSubtractions = inputCredits * double.Parse(SettingsManager.RetrieveFromConfigFile("taxRate"));
 

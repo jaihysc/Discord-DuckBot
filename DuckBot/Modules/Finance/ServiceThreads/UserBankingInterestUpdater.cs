@@ -2,6 +2,7 @@
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using System;
 using System.Collections.Generic;
 using System.IO;

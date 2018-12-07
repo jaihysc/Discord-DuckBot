@@ -3,6 +3,7 @@ using DuckBot.Modules.Finance;
 using DuckBot.Modules.UserActions;
 using DuckBot.Modules.UserFinance;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using System;
 using System.Collections.Generic;
 using System.IO;
