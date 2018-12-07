@@ -45,8 +45,19 @@ namespace DuckBot.Modules.Commands
                 guildRoleNameList.Add($"**{role.RoleName}**");
             }
 
-            guildRoleNameList.Add("\u200b");
-            embedBuilder.AddInlineField("Role Name", string.Join(" \n ", guildRoleNameList));
+            //Join guild role names from list
+            string joinedGuildRoleNameList = string.Join(" \n ", guildRoleNameList);
+
+            //If guild has no set roles, add invisible character
+            if (string.IsNullOrEmpty(joinedGuildRoleNameList))
+            {
+                embedBuilder.AddInlineField("Role Name", "\u200b");
+            }
+            //If guild has roles, add roles
+            else
+            {
+                embedBuilder.AddInlineField("Role Name", joinedGuildRoleNameList);
+            }
 
             //Send user stock portfolio
             var embed = embedBuilder.Build();

@@ -238,8 +238,16 @@ namespace DuckBot.Modules.UserFinance
                 userStockBuyMarketValueList.Add($"**{userStock.StockBuyPrice}** || **{userStockMarketPrice}**");
             }
 
-            embedBuilder.AddInlineField("Stock Ticker - Amount", string.Join(" \n ", userStockTickerList));
-            embedBuilder.AddInlineField("Buy price || Market price", string.Join(" \n ", userStockBuyMarketValueList));
+            //Join user stock items
+            string joinedUserStockTickerList = string.Join(" \n ", userStockTickerList);
+            string joinedUserStockBuyMarketValueList = string.Join(" \n ", userStockBuyMarketValueList);
+
+            //Add inline field if user has stocks
+            if (!string.IsNullOrEmpty(joinedUserStockTickerList) && !string.IsNullOrEmpty(joinedUserStockBuyMarketValueList))
+            {
+                embedBuilder.AddInlineField("Stock Ticker - Amount", joinedUserStockTickerList);
+                embedBuilder.AddInlineField("Buy price || Market price", joinedUserStockBuyMarketValueList);
+            }
 
             //Send user stock portfolio
             var embed = embedBuilder.Build();
@@ -250,8 +258,8 @@ namespace DuckBot.Modules.UserFinance
         public static async Task DisplayMarketStocksAsync(SocketCommandContext Context)
         {
             //User stock list
-            List<string> userStockTickerList = new List<string>();
-            List<string> userStockBuyMarketValueList = new List<string>();
+            List<string> stockTickerList = new List<string>();
+            List<string> stockBuyMarketValueList = new List<string>();
 
             //Get market stock value from storage
             var marketStockStorage = XmlManager.FromXmlFile<MarketStockStorage>(CoreMethod.GetFileLocation(@"\MarketStocksValue.xml"));
@@ -285,12 +293,20 @@ namespace DuckBot.Modules.UserFinance
             foreach (var marketStock in marketStockStorage.MarketStock)
             {
                 //Add market stock value to list
-                userStockTickerList.Add($"**{marketStock.StockTicker}**");
-                userStockBuyMarketValueList.Add($"**{marketStock.StockPrice}**");
+                stockTickerList.Add($"**{marketStock.StockTicker}**");
+                stockBuyMarketValueList.Add($"**{marketStock.StockPrice}**");
             }
 
-            embedBuilder.AddInlineField("Stock Ticker", string.Join(" \n ", userStockTickerList));
-            embedBuilder.AddInlineField("Market price", string.Join(" \n ", userStockBuyMarketValueList));
+            //Join user stock items
+            string joinedUserStockTickerList = string.Join(" \n ", stockTickerList);
+            string joinedUserStockBuyMarketValueList = string.Join(" \n ", stockBuyMarketValueList);
+
+            //Add inline field if stock exists
+            if (!string.IsNullOrEmpty(joinedUserStockTickerList) && !string.IsNullOrEmpty(joinedUserStockBuyMarketValueList))
+            {
+                embedBuilder.AddInlineField("Stock Ticker", string.Join(" \n ", stockTickerList));
+                embedBuilder.AddInlineField("Market price", string.Join(" \n ", stockBuyMarketValueList));
+            }
 
             //Send user stock portfolio
             var embed = embedBuilder.Build();
