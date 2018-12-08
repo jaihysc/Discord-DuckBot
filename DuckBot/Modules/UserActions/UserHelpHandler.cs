@@ -30,7 +30,7 @@ namespace DuckBot.Modules.UserActions
                         .WithName("Duck Help")
                         .WithIconUrl("https://ubisafe.org/images/duck-transparent-jpeg-5.png");
                 })
-                .AddField("Currency Commands", "`balance` `daily` `debt` `borrow` `return` `moneyTransfer` ")
+                .AddField("Currency Commands", "`balance` `daily` `debt` `borrow` `return` `moneyTransfer` `bankruptcy` ")
                 .AddField("Game Commands", "`Prefix: game` | `slot`")
                 .AddField("Stock Commands", "`Prefix: stock` | `portfolio` `market` `buy` `sell`")
                 .AddField("Case Commands", "`Prefix: case` | `open`")
@@ -158,8 +158,9 @@ namespace DuckBot.Modules.UserActions
 
             foreach (var item in storedCommands)
             {
-                //If fuzzy search difference is less than 6
-                if (FuzzySearchManager.Compute(item.ToLower(), inputCommand.ToLower()) < fuzzyIndex)
+                //If fuzzy search difference is less than 6 or if storedCommand contains inputCommand
+                if (FuzzySearchManager.Compute(item.ToLower(), inputCommand.ToLower()) < fuzzyIndex ||
+                    item.ToLower().Contains(inputCommand.ToLower()))
                 {
                     //Concat items in list together
                     similarItemsString = string.Concat(similarItemsString, "\n", item);

@@ -14,6 +14,8 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
 {
     public class UnboxingHandler
     {
+        private static RootWeaponSkin rootWeaponSkin;
+
         /// <summary>
         /// Opens a virtual CS:GO case, result is sent to Context channel in a method
         /// </summary>
@@ -21,6 +23,13 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
         /// <returns></returns>
         public static async Task OpenCase(SocketCommandContext Context)
         {
+            //Gets skin data if null
+            if (rootWeaponSkin == null)
+            {
+                //Gets weapon skin data for case unbox
+                GetRootWeaponSkin();
+            }
+
             //Test if user has enough credits
             if (UserCreditsHandler.AddCredits(Context, -300) == true)
             {
@@ -28,10 +37,10 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
                 var result = itemProcess.CalculateItemRarity();
 
                 //Get item
-                SkinItem skinItem = itemProcess.GetItem(result, GetRootWeaponSkin());
+                SkinItem skinItem = itemProcess.GetItem(result, rootWeaponSkin);
 
                 //Add money for skin quality
-                long skinMarketValue = itemProcess.GiveItemQualityCredits(Context, result);
+                long skinMarketValue = CsgoItemPriceHandler.GetWeaponSkinPrice(skinItem.market_name);
 
                 //Send item into
                 var unboxHandler = new UnboxingHandler();
@@ -66,16 +75,14 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
         }
 
-        private static RootWeaponSkin GetRootWeaponSkin()
+        private static void GetRootWeaponSkin()
         {
             //Read skin data from local json file
-            RootWeaponSkin rootObject;
             using (StreamReader r = new StreamReader(CoreMethod.GetFileLocation("skinData.json")))
             {
                 string json = r.ReadToEnd();
-                rootObject = JsonConvert.DeserializeObject<RootWeaponSkin>(json);
+                rootWeaponSkin = JsonConvert.DeserializeObject<RootWeaponSkin>(json);
             }
-            return rootObject;
         }
     }
 
@@ -150,22 +157,6 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
 
             return returnResult;
         }
-
-        public long GiveItemQualityCredits(SocketCommandContext Context, ItemRarity itemRarity)
-        {
-            //Give credits on item quality
-            if (itemRarity == ItemRarity.White) { UserCreditsHandler.AddCredits(Context , 3); return 3; }
-            if (itemRarity == ItemRarity.LightBlue) { UserCreditsHandler.AddCredits(Context, 10); return 10; }
-            if (itemRarity == ItemRarity.DarkerBlue) { UserCreditsHandler.AddCredits(Context, 50); return 50; }
-            if (itemRarity == ItemRarity.Purple) { UserCreditsHandler.AddCredits(Context, 300); return 300; }
-            if (itemRarity == ItemRarity.Pink) { UserCreditsHandler.AddCredits(Context, 900); return 900; }
-            if (itemRarity == ItemRarity.Red) { UserCreditsHandler.AddCredits(Context, 6000); return 6000; }
-            if (itemRarity == ItemRarity.Gold) { UserCreditsHandler.AddCredits(Context, 100000); return 100000; }
-            if (itemRarity == ItemRarity.Yellow) { UserCreditsHandler.AddCredits(Context, 500000); return 500000; } 
-
-            return 0;
-        }
-
 
         public enum ItemRarity { White, LightBlue, DarkerBlue, Purple, Pink, Red, Gold, Yellow }
     }

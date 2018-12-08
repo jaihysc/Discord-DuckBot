@@ -52,15 +52,13 @@ namespace DuckBot.Modules.Finance.ServiceThreads
 
                     //Calculate forcefully deduct amount
                     long deductionAmount = 0;
-                    //Set deduction to 1 in the event debt is less than 5
-                    if (userCreditStorage.UserInfo.UserBankingStorage.Credit == 0)
+                    //Set deduction to 1 in the event debt is less than 5 and user owns credits
+                    if (userCreditStorage.UserInfo.UserBankingStorage.Credit > 0 && userCreditStorage.UserInfo.UserBankingStorage.CreditDebt > 0)
                     {
                         deductionAmount = 1;
                     }
-                    else
-                    {
-                        deductionAmount = Convert.ToInt64(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("taxRate")));
-                    }
+
+                    deductionAmount = Convert.ToInt64(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("interestRate")));
 
                     //Calculate new credits
                     long userCreditsNew = 0;

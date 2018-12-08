@@ -40,7 +40,7 @@ namespace DuckBot.Modules.UserFinance
                     bool buyStockExists = true;
 
                     //Get user portfolio
-                    var userStocksStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                    var userStocksStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + ".xml");
 
                     //Calculate stock price
                     long stockTotalCost = stock.StockPrice * buyAmount;
@@ -83,7 +83,7 @@ namespace DuckBot.Modules.UserFinance
 
 
                         //Add existing user stocks to list
-                        var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                        var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + ".xml");
                         List<UserStock> userStockStorageList = new List<UserStock>();
 
                         foreach (var userStock in userStockStorage.UserStock)
@@ -103,7 +103,7 @@ namespace DuckBot.Modules.UserFinance
                             UserStock = userStockStorageList
                         };
 
-                        XmlManager.ToXmlFile(userStockRecord, CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                        XmlManager.ToXmlFile(userStockRecord, CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + ".xml");
                     }
 
                     //Send warning if stock does not exist
@@ -124,7 +124,7 @@ namespace DuckBot.Modules.UserFinance
                 if (stock.StockTicker == tickerSymbol)
                 {
                     //Get user portfolio
-                    var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                    var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + ".xml");
 
                     //Check if user is selling more stocks than they have
                     try
@@ -185,7 +185,7 @@ namespace DuckBot.Modules.UserFinance
                                 UserStock = userStockStorageList
                             };
 
-                            XmlManager.ToXmlFile(userStockRecord, CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                            XmlManager.ToXmlFile(userStockRecord, CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + ".xml");
                         }
                     }
                     catch (Exception ex)
@@ -204,7 +204,7 @@ namespace DuckBot.Modules.UserFinance
             List<string> userStockBuyMarketValueList = new List<string>();
 
             //Get user portfolio
-            var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+            var userStockStorage = XmlManager.FromXmlFile<UserStockStorage>(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + Context.User.Id.ToString() + ".xml");
 
             var embedBuilder = new EmbedBuilder()
                 .WithColor(new Color(40, 144, 175))

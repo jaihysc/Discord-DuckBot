@@ -5,6 +5,9 @@ using DuckBot.Modules.Finance;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.UserActions;
 using DuckBot.Modules.UserFinance;
+using DuckBot_ClassLibrary;
+using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace DuckBot.Modules.Commands
@@ -78,6 +81,27 @@ namespace DuckBot.Modules.Commands
         public async Task ReturnCreditsAsync(long amount)
         {
             await UserDebtHandler.ReturnCredits(Context, amount);
+
+        }
+
+        [Command("bankruptcy")]
+        public async Task BankruptcyAsync()
+        {
+            
+            try
+            {
+                //Delete user profile
+                UserCreditsHandler.SetCredits(Context, 0);
+                UserDebtHandler.SetDebt(Context, 0);
+                //Delete user stocks
+                File.Delete(CoreMethod.GetFileLocation(@"\UserStocks") + $@"\{Context.Message.Author.Id}.xml");
+            }
+            catch (Exception)
+            {
+            }
+
+            //Send final confirmation
+            await Context.Channel.SendMessageAsync($"It's all over now {Context.Message.Author.Mention}");
 
         }
 

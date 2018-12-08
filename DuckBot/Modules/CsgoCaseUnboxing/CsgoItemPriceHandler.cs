@@ -9,31 +9,71 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Modules.CsgoCaseUnboxing
 {
-    public class CsgoItemPriceHandler
+    public static class CsgoItemPriceHandler
     {
-        public SkinItem GetItemPrice(string marketHashName)
+        private static Random rand = new Random();
+
+        private static RootWeaponSkinPrice rootWeaponSkinPrice;
+
+        /// <summary>
+        /// Returns the market value of the skin, multiplied by 100
+        /// </summary>
+        /// <param name="skinName">Name of the skin to find</param>
+        /// <returns>Long of the skin price mutltiplied by 100</returns>
+        public static long GetWeaponSkinPrice(string skinName)
         {
-            var rootObject = GetRootWeaponSkinPrice();
+            //If weapon skin price data is null
+            if (rootWeaponSkinPrice == null)
+            {
+                //Read skin prices from file
+                GetRootWeaponSkin();
+            }
 
-            var sortedResult = rootObject.items
-                .Where(e => !e.market_name.ToLower().Contains(marketHashName)).ToArray();
+            //Filter to ones with the skinName
+            try
+            {
+                var sortedWeaponSkinPrice = rootWeaponSkinPrice.items.Where(s => s.name == skinName).ToArray();
 
+                var sortedWeaponSkinSingularPrice = sortedWeaponSkinPrice.FirstOrDefault();
 
-            var returnResult = sortedResult[0];
+                //Return the price
+                return sortedWeaponSkinSingularPrice.price;
+            }
+            //If it failed to find skin price
+            catch (Exception)
+            {
+                //Return random amount
+                return rand.Next(50, 200);
+            }
 
-            return returnResult;
         }
 
-        private static RootWeaponSkin GetRootWeaponSkinPrice()
+        private static void GetRootWeaponSkin()
         {
             //Read skin data from local json file
-            RootWeaponSkin rootObject;
-            using (StreamReader r = new StreamReader(CoreMethod.GetFileLocation("skinData.json")))
+            using (StreamReader r = new StreamReader(CoreMethod.GetFileLocation("skinPricing.json")))
             {
                 string json = r.ReadToEnd();
-                rootObject = JsonConvert.DeserializeObject<RootWeaponSkin>(json);
+                rootWeaponSkinPrice = JsonConvert.DeserializeObject<RootWeaponSkinPrice>(json);
             }
-            return rootObject;
         }
+    }
+
+    public class Item
+    {
+        public string name { get; set; }
+        public int price { get; set; }
+        public int have { get; set; }
+        public int max { get; set; }
+        public int rate { get; set; }
+        public int tr { get; set; }
+        public int res { get; set; }
+    }
+
+    public class RootWeaponSkinPrice
+    {
+        public bool success { get; set; }
+        public int num_items { get; set; }
+        public List<Item> items { get; set; }
     }
 }

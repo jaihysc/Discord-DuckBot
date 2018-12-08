@@ -82,7 +82,36 @@ namespace DuckBot.Modules.Finance.CurrencyManager
             }
         }
 
+        /// <summary>
+        /// Sets the user debt
+        /// </summary>
+        /// <param name="Context">Command Context</param>
+        /// <param name="setAmount">Amount to set debt to</param>
+        public static void SetDebt(SocketCommandContext Context, long setAmount)
+        {
+            //Get user debt to list
+            var userCreditDebtStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
 
+            //Write new debt amount 
+            var userRecord = new UserStorage
+            {
+                UserId = userCreditDebtStorage.UserId,
+                UserInfo = new UserInfo
+                {
+                    UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditDebtStorage.UserInfo.UserDailyLastUseStorage.DateTime },
+                    UserBankingStorage = new UserBankingStorage { Credit = userCreditDebtStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = setAmount },
+                    UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditDebtStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
+                }
+            };
+
+            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+        }
+
+        /// <summary>
+        /// Sets the user debt
+        /// </summary>
+        /// <param name="Context">Command Context</param>
+        /// <param name="addAmount">Amount of debt to add</param>
         public static void AddDebt(SocketCommandContext Context, long addAmount)
         {
             //Get user debt to list

@@ -3,6 +3,7 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot.Core;
+using DuckBot.Modules.CsgoCaseUnboxing;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.Finance.ServiceThreads;
 using DuckBot.Modules.Moderation;
@@ -32,6 +33,7 @@ namespace DuckBot
         public static void Main(string[] args)
         {
             //Injection
+            //This will be depreciated soon
             CoreMethod.DeclareRootLocation(rootLocation);
 
             //Runs setup if config files are not present
@@ -163,9 +165,7 @@ namespace DuckBot
                     var commandHelpDefinitionStorage = XmlManager.FromXmlFile<UserHelpHandler.HelpMenuCommands>(CoreMethod.GetFileLocation(@"CommandHelpDescription.xml"));
                     string similarItemsString = UserHelpHandler.FindSimilarCommands(
                         commandHelpDefinitionStorage.CommandHelpEntry.Select(i => i.CommandName).ToList(), 
-                        message.ToString(),
-                        //Add length of bot command prefix to fuzzy search index
-                        5 + botCommandPrefix.Length);
+                        message.ToString().Substring(botCommandPrefix.Length + 1));
 
                     //If no similar matches are found, send nothing
                     if (string.IsNullOrEmpty(similarItemsString))

@@ -25,7 +25,7 @@ namespace DuckBot.Modules.Commands.Preconditions
 
             
             //Create user stock entry if stock entry does not exist
-            if (!File.Exists(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString() + @"\UserStockPortfolio.xml"))
+            if (!File.Exists(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + context.Message.Author.Id + ".xml"))
             {
                 //Create user profile
                 //Write user stock amount
@@ -37,8 +37,7 @@ namespace DuckBot.Modules.Commands.Preconditions
                     }
                 };
 
-                System.IO.Directory.CreateDirectory(CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString());
-                XmlManager.ToXmlFile(userStockRecord, CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString() + @"\UserStockPortfolio.xml");
+                XmlManager.ToXmlFile(userStockRecord, CoreMethod.GetFileLocation(@"\UserStocks") + @"\" + context.User.Id.ToString() + ".xml");
             }
             
             return PreconditionResult.FromSuccess();

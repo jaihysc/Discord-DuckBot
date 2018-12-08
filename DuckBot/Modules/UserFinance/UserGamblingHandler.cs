@@ -50,7 +50,7 @@ namespace DuckBot.Modules.UserFinance
         {
             long returnAmount = 0;
 
-            double randomNumber = rand.Next(2000000);
+            double randomNumber = rand.Next(-10000, 1000000);
 
             //Change this number to change the change of winning
             int randomNumber2 = rand.Next(5);
@@ -99,6 +99,7 @@ namespace DuckBot.Modules.UserFinance
                 {
                     returnAmount = returnAmount * rand.Next(10);
                 }
+                /*
                 if (randomNumber >= 400000 && randomNumber <= 429999)
                 {
                     returnAmount = returnAmount * rand.Next(1, 5);
@@ -111,6 +112,7 @@ namespace DuckBot.Modules.UserFinance
                 {
                     returnAmount = gambleAmount * 2 - (gambleAmount / 3);
                 }
+                */
                 if (randomNumber >= 0 && randomNumber <= 299999)
                 {
                     returnAmount = gambleAmount + gambleAmount;
