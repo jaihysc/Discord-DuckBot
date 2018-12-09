@@ -41,6 +41,7 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
 
                 //Add money for skin quality
                 long skinMarketValue = CsgoItemPriceHandler.GetWeaponSkinPrice(skinItem.market_name);
+                UserCreditsHandler.AddCredits(Context, skinMarketValue);
 
                 //Send item into
                 var unboxHandler = new UnboxingHandler();
