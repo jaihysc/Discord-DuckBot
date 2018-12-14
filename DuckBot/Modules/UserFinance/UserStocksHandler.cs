@@ -211,7 +211,8 @@ namespace DuckBot.Modules.UserFinance
                 .WithFooter(footer =>
                 {
                     footer
-                        .WithText("Sent by " + Context.Message.Author.ToString());
+                        .WithText("Sent by " + Context.Message.Author.ToString())
+                        .WithIconUrl(Context.Message.Author.GetAvatarUrl());
                 })
                 .WithAuthor(author =>
                 {
@@ -282,7 +283,8 @@ namespace DuckBot.Modules.UserFinance
                 .WithFooter(footer =>
                 {
                     footer
-                        .WithText("Sent by " + Context.Message.Author.ToString());
+                        .WithText("Sent by " + Context.Message.Author.ToString())
+                        .WithIconUrl(Context.Message.Author.GetAvatarUrl());
                 })
                 .WithAuthor(author =>
                 {
@@ -329,7 +331,8 @@ namespace DuckBot.Modules.UserFinance
                     .WithColor(new Color(192, 192, 192))
                     .WithFooter(footer => {
                         footer
-                            .WithText($"Sent by {Context.Message.Author.ToString()}");
+                            .WithText($"Sent by {Context.Message.Author.ToString()}")
+                            .WithIconUrl(Context.Message.Author.GetAvatarUrl());
                     })
                     .WithThumbnailUrl(string.Format("https://storage.googleapis.com/iex/api/logos/{0}.png", stockTicker.ToUpper()))
                     .WithAuthor(author => {

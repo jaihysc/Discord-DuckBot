@@ -17,12 +17,13 @@ namespace DuckBot.Modules.UserActions
         {
             //https://leovoel.github.io/embed-visualizer/
             var embedBuilder = new EmbedBuilder()
-                .WithDescription(" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki/Main). \n \n Prefix: `.d`")
+                .WithDescription(" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki). \n \n Prefix: `.d`")
                 .WithColor(new Color(253, 184, 20))
                 .WithFooter(footer =>
                 {
                     footer
-                        .WithText("To check command usage, type .d help <command> // Use .d @help for moderation commands // Sent by " + Context.Message.Author.ToString());
+                        .WithText("To check command usage, type .d help <command> // Use .d @help for moderation commands // Sent by " + Context.Message.Author.ToString())
+                        .WithIconUrl(Context.Message.Author.GetAvatarUrl());
                 })
                 .WithAuthor(author =>
                 {
@@ -33,7 +34,7 @@ namespace DuckBot.Modules.UserActions
                 .AddField("Currency Commands", "`balance` `daily` `debt` `borrow` `return` `moneyTransfer` `bankruptcy` ")
                 .AddField("Game Commands", "`Prefix: game` | `slot`")
                 .AddField("Stock Commands", "`Prefix: stock` | `portfolio` `market` `buy` `sell`")
-                .AddField("Case Commands", "`Prefix: case` | `open`")
+                .AddField("Case Commands", "`Prefix: case` | `open` `inventory` `sell`")
                 .AddField("Role Commands", "`Prefix: role` | `list` `add` `remove`");
 
             var embed = embedBuilder.Build();
@@ -49,7 +50,8 @@ namespace DuckBot.Modules.UserActions
                 .WithFooter(footer =>
                 {
                     footer
-                        .WithText("To check command usage, type .d @help <command> // Use .d help for standard commands // Sent by " + Context.Message.Author.ToString());
+                        .WithText("To check command usage, type .d @help <command> // Use .d help for standard commands // Sent by " + Context.Message.Author.ToString())
+                        .WithIconUrl(Context.Message.Author.GetAvatarUrl());
                 })
                 .WithAuthor(author =>
                 {

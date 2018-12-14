@@ -2,6 +2,7 @@
 using Discord.Commands;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot_ClassLibrary;
+using DuckBot_ClassLibrary.Modules;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Modules.CsgoCaseUnboxing
 {
-    public class UnboxingHandler
+    public class CsgoUnboxingHandler
     {
-        private static RootWeaponSkin rootWeaponSkin;
+        public static RootWeaponSkin rootWeaponSkin;
 
         /// <summary>
         /// Opens a virtual CS:GO case, result is sent to Context channel in a method
@@ -23,12 +24,8 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
         /// <returns></returns>
         public static async Task OpenCase(SocketCommandContext Context)
         {
-            //Gets skin data if null
-            if (rootWeaponSkin == null)
-            {
-                //Gets weapon skin data for case unbox
-                GetRootWeaponSkin();
-            }
+            //Gets weapon skin data for case unbox
+            GetRootWeaponSkin();
 
             //Test if user has enough credits
             if (UserCreditsHandler.AddCredits(Context, -300) == true)
@@ -36,15 +33,46 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
                 var itemProcess = new ItemDropProcessing();
                 var result = itemProcess.CalculateItemRarity();
 
-                //Get item
-                SkinItem skinItem = itemProcess.GetItem(result, rootWeaponSkin);
+                //While item is not found, try to get a item
+                SkinItem skinItem = null;
+                while (skinItem == null)
+                {
+                    //Get item
+                    skinItem = itemProcess.GetItem(result, rootWeaponSkin);
+
+                    //Read skin prices from file
+                    var rootWeaponSkinPrice = CsgoItemPriceHandler.GetRootWeaponSkin();
+
+                    //Check if a price exists for the item about to be given to the user
+                    bool itemPriceExists = false;
+                    foreach (var item in rootWeaponSkinPrice.items)
+                    {
+                        if (item.name == skinItem.market_hash_name)
+                        {
+                            itemPriceExists = true;
+                        }               
+                    }
+
+                    //If doesn't exist, try to get another item
+                    if (itemPriceExists == false)
+                    {
+                        skinItem = null;
+                    }
+                }             
 
                 //Add money for skin quality
                 long skinMarketValue = CsgoItemPriceHandler.GetWeaponSkinPrice(skinItem.market_name);
-                UserCreditsHandler.AddCredits(Context, skinMarketValue);
+                //UserCreditsHandler.AddCredits(Context, skinMarketValue);
+
+                //Add item to user file inventory
+                var userSkin = XmlManager.FromXmlFile<UserSkinStorageRootobject>(CoreMethod.GetFileLocation("UserSkinStorage.xml"));
+
+                userSkin.UserSkinEntries.Add(new UserSkinEntry { Market_hash_name = skinItem.market_hash_name, OwnerID = Context.Message.Author.Id, UnboxDate = DateTime.UtcNow});
+
+                XmlManager.ToXmlFile(userSkin, CoreMethod.GetFileLocation("UserSkinStorage.xml"));
 
                 //Send item into
-                var unboxHandler = new UnboxingHandler();
+                var unboxHandler = new CsgoUnboxingHandler();
                 await unboxHandler.SendOpenedCaseInfo(Context, skinItem, skinMarketValue);
             }
             else
@@ -60,7 +88,8 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
                 .WithFooter(footer =>
                 {
                     footer
-                        .WithText("Sent by " + Context.Message.Author.ToString());
+                        .WithText("Sent by " + Context.Message.Author.ToString())
+                        .WithIconUrl(Context.Message.Author.GetAvatarUrl());
                 })
                 .WithAuthor(author =>
                 {
@@ -76,14 +105,19 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
         }
 
-        private static void GetRootWeaponSkin()
+        public static RootWeaponSkin GetRootWeaponSkin()
         {
-            //Read skin data from local json file
-            using (StreamReader r = new StreamReader(CoreMethod.GetFileLocation("skinData.json")))
+            if (rootWeaponSkin == null)
             {
-                string json = r.ReadToEnd();
-                rootWeaponSkin = JsonConvert.DeserializeObject<RootWeaponSkin>(json);
+                //Read skin data from local json file
+                using (StreamReader r = new StreamReader(CoreMethod.GetFileLocation("skinData.json")))
+                {
+                    string json = r.ReadToEnd();
+                    rootWeaponSkin = JsonConvert.DeserializeObject<RootWeaponSkin>(json);
+                }
             }
+
+            return rootWeaponSkin;
         }
     }
 
@@ -94,8 +128,8 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
         {
             int randomNumber = rand.Next(9999);
 
-            if (randomNumber < 10000 && randomNumber >= 6004) return ItemRarity.LightBlue;
-            if (randomNumber < 6004 && randomNumber >= 2008) return ItemRarity.DarkerBlue;
+            //if (randomNumber < 10000 && randomNumber >= 6004) return ItemRarity.LightBlue;
+            if (randomNumber < 10000 && randomNumber >= 2008) return ItemRarity.DarkerBlue;
             if (randomNumber < 2008 && randomNumber >= 410) return ItemRarity.Purple;
             if (randomNumber < 410 && randomNumber >= 90) return ItemRarity.Pink;
             if (randomNumber < 90 && randomNumber >= 26) return ItemRarity.Red;

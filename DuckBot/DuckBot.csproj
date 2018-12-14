@@ -35,8 +35,8 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Discord.Addons.Interactive, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Discord.Addons.Interactive.1.0.1\lib\netstandard1.1\Discord.Addons.Interactive.dll</HintPath>
+    <Reference Include="Discord.Addons.Interactive, Version=2.0.3.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Discord.Addons.PassiveInteractive.2.0.3\lib\netstandard2.0\Discord.Addons.Interactive.dll</HintPath>
     </Reference>
     <Reference Include="Discord.Net.Commands, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Discord.Net.Commands.1.0.2\lib\netstandard1.1\Discord.Net.Commands.dll</HintPath>
@@ -144,7 +144,7 @@
     <Compile Include="Modules\Commands\StandardCommands\CommandModule.cs" />
     <Compile Include="Modules\Commands\ElevatedCommandModule.cs" />
     <Compile Include="Modules\Commands\ManagementCommandModulecs.cs" />
-    <Compile Include="Modules\Commands\StandardCommands\MiscCommandModule.cs" />
+    <Compile Include="Modules\Commands\StandardCommands\StandardRoleCommandModule.cs" />
     <Compile Include="Modules\Commands\Preconditions\BlacklistedUsersPrecondition.cs" />
     <Compile Include="Modules\Commands\Preconditions\UserRateLimitPrecondition.cs" />
     <Compile Include="Modules\Commands\Preconditions\UserStorageCheckerPrecondition.cs" />
@@ -156,6 +156,7 @@
     <Compile Include="Modules\Commands\StandardCommands\StandardGameCommandModule.cs" />
     <Compile Include="Modules\Commands\StandardCommands\StandardStockCommandModule.cs" />
     <Compile Include="Modules\CsgoCaseUnboxing\CsgoCaseUnboxingHandler.cs" />
+    <Compile Include="Modules\CsgoCaseUnboxing\CsgoInventoryManager.cs" />
     <Compile Include="Modules\CsgoCaseUnboxing\CsgoItemPriceHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserBankingHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserCreditsHandler.cs" />

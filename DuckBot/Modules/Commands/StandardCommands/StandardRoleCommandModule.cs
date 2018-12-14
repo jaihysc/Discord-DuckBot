@@ -9,11 +9,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DuckBot.Modules.Commands
+namespace DuckBot.Modules.Commands.StandardCommands
 {
     [Group("role")]
     [Alias("r")]
-    public class MiscCommandModule : ModuleBase<SocketCommandContext>
+    public class StandardRoleCommandModule : ModuleBase<SocketCommandContext>
     {
         //Roles
         [Command("list")]

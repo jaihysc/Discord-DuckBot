@@ -2,6 +2,7 @@
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot.Modules.Commands.Preconditions;
 using DuckBot.Modules.Finance;
 using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;
@@ -28,6 +29,27 @@ namespace DuckBot.Modules.UserActions
             bool sendSwearWarning = false;
             List<string> blockedWords = new List<string>();
 
+            // If this command was NOT executed by predefined users, return a failure
+            List<ulong> whitelistedUsers = new List<ulong>();
+
+            CoreMethod.ReadFromFileToList("UserWhitelist.txt").ForEach(u => whitelistedUsers.Add(ulong.Parse(u)));
+
+            //Test if user is whitelisted
+            bool userIsWhiteListed = false;
+            foreach (var user in whitelistedUsers)
+            {
+                if (message.Author.Id == user)
+                {
+                    userIsWhiteListed = true;
+                }
+            }
+
+            bool userWhiteListed = false;
+            if (userIsWhiteListed == true)
+            {
+                userWhiteListed = true;
+            }
+
             //Prohibited word detection
             try
             {
@@ -53,7 +75,7 @@ namespace DuckBot.Modules.UserActions
                     }
 
                     //Sends swear warning to user if previous statement detected swear word
-                    if (sendSwearWarning == true)
+                    if (sendSwearWarning == true && userWhiteListed == false)
                     {
                         string userReturnString = string.Join(", ", blockedWords);
 

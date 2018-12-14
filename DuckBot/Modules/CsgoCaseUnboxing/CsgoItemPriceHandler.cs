@@ -13,7 +13,7 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
     {
         private static Random rand = new Random();
 
-        private static RootWeaponSkinPrice rootWeaponSkinPrice;
+        public static RootWeaponSkinPrice rootWeaponSkinPrice;
 
         /// <summary>
         /// Returns the market value of the skin, multiplied by 100
@@ -22,12 +22,8 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
         /// <returns>Long of the skin price mutltiplied by 100</returns>
         public static long GetWeaponSkinPrice(string skinName)
         {
-            //If weapon skin price data is null
-            if (rootWeaponSkinPrice == null)
-            {
-                //Read skin prices from file
-                GetRootWeaponSkin();
-            }
+            //Read skin prices from file
+            GetRootWeaponSkin();
 
             //Filter to ones with the skinName
             try
@@ -48,14 +44,19 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
 
         }
 
-        private static void GetRootWeaponSkin()
+        public static RootWeaponSkinPrice GetRootWeaponSkin()
         {
-            //Read skin data from local json file
-            using (StreamReader r = new StreamReader(CoreMethod.GetFileLocation("skinPricing.json")))
+            if (rootWeaponSkinPrice == null)
             {
-                string json = r.ReadToEnd();
-                rootWeaponSkinPrice = JsonConvert.DeserializeObject<RootWeaponSkinPrice>(json);
+                //Read skin data from local json file
+                using (StreamReader r = new StreamReader(CoreMethod.GetFileLocation("skinPricing.json")))
+                {
+                    string json = r.ReadToEnd();
+                    rootWeaponSkinPrice = JsonConvert.DeserializeObject<RootWeaponSkinPrice>(json);
+                }
             }
+
+            return rootWeaponSkinPrice;
         }
     }
 
