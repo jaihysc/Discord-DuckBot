@@ -18,7 +18,7 @@ namespace DuckBot.Modules.Commands.StandardCommands
     [UserStorageCheckerPrecondition]
     public class StandardFinanceCommandModule : InteractiveBase
     {
-        [Command("balance")]
+        [Command("balance", RunMode = RunMode.Async)]
         [Alias("bal")]
         public async Task SlotBalanceAsync()
         {
@@ -28,31 +28,31 @@ namespace DuckBot.Modules.Commands.StandardCommands
                 $"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**," +
                 $" You have **{UserBankingHandler.CreditCurrencyFormatter(userCredits)} Credits**");
         }
-        [Command("daily")]
+        [Command("daily", RunMode = RunMode.Async)]
         public async Task SlotDailyCreditsAsync()
         {
             await UserGamblingHandler.SlotDailyCreditsAsync(Context);
         }
 
-        [Command("moneyTransfer")]
+        [Command("moneyTransfer", RunMode = RunMode.Async)]
         [Alias("mT")]
         public async Task MoneyTransferAsync(string targetUser, long amount)
         {
             await UserCreditsHandler.TransferCredits(Context, targetUser, amount);
         }
 
-        [Command("debt")]
+        [Command("debt", RunMode = RunMode.Async)]
         public async Task GetBorrowedCreditsAsync()
         {
             await UserDebtHandler.DisplayUserCreditsDebt(Context);
         }
-        [Command("borrow")]
+        [Command("borrow", RunMode = RunMode.Async)]
         public async Task BorrowCreditsAsync(long amount)
         {
             await UserDebtHandler.BorrowCredits(Context, amount);
 
         }
-        [Command("return")]
+        [Command("return", RunMode = RunMode.Async)]
         public async Task ReturnCreditsAsync(long amount)
         {
             await UserDebtHandler.ReturnCredits(Context, amount);

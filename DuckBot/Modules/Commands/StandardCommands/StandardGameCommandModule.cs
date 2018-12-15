@@ -18,7 +18,7 @@ namespace DuckBot.Modules.Commands.StandardCommands
     public class StandardGameCommandModule : ModuleBase<SocketCommandContext>
     {
         //Gambling
-        [Command("slot")]
+        [Command("slot", RunMode = RunMode.Async)]
         [Alias("s")]
         public async Task PlaySlotAsync(long gambleAmount)
         {

@@ -17,21 +17,19 @@ namespace DuckBot.Modules.Commands.StandardCommands
     [Alias("c")]
     public class StandardCaseCommandModule : InteractiveBase<SocketCommandContext>
     {
-        [Command("open")]
+        [Command("open", RunMode = RunMode.Async)]
         [Alias("o")]
         public async Task OpenCaseAsync()
         {
             await CsgoUnboxingHandler.OpenCase(Context);
         }
 
-        [Command("inventory")]
+        [Command("inventory", RunMode = RunMode.Async)]
         [Alias("i")]
         public async Task DisplayInventoryAsync()
         {
-            var csgoInventoryManager = new CsgoInventoryHandler();
-
-            //These 2 lines work by magic - J c
-            var pager = csgoInventoryManager.DisplayUserCsgoInventory(Context);
+            //Get paginated message
+            var pager = CsgoInventoryHandler.DisplayUserCsgoInventory(Context);
 
             //Send paginated message
             await PagedReplyAsync(pager, new ReactionList
@@ -45,7 +43,7 @@ namespace DuckBot.Modules.Commands.StandardCommands
             });
         }
 
-        [Command("sell")]
+        [Command("sell", RunMode = RunMode.Async)]
         [Alias("s")]
         public async Task SellInventoryItemAsync([Remainder]string inventoryMarketHash)
         {
@@ -57,6 +55,25 @@ namespace DuckBot.Modules.Commands.StandardCommands
             {
                 CsgoInventorySaleHandler.SellInventoryItem(Context, inventoryMarketHash);
             }           
+        }
+
+        [Ratelimit(1, 2, Measure.Minutes)]
+        [Command("market", RunMode = RunMode.Async)]
+        [Alias("m")]
+        public async Task ShowItemMarketAsync()
+        {
+            var pager = CsGoMarketInventoryHandler.GetCsgoMarketInventory(Context);
+
+            //Send paginated message
+            await PagedReplyAsync(pager, new ReactionList
+            {
+                Jump = true,
+                Forward = true,
+                Backward = true,
+                Last = true,
+                Trash = true,
+                First = true
+            });
         }
     }
 }

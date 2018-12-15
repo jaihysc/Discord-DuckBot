@@ -12,20 +12,16 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Modules.CsgoCaseUnboxing
 {
-    public class CsgoInventoryHandler : InteractiveBase<SocketCommandContext>
+    public static class CsgoInventoryHandler
     {
-        private List<string> embedFields = new List<string>();
-        private List<string> embedPriceFields = new List<string>();
-        private List<PaginatedMessage.Page> skinPages = new List<PaginatedMessage.Page>();
+        private static List<string> embedFieldsMaster = new List<string>();
+        private static List<string> embedPriceFieldsMaster = new List<string>();
 
-        public PaginatedMessage DisplayUserCsgoInventory(SocketCommandContext Context)
+        public static PaginatedMessage DisplayUserCsgoInventory(SocketCommandContext Context)
         {
-            //If weapon skin price data is null
-            if (CsgoUnboxingHandler.rootWeaponSkin == null)
-            {
-                //Read skin prices from file
-                CsgoUnboxingHandler.GetRootWeaponSkin();
-            }
+            //Reset fields
+            embedFieldsMaster = new List<string>();
+            embedPriceFieldsMaster = new List<string>();
 
             //Get user skins from xml file
             UserSkinStorageRootobject userSkin = new UserSkinStorageRootobject();
@@ -33,10 +29,8 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             {
                 userSkin = XmlManager.FromXmlFile<UserSkinStorageRootobject>(CoreMethod.GetFileLocation("UserSkinStorage.xml"));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Fuck!!!, unable to read user skin inventory from file");
-                Console.WriteLine(ex.StackTrace);
             }
 
             List<UserSkinEntry> foundUserSkins = new List<UserSkinEntry>();
@@ -50,143 +44,81 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
                 }
             }
 
+            //Generate fields
+            AddSkinFieldEntry(foundUserSkins);
 
-            //Generate user page         
-            int userSkinsProcessedSinceLastPage = 0;
-            foreach (var userSkinEntry in foundUserSkins)
+            //Configurate paginated message
+            var paginationConfig = new PaginationConfig
             {
-                //number of skin entries before cutting off to a new page
-                int entriesPerPage = 15;
+                AuthorName = Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5) + " Inventory",
+                AuthorURL = Context.Message.Author.GetAvatarUrl(),
 
-                //Create a new page and reset counter if reached 20
-                if (userSkinsProcessedSinceLastPage == entriesPerPage)
-                {
-                    //Add page
-                    CreateNewPaginatorPage(embedFields, embedPriceFields, skinPages);
-
-                    //Counter reset
-                    userSkinsProcessedSinceLastPage = 0;
-
-                    //Reset fields
-                    embedFields = new List<string>();
-                    embedPriceFields = new List<string>();
-                }
-
-                //Keep adding skins to list if it has not reached cutoff amount
-                if (userSkinsProcessedSinceLastPage != entriesPerPage)
-                {
-                    //Find skin entry info
-                    foreach (var storageSkinEntry in CsgoUnboxingHandler.rootWeaponSkin.items)
-                    {
-                        //Filter by market hash name
-                        //LESSON LEARNED: Decode unicode before processing them to avoid them not being recognised!!!!!!!111!!
-                        if (UnicodeLiteralConverter.DecodeToNonAsciiCharacters(storageSkinEntry.market_hash_name) == UnicodeLiteralConverter.DecodeToNonAsciiCharacters(userSkinEntry.Market_hash_name))
-                        {
-                            string skinQualityEmote = "<:white:522875796319240193>";
-
-                            //Assign quality colors
-                            if (storageSkinEntry.quality_color == "B0C3D9" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:white:522875796319240193>"; //white
-                            if (storageSkinEntry.quality_color == "5E98D9" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:lightblue:522878230848602131>"; //light blue
-                            if (storageSkinEntry.quality_color == "4B69FF" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:darkerblue:522878230550544387>"; //darker blue
-                            if (storageSkinEntry.quality_color == "8847FF" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:purple:522878233482625034>"; //purple
-                            if (storageSkinEntry.quality_color == "D32CE6" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:pink:522878230856990807>"; //pink
-                            if (storageSkinEntry.quality_color == "EB4B4B" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:red:522878230533767199>"; //red
-                            if (storageSkinEntry.quality_color == "EB4B4B" && storageSkinEntry.name_color == "8650AC") skinQualityEmote = "<:gold:522878230634692619>"; //gold
-                            if (storageSkinEntry.quality_color == "E4AE39" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:yellowgold:522878230923968513>"; //rare gold
-
-                            //Add skin entry
-                            try
-                            {
-                                Emote emote = Emote.Parse(skinQualityEmote);
-
-                                //Add skin entry to list
-                                embedFields.Add(emote + " "+ storageSkinEntry.market_name);
-
-                                //Get skin data
-                                var rootWeaponSkinPrice = CsgoItemPriceHandler.GetRootWeaponSkin();
-
-                                //Filter and Add skin price entry to list
-                                embedPriceFields.Add(emote + " " + rootWeaponSkinPrice.items.Where(s => s.name == storageSkinEntry.market_hash_name).FirstOrDefault().price.ToString());
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Source);
-                            }                            
-                        }
-                    }
-
-                }
-
-                //Increment counters
-                userSkinsProcessedSinceLastPage++;
-
-
-            }
-
-            //Add blank inline field if user has no skins
-            if (embedFields.Count > 0 && embedPriceFields.Count > 0)
-            {
-                CreateNewPaginatorPage(embedFields, embedPriceFields, skinPages);
-            }
-            else
-            {
-                skinPages.Add(new PaginatedMessage.Page
-                {
-                    Fields = new List<EmbedFieldBuilder>
-                    {
-                        new EmbedFieldBuilder
-                        {
-                            Name = "You do not have any skins",
-                            Value = $"Go unbox some with `{MainProgram.botCommandPrefix} case open`"
-                        }
-                    }
-                });
-            }
-
-            //Create paginated message
-            var pager = new PaginatedMessage
-            {
-                Pages = skinPages,
-                Author = new EmbedAuthorBuilder
-                {
-                    IconUrl = Context.Message.Author.GetAvatarUrl(),
-                    Name = Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5) + " Inventory",
-                },
-                Color = Color.DarkGreen,
                 Description = $"To sell items, use `{MainProgram.botCommandPrefix} case sell [name]`",
-                FooterOverride = null,
-                //ImageUrl = Context.Client.CurrentUser.GetAvatarUrl(),
-                //ThumbnailUrl = Context.Client.CurrentUser.GetAvatarUrl(),
-                Options = PaginatedAppearanceOptions.Default,
+
+                DefaultFieldHeader = "You do not have any skins",
+                DefaultFieldDescription = $"Go unbox some with `{MainProgram.botCommandPrefix} case open`",
+
+                Field1Header = "Item Name",
+                Field2Header = "Market Value",
             };
+
+            var paginationManager = new PaginationManager();
+
+            //Generate paginated message
+            var pager = paginationManager.GeneratePaginatedMessage(embedFieldsMaster, embedPriceFieldsMaster, paginationConfig);
 
             return pager;
         }
 
-        private void CreateNewPaginatorPage(List<string> embedFields, List<string> embedPriceFields, List<PaginatedMessage.Page> skinPages)
+        private static void AddSkinFieldEntry(List<UserSkinEntry> foundUserSkins)
         {
-            skinPages.Add(new PaginatedMessage.Page
-            {
-                Fields = new List<EmbedFieldBuilder>
-                {
-                    new EmbedFieldBuilder
-                    {
-                        Name = "Item Name",
-                        Value = string.Join("\n", embedFields),
-                        IsInline = true
-                    },
+            var rootWeaponSkin = CsgoUnboxingHandler.GetRootWeaponSkin();
 
-                    new EmbedFieldBuilder
+            //For every item belonging to sender
+            foreach (var item in foundUserSkins)
+            {
+                //Find skin entry info
+                foreach (var storageSkinEntry in rootWeaponSkin.items)
+                {
+                    //Filter by market hash name
+                    //LESSON LEARNED: Decode unicode before processing them to avoid them not being recognised!!!!!!!111!!
+                    if (UnicodeLiteralConverter.DecodeToNonAsciiCharacters(storageSkinEntry.market_hash_name) == UnicodeLiteralConverter.DecodeToNonAsciiCharacters(item.Market_hash_name))
                     {
-                        Name = "Market Value",
-                        Value = string.Join("\n", embedPriceFields),
-                        IsInline = true
+                        string skinQualityEmote = "<:white:522875796319240193>";
+
+                        //Assign quality colors
+                        if (storageSkinEntry.quality_color == "B0C3D9" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:white:522875796319240193>"; //white
+                        if (storageSkinEntry.quality_color == "5E98D9" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:lightblue:522878230848602131>"; //light blue
+                        if (storageSkinEntry.quality_color == "4B69FF" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:darkerblue:522878230550544387>"; //darker blue
+                        if (storageSkinEntry.quality_color == "8847FF" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:purple:522878233482625034>"; //purple
+                        if (storageSkinEntry.quality_color == "D32CE6" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:pink:522878230856990807>"; //pink
+                        if (storageSkinEntry.quality_color == "EB4B4B" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:red:522878230533767199>"; //red
+                        if (storageSkinEntry.quality_color == "EB4B4B" && storageSkinEntry.name_color == "8650AC") skinQualityEmote = "<:gold:522878230634692619>"; //gold
+                        if (storageSkinEntry.quality_color == "E4AE39" && storageSkinEntry.name_color == "D2D2D2") skinQualityEmote = "<:yellowgold:522878230923968513>"; //rare gold
+
+                        //Add skin entry
+                        try
+                        {
+                            Emote emote = Emote.Parse(skinQualityEmote);
+
+                            //Add skin entry to list
+                            embedFieldsMaster.Add(emote + " " + storageSkinEntry.market_name);
+
+                            //Get skin data
+                            var rootWeaponSkinPrice = CsgoItemPriceHandler.GetRootWeaponSkin();
+
+                            //Filter and Add skin price entry to list
+                            embedPriceFieldsMaster.Add(emote + " " + rootWeaponSkinPrice.items.Where(s => s.name == storageSkinEntry.market_hash_name).FirstOrDefault().price.ToString());
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Source);
+                        }
                     }
                 }
-            });
+            }
+
         }
-
-
 
     }
 
@@ -241,9 +173,17 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             {
                 int weaponSkinValue = 0;
 
+
                 foreach (var skin in userSkin.UserSkinEntries)
                 {
-                    weaponSkinValue += rootWeaponSkinPrice.items.Where(s => s.name.ToLower() == skin.Market_hash_name.ToLower()).FirstOrDefault().price;
+                    try
+                    {
+                        weaponSkinValue += rootWeaponSkinPrice.items.Where(s => s.name.ToLower() == skin.Market_hash_name.ToLower()).FirstOrDefault().price;
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    
                 }              
 
                 //Give user credits
@@ -271,6 +211,88 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
                 Console.WriteLine("Fuck!!!");
                 Console.WriteLine(ex.StackTrace);
             }
+        }
+    }
+
+    public static class CsGoMarketInventoryHandler
+    {
+        public static PaginatedMessage GetCsgoMarketInventory(SocketCommandContext Context)
+        {
+            //Get price data
+            var rootWeaponSkinPrice = CsgoItemPriceHandler.GetRootWeaponSkin();
+            var rootWeaponSkin = CsgoCaseUnboxing.CsgoUnboxingHandler.GetRootWeaponSkin();
+
+            List<string> filteredRootWeaponSkin = new List<string>();
+            List<string> filteredRootWeaponSkinPrice = new List<string>();
+
+            try
+            {
+                //Filter rootWeaponSkin to those with a price found in rootWeaponSkinPrice
+                foreach (var skin in rootWeaponSkin.items)
+                {
+                    foreach (var skinPrice in rootWeaponSkinPrice.items)
+                    {
+                        if (skin.market_hash_name == skinPrice.name)
+                        {
+                            if (UnicodeLiteralConverter.DecodeToNonAsciiCharacters(skin.market_hash_name) == UnicodeLiteralConverter.DecodeToNonAsciiCharacters(skinPrice.name))
+                            {
+                                string skinQualityEmote = "<:white:522875796319240193>";
+
+                                //Assign quality colors
+                                if (skin.quality_color == "B0C3D9" && skin.name_color == "D2D2D2") skinQualityEmote = "<:white:522875796319240193>"; //white
+                                if (skin.quality_color == "5E98D9" && skin.name_color == "D2D2D2") skinQualityEmote = "<:lightblue:522878230848602131>"; //light blue
+                                if (skin.quality_color == "4B69FF" && skin.name_color == "D2D2D2") skinQualityEmote = "<:darkerblue:522878230550544387>"; //darker blue
+                                if (skin.quality_color == "8847FF" && skin.name_color == "D2D2D2") skinQualityEmote = "<:purple:522878233482625034>"; //purple
+                                if (skin.quality_color == "D32CE6" && skin.name_color == "D2D2D2") skinQualityEmote = "<:pink:522878230856990807>"; //pink
+                                if (skin.quality_color == "EB4B4B" && skin.name_color == "D2D2D2") skinQualityEmote = "<:red:522878230533767199>"; //red
+                                if (skin.quality_color == "EB4B4B" && skin.name_color == "8650AC") skinQualityEmote = "<:gold:522878230634692619>"; //gold
+                                if (skin.quality_color == "E4AE39" && skin.name_color == "D2D2D2") skinQualityEmote = "<:yellowgold:522878230923968513>"; //rare gold
+
+                                //Add skin entry
+                                try
+                                {
+                                    Emote emote = Emote.Parse(skinQualityEmote);
+
+                                    //Add weapon skin
+                                    filteredRootWeaponSkin.Add(emote + " " + skin.market_name);
+
+                                    //Find weapon skin price for selected wepaon skin, Add weapon skin price
+                                    filteredRootWeaponSkinPrice.Add(emote + " " +  rootWeaponSkinPrice.items.Where(s => s.name == skin.market_hash_name).FirstOrDefault().price.ToString());
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine(ex.Source);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception)
+            {
+            }
+
+            //Configurate paginated message
+            var paginationConfig = new PaginationConfig
+            {
+                AuthorName = "CS:GO Market",
+                AuthorURL = Context.Message.Author.GetAvatarUrl(),
+
+                Description = $"Current skin market, to buy skins, use `{MainProgram.botCommandPrefix} case buy [name]`",
+
+                DefaultFieldHeader = "Oh no, something went wrong!",
+                DefaultFieldDescription = $"We are working hard behind the scenes to fix this",
+
+                Field1Header = "Item Name",
+                Field2Header = "Price",
+            };
+
+            var paginationManager = new PaginationManager();
+
+            //Generate paginated message
+            var pager = paginationManager.GeneratePaginatedMessage(filteredRootWeaponSkin, filteredRootWeaponSkinPrice, paginationConfig);
+
+            return pager;
         }
     }
 
