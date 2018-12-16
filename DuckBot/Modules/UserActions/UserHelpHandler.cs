@@ -34,7 +34,7 @@ namespace DuckBot.Modules.UserActions
                 .AddField("Currency Commands", "`balance` `daily` `debt` `borrow` `return` `moneyTransfer` `bankruptcy` ")
                 .AddField("Game Commands", "`Prefix: game` | `slot`")
                 .AddField("Stock Commands", "`Prefix: stock` | `portfolio` `market` `buy` `sell`")
-                .AddField("Case Commands", "`Prefix: case` | `open` `inventory` `sell`")
+                .AddField("Case Commands", "`Prefix: cs` | `open` `inventory` `market` `buy ``sell`")
                 .AddField("Role Commands", "`Prefix: role` | `list` `add` `remove`");
 
             var embed = embedBuilder.Build();

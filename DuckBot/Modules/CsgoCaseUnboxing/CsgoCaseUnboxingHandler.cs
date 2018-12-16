@@ -169,8 +169,11 @@ namespace DuckBot.Modules.CsgoCaseUnboxing
             var sortedResult = rootObject.items
                 .Where(e => e.quality_color.ToLower().Contains(filterQualityColor.ToLower()))
                 .Where(e => e.name_color.ToLower().Contains(filterNameColor.ToLower()))
+                //Filter out stattrak, stickers, music kits, and graffiti
                 .Where(e => !e.market_name.ToLower().Contains("stattrak"))
                 .Where(e => !e.market_name.ToLower().Contains("sticker"))
+                .Where(e => !e.market_name.ToLower().Contains("music kit"))
+                .Where(e => !e.market_name.ToLower().Contains(" pin"))
                 .Where(e => !e.market_name.ToLower().Contains("graffiti")).ToArray();
 
             var returnResult = sortedResult[rand.Next(sortedResult.Count())];

@@ -13,7 +13,7 @@ namespace DuckBot.Modules.Commands.StandardCommands
     [Ratelimit(1, 5, Measure.Seconds)]
     [BlacklistedUsersPrecondition]
     [UserStorageCheckerPrecondition]
-    [Group("case")]
+    [Group("cs")]
     [Alias("c")]
     public class StandardCaseCommandModule : InteractiveBase<SocketCommandContext>
     {
@@ -49,20 +49,27 @@ namespace DuckBot.Modules.Commands.StandardCommands
         {
             if (inventoryMarketHash == "*")
             {
-                CsgoInventorySaleHandler.SellAllInventoryItem(Context);
+                await CsgoInventoryTransactionHandler.SellAllInventoryItemAsync(Context);
             }
             else
             {
-                CsgoInventorySaleHandler.SellInventoryItem(Context, inventoryMarketHash);
+                await CsgoInventoryTransactionHandler.SellInventoryItemAsync(Context, inventoryMarketHash);
             }           
+        }
+
+        [Command("buy", RunMode = RunMode.Async)]
+        [Alias("b")]
+        public async Task BuyInventoryItemAsync([Remainder]string inventoryMarketHash)
+        {
+            await CsgoInventoryTransactionHandler.BuyItemFromMarketAsync(Context, inventoryMarketHash);
         }
 
         [Ratelimit(1, 2, Measure.Minutes)]
         [Command("market", RunMode = RunMode.Async)]
         [Alias("m")]
-        public async Task ShowItemMarketAsync()
+        public async Task ShowItemMarketAsync([Remainder]string filterString = null)
         {
-            var pager = CsGoMarketInventoryHandler.GetCsgoMarketInventory(Context);
+            var pager = CsGoMarketInventoryHandler.GetCsgoMarketInventory(Context, filterString);
 
             //Send paginated message
             await PagedReplyAsync(pager, new ReactionList
