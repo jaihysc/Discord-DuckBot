@@ -86,21 +86,28 @@ namespace DuckBot.Modules.Csgo
                 using (StreamReader r = new StreamReader(CoreMethod.GetFileLocation("skinData.json")))
                 {
                     string json = r.ReadToEnd();
-                    var rootWeaponSkinTemp = RootSkinData.FromJson(json);
+                    var rootWeaponSkin = RootSkinData.FromJson(json);
 
-                    
-                    foreach (var item in rootWeaponSkinTemp.ItemsList.Values)
+                    var rootWeaponSkinTemp = rootWeaponSkin;
+
+                    foreach (var item in rootWeaponSkin.ItemsList.Values)
                     {
-                        //This throws for some reason, no idea why, so this try catch shill stay here
                         try
                         {
                             //Multiply all prices by 100 to remove decimals
-                            item.Price.AllTime.Average = item.Price.AllTime.Average * 100;
+                            if (item.Price != null)
+                            {
+                                rootWeaponSkinTemp.ItemsList[item.Name].Price.AllTime.Average = item.Price.AllTime.Average * 100;
+                            }
+                            else
+                            {
+                                rootWeaponSkinTemp.ItemsList = rootWeaponSkinTemp.ItemsList.Where(s => s.Key != item.Name).ToDictionary(x => x.Key, y => y.Value);
+                            }
                         }
                         catch (Exception)
                         {
-                        }       
-                           
+                        }            
+
                         /*
                         item.Value.Price.AllTime.HighestPrice = item.Value.Price.AllTime.HighestPrice * 100;
                         item.Value.Price.AllTime.LowestPrice = item.Value.Price.AllTime.LowestPrice * 100;
@@ -123,9 +130,11 @@ namespace DuckBot.Modules.Csgo
                         item.Value.Price.The7_Days.Median = item.Value.Price.The7_Days.Median * 100;
                         */
 
-                    }                   
+                    }
+
 
                     rootWeaponSkin = rootWeaponSkinTemp;
+                    CsgoUnboxingHandler.rootWeaponSkin = rootWeaponSkin;
                 }
             }
 
