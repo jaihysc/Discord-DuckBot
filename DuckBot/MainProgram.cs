@@ -3,7 +3,7 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot.Core;
-using DuckBot.Modules.CsgoCaseUnboxing;
+using DuckBot.Modules.Csgo;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.Finance.ServiceThreads;
 using DuckBot.Modules.Moderation;

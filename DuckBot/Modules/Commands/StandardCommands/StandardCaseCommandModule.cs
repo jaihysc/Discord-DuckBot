@@ -1,7 +1,7 @@
 ﻿using Discord.Addons.Interactive;
 using Discord.Commands;
 using DuckBot.Modules.Commands.Preconditions;
-using DuckBot.Modules.CsgoCaseUnboxing;
+using DuckBot.Modules.Csgo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Modules.Commands.StandardCommands
 {
-    [Ratelimit(1, 5, Measure.Seconds)]
     [BlacklistedUsersPrecondition]
     [UserStorageCheckerPrecondition]
     [Group("cs")]
     [Alias("c")]
     public class StandardCaseCommandModule : InteractiveBase<SocketCommandContext>
     {
+        [Ratelimit(1, 5, Measure.Seconds)]
         [Command("open", RunMode = RunMode.Async)]
         [Alias("o")]
         public async Task OpenCaseAsync()
@@ -24,8 +24,9 @@ namespace DuckBot.Modules.Commands.StandardCommands
             await CsgoUnboxingHandler.OpenCase(Context);
         }
 
+        [Ratelimit(1, 30, Measure.Seconds)]
         [Command("inventory", RunMode = RunMode.Async)]
-        [Alias("i")]
+        [Alias("inv")]
         public async Task DisplayInventoryAsync()
         {
             //Get paginated message
@@ -43,33 +44,35 @@ namespace DuckBot.Modules.Commands.StandardCommands
             });
         }
 
+        [Ratelimit(3, 5, Measure.Seconds)]
         [Command("sell", RunMode = RunMode.Async)]
         [Alias("s")]
         public async Task SellInventoryItemAsync([Remainder]string inventoryMarketHash)
         {
             if (inventoryMarketHash == "*")
             {
-                await CsgoInventoryTransactionHandler.SellAllInventoryItemAsync(Context);
+                await CsgoTransactionHandler.SellAllInventoryItemAsync(Context);
             }
             else
             {
-                await CsgoInventoryTransactionHandler.SellInventoryItemAsync(Context, inventoryMarketHash);
+                await CsgoTransactionHandler.SellInventoryItemAsync(Context, inventoryMarketHash);
             }           
         }
 
+        [Ratelimit(1, 4, Measure.Seconds)]
         [Command("buy", RunMode = RunMode.Async)]
         [Alias("b")]
         public async Task BuyInventoryItemAsync([Remainder]string inventoryMarketHash)
         {
-            await CsgoInventoryTransactionHandler.BuyItemFromMarketAsync(Context, inventoryMarketHash);
+            await CsgoTransactionHandler.BuyItemFromMarketAsync(Context, inventoryMarketHash);
         }
 
-        [Ratelimit(1, 2, Measure.Minutes)]
+        [Ratelimit(1, 45, Measure.Seconds)]
         [Command("market", RunMode = RunMode.Async)]
         [Alias("m")]
         public async Task ShowItemMarketAsync([Remainder]string filterString = null)
         {
-            var pager = CsGoMarketInventoryHandler.GetCsgoMarketInventory(Context, filterString);
+            var pager = CsgoInventoryHandler.GetCsgoMarketInventory(Context, filterString);
 
             //Send paginated message
             await PagedReplyAsync(pager, new ReactionList
@@ -81,6 +84,14 @@ namespace DuckBot.Modules.Commands.StandardCommands
                 Trash = true,
                 First = true
             });
+        }
+
+        [Ratelimit(1, 5, Measure.Seconds)]
+        [Command("info", RunMode = RunMode.Async)]
+        [Alias("i")]
+        public async Task ShowItemInfoAsync([Remainder]string filterString)
+        {
+            await CsgoInventoryHandler.DisplayCsgoItemStatistics(Context, filterString);
         }
     }
 }

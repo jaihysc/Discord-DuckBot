@@ -1,7 +1,7 @@
 ﻿using Discord.Addons.Interactive;
 using Discord.Commands;
 using DuckBot.Modules.Commands.Preconditions;
-using DuckBot.Modules.CsgoCaseUnboxing;
+using DuckBot.Modules.Csgo;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.UserActions;

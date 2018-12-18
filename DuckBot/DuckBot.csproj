@@ -155,9 +155,10 @@
     <Compile Include="Modules\Commands\StandardCommands\StandardFinanceCommandModule.cs" />
     <Compile Include="Modules\Commands\StandardCommands\StandardGameCommandModule.cs" />
     <Compile Include="Modules\Commands\StandardCommands\StandardStockCommandModule.cs" />
-    <Compile Include="Modules\CsgoCaseUnboxing\CsgoCaseUnboxingHandler.cs" />
-    <Compile Include="Modules\CsgoCaseUnboxing\CsgoInventoryManager.cs" />
-    <Compile Include="Modules\CsgoCaseUnboxing\CsgoItemPriceHandler.cs" />
+    <Compile Include="Modules\Csgo\CsgoCaseUnboxingHandler.cs" />
+    <Compile Include="Modules\Csgo\CsgoInventoryManager.cs" />
+    <Compile Include="Modules\Csgo\CsgoMarketDataSerializer.cs" />
+    <Compile Include="Modules\Csgo\CsgoTransactionHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserBankingHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserCreditsHandler.cs" />
     <Compile Include="Modules\Finance\CurrencyManager\UserCreditTaxHandler.cs" />

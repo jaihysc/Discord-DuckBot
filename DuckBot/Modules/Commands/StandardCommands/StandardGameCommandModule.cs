@@ -1,6 +1,6 @@
 ﻿using Discord.Commands;
 using DuckBot.Modules.Commands.Preconditions;
-using DuckBot.Modules.CsgoCaseUnboxing;
+using DuckBot.Modules.Csgo;
 using DuckBot.Modules.UserFinance;
 using System;
 using System.Collections.Generic;

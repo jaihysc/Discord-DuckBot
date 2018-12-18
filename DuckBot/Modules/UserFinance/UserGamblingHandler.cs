@@ -98,8 +98,7 @@ namespace DuckBot.Modules.UserFinance
                 if (randomNumber >= 430000 && randomNumber <= 449999)
                 {
                     returnAmount = returnAmount * rand.Next(10);
-                }
-                /*
+                }              
                 if (randomNumber >= 400000 && randomNumber <= 429999)
                 {
                     returnAmount = returnAmount * rand.Next(1, 5);
@@ -112,7 +111,6 @@ namespace DuckBot.Modules.UserFinance
                 {
                     returnAmount = gambleAmount * 2 - (gambleAmount / 3);
                 }
-                */
                 if (randomNumber >= 0 && randomNumber <= 299999)
                 {
                     returnAmount = gambleAmount + gambleAmount;
