@@ -99,7 +99,7 @@ namespace DuckBot.Modules.Csgo
             {
                 //Find user selected item, make sure it is owned by user
                 var selectedSkinToSell = rootUserSkin.UserSkinEntries
-                    .Where(s => s.ClassId.ToLower().Contains(itemMarketHash.ToLower()))
+                    .Where(s => s.MarketName.ToLower().Contains(itemMarketHash.ToLower()))
                     .Where(s => s.OwnerID == Context.Message.Author.Id)
                     .FirstOrDefault();
 

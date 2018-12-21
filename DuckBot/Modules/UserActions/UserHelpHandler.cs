@@ -101,7 +101,8 @@ namespace DuckBot.Modules.UserActions
                     .WithFooter(footer =>
                     {
                         footer
-                            .WithText("Sent by " + Context.Message.Author.ToString());
+                            .WithText("Sent by " + Context.Message.Author.ToString())
+                            .WithIconUrl(Context.Message.Author.GetAvatarUrl());
                     })
                     .WithAuthor(author =>
                     {

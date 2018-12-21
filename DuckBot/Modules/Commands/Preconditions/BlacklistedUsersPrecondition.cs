@@ -38,6 +38,7 @@ namespace DuckBot.Modules.Commands.Preconditions
             }
             else
             {
+                await context.Channel.SendMessageAsync(context.Message.Author.Mention + " You have been blocked from using this command");
                 return PreconditionResult.FromError("You have been blocked from using this command.");
             }
 

@@ -41,6 +41,7 @@ namespace DuckBot.Modules.Commands.Preconditions
 
             if (userIsWhiteListed == false)
             {
+                await context.Channel.SendMessageAsync(context.Message.Author.Mention + " You must be whitelisted by the great duck commander to use this command");
                 return PreconditionResult.FromError("You must be whitelisted by the great duck commander to use this command.");
             }
             else

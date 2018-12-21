@@ -76,7 +76,13 @@ namespace DuckBot.Modules.Commands.Preconditions
             _invokeLimitPeriod = period;
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Handels actual user ratelimit
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="command"></param>
+        /// <param name="_services"></param>
+        /// <returns></returns>
         public async override Task<PreconditionResult> CheckPermissions(
             ICommandContext context,
             CommandInfo command,
@@ -107,7 +113,7 @@ namespace DuckBot.Modules.Commands.Preconditions
             var ownerId = appInfo.Owner.Id;
 
             //
-            // If this command was NOT executed by predefined users, return a failure
+            // Get whitelisted users
             List<ulong> whitelistedUsers = new List<ulong>();
 
             whitelistedUsers.Add(ownerId);
@@ -132,7 +138,16 @@ namespace DuckBot.Modules.Commands.Preconditions
             }
             else
             {
-                //context.Channel.SendMessageAsync("Chill, calm down. Take a drink, have a walk, come back");
+                //Send an error if this is the first time user tried to use the command again while in cooldown                
+                if (timeout.ReceivedError == false)
+                {
+                    //Only send this message once
+                    _invokeTracker[key].ReceivedError = true;
+
+                    await context.Channel.SendMessageAsync(context.Message.Author.Mention + " Chill, calm down. Take a drink, have a walk, come back **(You are in cooldown)**");
+                }
+                
+              
                 return await Task.FromResult(PreconditionResult.FromError("User is in cooldown"));
             }
 
@@ -143,10 +158,12 @@ namespace DuckBot.Modules.Commands.Preconditions
         {
             public uint TimesInvoked { get; set; }
             public DateTime FirstInvoke { get; }
+            public bool ReceivedError { get; set; }
 
             public CommandTimeout(DateTime timeStarted)
             {
                 FirstInvoke = timeStarted;
+                ReceivedError = false;
             }
         }
     }
