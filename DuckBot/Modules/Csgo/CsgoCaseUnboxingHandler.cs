@@ -55,6 +55,40 @@ namespace DuckBot.Modules.Csgo
             }
         }
 
+        /// <summary>
+        /// virtual CS:GO drop given to user
+        /// </summary>
+        /// <param name="Context"></param>
+        /// <returns></returns>
+        public static async Task OpenDrop(SocketCommandContext Context)
+        {
+            //Gets weapon skin data for case unbox
+            GetRootWeaponSkin();
+
+            //Test if user has enough credits
+            var itemProcess = new ItemDropProcessing();
+
+            var rarity = new ItemListType
+            {
+                Rarity = Rarity.ConsumerGrade
+            };
+
+
+            //Get item
+            var skinItem = itemProcess.GetItem(rarity, rootWeaponSkin);
+
+
+            //Add item to user file inventory
+            var userSkin = XmlManager.FromXmlFile<UserSkinStorageRootobject>(CoreMethod.GetFileLocation("UserSkinStorage.xml"));
+
+            userSkin.UserSkinEntries.Add(new UserSkinEntry { ClassId = skinItem.Classid, OwnerID = Context.Message.Author.Id, UnboxDate = DateTime.UtcNow, MarketName = skinItem.Name });
+
+            XmlManager.ToXmlFile(userSkin, CoreMethod.GetFileLocation("UserSkinStorage.xml"));
+
+            //Send item into
+            await SendOpenedCaseInfo(Context, skinItem, Convert.ToInt64(skinItem.Price.AllTime.Average));
+        }
+
         public static async Task SendOpenedCaseInfo(SocketCommandContext Context, SkinDataItem skinItem, long skinMarketValue)
         {
             var embedBuilder = new EmbedBuilder()
@@ -93,21 +127,17 @@ namespace DuckBot.Modules.Csgo
 
                     foreach (var item in rootWeaponSkin.ItemsList.Values)
                     {
-                        try
+
+                        //Multiply all prices by 100 to remove decimals
+                        if (item.Price != null)
                         {
-                            //Multiply all prices by 100 to remove decimals
-                            if (item.Price != null)
-                            {
-                                rootWeaponSkinTemp.ItemsList[item.Name].Price.AllTime.Average = item.Price.AllTime.Average * 100;
-                            }
-                            else
-                            {
-                                rootWeaponSkinTemp.ItemsList = rootWeaponSkinTemp.ItemsList.Where(s => s.Key != item.Name).ToDictionary(x => x.Key, y => y.Value);
-                            }
+                            rootWeaponSkinTemp.ItemsList[item.Name].Price.AllTime.Average = item.Price.AllTime.Average * 100;
                         }
-                        catch (Exception)
+                        else
                         {
-                        }            
+                            rootWeaponSkinTemp.ItemsList = rootWeaponSkinTemp.ItemsList.Where(s => s.Key != item.Name).ToDictionary(x => x.Key, y => y.Value);
+                        }
+          
 
                         /*
                         item.Value.Price.AllTime.HighestPrice = item.Value.Price.AllTime.HighestPrice * 100;
@@ -217,19 +247,20 @@ namespace DuckBot.Modules.Csgo
             //Randomly select a skin from the filtered list of possible skins
             var selectedSkin = sortedResult[rand.Next(sortedResult.Count())];
 
-
+            bool giveStatTrak = CalculateStatTrakDrop();
             //Give stattrak
-            if (CalculateStatTrakDrop() == true)
+            if (giveStatTrak == true)
             {
                 var selectedStatTrakItem = skinData.ItemsList
-                    .Where(s => s.Value.Classid.ToLower().Contains(selectedSkin.Value.Classid))
+                    .Where(s => s.Value.Name.ToLower().Contains(selectedSkin.Value.Name.ToLower()))
                     .Where(s => s.Value.Name.ToLower().Contains("stattrak")).FirstOrDefault();
 
-
-                 selectedSkin = selectedStatTrakItem;
+                //If filter was unsuccessful at finding stattrak, do not assign item
+                if (selectedStatTrakItem.Value != null)
+                {
+                    selectedSkin = selectedStatTrakItem;
+                }
             }
-
-            
             return selectedSkin.Value;
         }
     }

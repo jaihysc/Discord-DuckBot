@@ -24,9 +24,17 @@ namespace DuckBot.Modules.Commands.StandardCommands
             await CsgoUnboxingHandler.OpenCase(Context);
         }
 
+        [Ratelimit(1, 5, Measure.Seconds)]
+        [Command("drop", RunMode = RunMode.Async)]
+        [Alias("d")]
+        public async Task OpenDropAsync()
+        {
+            await CsgoUnboxingHandler.OpenDrop(Context);
+        }
+
         [Ratelimit(1, 30, Measure.Seconds)]
         [Command("inventory", RunMode = RunMode.Async)]
-        [Alias("inv")]
+        [Alias("inv", "i")]
         public async Task DisplayInventoryAsync()
         {
             //Get paginated message
@@ -88,7 +96,6 @@ namespace DuckBot.Modules.Commands.StandardCommands
 
         [Ratelimit(1, 5, Measure.Seconds)]
         [Command("info", RunMode = RunMode.Async)]
-        [Alias("i")]
         public async Task ShowItemInfoAsync([Remainder]string filterString)
         {
             await CsgoInventoryHandler.DisplayCsgoItemStatistics(Context, filterString);
