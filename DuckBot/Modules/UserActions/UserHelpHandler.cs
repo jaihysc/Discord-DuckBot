@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot.Models;
 using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;
 using System;
@@ -65,19 +66,6 @@ namespace DuckBot.Modules.UserActions
             var embed = embedBuilder.Build();
 
             await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
-        }
-
-        public class HelpMenuCommands
-        {
-            public List<HelpMenuCommandEntry> CommandHelpEntry { get; set; }
-        }
-        public class HelpMenuCommandEntry
-        {
-            public string CommandName { get; set; }
-            public string CommandDescription { get; set; }
-            public string CommandRequiredPermissions { get; set; }
-            public string CommandUsage { get; set; }
-            public string CommandUsageDefinition { get; set; }
         }
 
         public static async Task DisplayCommandHelpMenu(SocketCommandContext Context, string inputCommand)

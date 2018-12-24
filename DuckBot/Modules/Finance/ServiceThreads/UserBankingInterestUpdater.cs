@@ -1,4 +1,5 @@
 ﻿using DuckBot.Core;
+using DuckBot.Models;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
@@ -100,7 +101,6 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                 }
                 catch(Exception ex)
                 {
-                    Console.WriteLine(ex.StackTrace);
                 }
             }
         }

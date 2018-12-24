@@ -3,6 +3,7 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot.Core;
+using DuckBot.Models;
 using DuckBot.Modules.Csgo;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.Finance.ServiceThreads;
@@ -162,7 +163,7 @@ namespace DuckBot
                 if (result.Error == CommandError.UnknownCommand)
                 {
                     //Find similar commands
-                    var commandHelpDefinitionStorage = XmlManager.FromXmlFile<UserHelpHandler.HelpMenuCommands>(CoreMethod.GetFileLocation(@"CommandHelpDescription.xml"));
+                    var commandHelpDefinitionStorage = XmlManager.FromXmlFile<HelpMenuCommands>(CoreMethod.GetFileLocation(@"CommandHelpDescription.xml"));
                     string similarItemsString = UserHelpHandler.FindSimilarCommands(
                         commandHelpDefinitionStorage.CommandHelpEntry.Select(i => i.CommandName).ToList(), 
                         message.ToString().Substring(botCommandPrefix.Length + 1));

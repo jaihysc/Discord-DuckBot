@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot.Models;
 using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -152,19 +153,6 @@ namespace DuckBot.Modules.Commands.Preconditions
             }
 
 
-        }
-
-        private sealed class CommandTimeout
-        {
-            public uint TimesInvoked { get; set; }
-            public DateTime FirstInvoke { get; }
-            public bool ReceivedError { get; set; }
-
-            public CommandTimeout(DateTime timeStarted)
-            {
-                FirstInvoke = timeStarted;
-                ReceivedError = false;
-            }
         }
     }
 

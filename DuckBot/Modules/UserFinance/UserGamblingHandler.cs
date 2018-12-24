@@ -7,6 +7,7 @@ using DuckBot.Modules.UserActions;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Core;
 using DuckBot_ClassLibrary;
+using DuckBot.Models;
 
 namespace DuckBot.Modules.UserFinance
 {

@@ -2,6 +2,7 @@
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot.Models;
 using DuckBot.Modules.Commands.Preconditions;
 using DuckBot.Modules.Finance;
 using DuckBot_ClassLibrary;

@@ -141,6 +141,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\SettingsManager.cs" />
+    <Compile Include="Models\CsgoItemData.cs" />
+    <Compile Include="Models\GuildRoles.cs" />
+    <Compile Include="Models\HelpMenuCommands.cs" />
+    <Compile Include="Models\RateLimit.cs" />
+    <Compile Include="Models\Stocks.cs" />
+    <Compile Include="Models\UserData.cs" />
     <Compile Include="Modules\Commands\StandardCommands\CommandModule.cs" />
     <Compile Include="Modules\Commands\ElevatedCommandModule.cs" />
     <Compile Include="Modules\Commands\ManagementCommandModulecs.cs" />

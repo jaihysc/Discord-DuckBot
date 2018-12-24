@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using DuckBot.Core;
+using DuckBot.Models;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;

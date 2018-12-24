@@ -2,6 +2,7 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot;
+using DuckBot.Models;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.Finance.ServiceThreads;
 using DuckBot_ClassLibrary;
@@ -14,17 +15,6 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Modules.UserFinance
 {
-    public class UserStockStorage
-    {
-        public List<UserStock> UserStock { get; set; }
-    }
-    public class UserStock
-    {
-        public string StockTicker { get; set; }
-        public long StockAmount { get; set; }
-        public long StockBuyPrice { get; set; }
-    }
-
     public class UserStocksHandler : ModuleBase<SocketCommandContext>
     {
         public static async Task BuyUserStocksAsync(SocketCommandContext Context, string tickerSymbol, long buyAmount)

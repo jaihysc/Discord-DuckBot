@@ -1,4 +1,5 @@
 ﻿using Discord.Commands;
+using DuckBot.Models;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.UserActions;
 using DuckBot.Modules.UserFinance;

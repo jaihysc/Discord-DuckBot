@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DuckBot.Models;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;
@@ -231,12 +232,5 @@ namespace DuckBot.Modules.Csgo
             
             return selectedSkin.Value;
         }
-    }
-
-    public class ItemListType
-    {
-        public Rarity Rarity { get; set; }
-        public WeaponType? WeaponType { get; set; }
-        public WeaponType? BlackListWeaponType { get; set; }
     }
 }

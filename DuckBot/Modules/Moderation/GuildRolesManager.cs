@@ -1,4 +1,5 @@
-﻿using DuckBot_ClassLibrary;
+﻿using DuckBot.Models;
+using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;
 using System;
 using System.Collections.Generic;
@@ -99,16 +100,5 @@ namespace DuckBot.Modules.Moderation
             };
             XmlManager.ToXmlFile(returnRoleStorage, CoreMethod.GetFileLocation(@"\GuildRoles.xml"));
         }
-    }
-
-    public class GuildRoleStorage
-    {
-        public List<GuildRoleEntry> GuildRoles { get; set; }
-    }
-    public class GuildRoleEntry
-    {
-        public ulong GuildID { get; set; }
-        public string RoleName { get; set; }
-        public ulong GuildRoleID { get; set; }
     }
 }

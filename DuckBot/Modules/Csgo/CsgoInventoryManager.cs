@@ -2,6 +2,7 @@
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using DuckBot.Core;
+using DuckBot.Models;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;
@@ -258,18 +259,5 @@ namespace DuckBot.Modules.Csgo
 
         }
 
-    }
-
-    public class UserSkinStorageRootobject
-    {
-        public long SkinAmount { get; set; }
-        public List<UserSkinEntry> UserSkinEntries { get; set; }
-    }
-    public class UserSkinEntry
-    {
-        public ulong OwnerID { get; set; }
-        public string ClassId { get; set; }
-        public DateTime UnboxDate { get; set; }
-        public string MarketName { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using DuckBot.Core;
+using DuckBot.Models;
 using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;
 using System;
@@ -11,32 +12,6 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Modules.UserActions
 {
-    public class UserStorage
-    {
-        public ulong UserId { get; set; }
-        public UserInfo UserInfo { get; set; }
-    }
-    public class UserInfo
-    {
-        public UserDailyLastUseStorage UserDailyLastUseStorage { get; set; }
-        public UserBankingStorage UserBankingStorage { get; set; }
-        public UserProhibitedWordsStorage UserProhibitedWordsStorage { get; set; }
-    }
-
-    public class UserDailyLastUseStorage
-    {
-        public DateTime DateTime { get; set; }
-    }
-    public class UserBankingStorage
-    {
-        public long Credit { get; set; }
-        public long CreditDebt { get; set; }
-    }
-    public class UserProhibitedWordsStorage
-    {
-        public int SwearCount { get; set; }
-    }
-
     public class UserXmlDataStorage
     {
         public static void CreateNewUserXmlEntry(SocketCommandContext Context)
