@@ -1,10 +1,4 @@
-﻿// To parse this JSON data, add NuGet 'Newtonsoft.Json' then do:
-//
-//    using DuckBot.Modules.CsgoCaseUnboxing;
-//
-//    var skinData = SkinData.FromJson(jsonString);
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 using System.Globalization;
@@ -17,6 +11,9 @@ namespace DuckBot.Modules.Csgo
     {
         [JsonProperty("success")]
         public bool Success { get; set; }
+
+        [JsonProperty("processed")]
+        public bool Processed { get; set; }
 
         [JsonProperty("currency")]
         public string Currency { get; set; }
@@ -32,6 +29,9 @@ namespace DuckBot.Modules.Csgo
     {
         [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("cases")]
+        public List<Case> Cases { get; set; }
 
         [JsonProperty("marketable")]
         public long Marketable { get; set; }
@@ -87,6 +87,12 @@ namespace DuckBot.Modules.Csgo
 
         [JsonProperty("knife_type", NullValueHandling = NullValueHandling.Ignore)]
         public KnifeType? KnifeType { get; set; }
+    }
+
+    public partial class Case
+    {
+        public string CaseName { get; set; }
+        public string CaseCollection { get; set; }
     }
 
     public partial class Price
@@ -187,6 +193,21 @@ namespace DuckBot.Modules.Csgo
                 case "Not Painted":
                     return Exterior.NotPainted;
                 case "Well-Worn":
+                    return Exterior.WellWorn;
+
+                //Number form
+
+                case "0":
+                    return Exterior.BattleScarred;
+                case "1":
+                    return Exterior.FactoryNew;
+                case "2":
+                    return Exterior.FieldTested;
+                case "3":
+                    return Exterior.MinimalWear;
+                case "4":
+                    return Exterior.NotPainted;
+                case "5":
                     return Exterior.WellWorn;
             }
             throw new Exception("Cannot unmarshal type Exterior");
@@ -335,6 +356,76 @@ namespace DuckBot.Modules.Csgo
                 case "USP-S":
                     return GunType.UspS;
                 case "XM1014":
+                    return GunType.Xm1014;
+
+                //Number form
+                case "0":
+                    return GunType.Ak47;
+                case "1":
+                    return GunType.Aug;
+                case "2":
+                    return GunType.Awp;
+                case "3":
+                    return GunType.Cz75Auto;
+                case "4":
+                    return GunType.DesertEagle;
+                case "5":
+                    return GunType.DualBerettas;
+                case "6":
+                    return GunType.Famas;
+                case "7":
+                    return GunType.FiveSeveN;
+                case "8":
+                    return GunType.G3Sg1;
+                case "9":
+                    return GunType.GalilAr;
+                case "10":
+                    return GunType.Glock18;
+                case "11":
+                    return GunType.M249;
+                case "12":
+                    return GunType.M4A1S;
+                case "13":
+                    return GunType.M4A4;
+                case "14":
+                    return GunType.Mac10;
+                case "15":
+                    return GunType.Mag7;
+                case "16":
+                    return GunType.Mp5Sd;
+                case "17":
+                    return GunType.Mp7;
+                case "18":
+                    return GunType.Mp9;
+                case "19":
+                    return GunType.Negev;
+                case "20":
+                    return GunType.Nova;
+                case "21":
+                    return GunType.P2000;
+                case "22":
+                    return GunType.P250;
+                case "23":
+                    return GunType.P90;
+                case "24":
+                    return GunType.PpBizon;
+                case "25":
+                    return GunType.R8Revolver;
+                case "26":
+                    return GunType.Scar20;
+                case "27":
+                    return GunType.Sg553;
+                case "28":
+                    return GunType.Ssg08;
+                case "29":
+                    return GunType.SawedOff;
+                case "30":
+                    return GunType.Tec9;
+                case "31":
+                    return GunType.Ump45;
+                case "32":
+                    return GunType.UspS;
+                case "33":
                     return GunType.Xm1014;
             }
             throw new Exception("Cannot unmarshal type GunType");
@@ -497,6 +588,37 @@ namespace DuckBot.Modules.Csgo
                     return KnifeType.TalonKnife;
                 case "Ursus Knife":
                     return KnifeType.UrsusKnife;
+
+                //Number form
+
+                case "0":
+                    return KnifeType.Bayonet;
+                case "1":
+                    return KnifeType.BowieKnife;
+                case "2":
+                    return KnifeType.ButterflyKnife;
+                case "3":
+                    return KnifeType.FalchionKnife;
+                case "4":
+                    return KnifeType.FlipKnife;
+                case "5":
+                    return KnifeType.GutKnife;
+                case "6":
+                    return KnifeType.HuntsmanKnife;
+                case "7":
+                    return KnifeType.Karambit;
+                case "8":
+                    return KnifeType.M9Bayonet;
+                case "9":
+                    return KnifeType.NavajaKnife;
+                case "10":
+                    return KnifeType.ShadowDaggers;
+                case "11":
+                    return KnifeType.StilettoKnife;
+                case "12":
+                    return KnifeType.TalonKnife;
+                case "13":
+                    return KnifeType.UrsusKnife;
             }
             throw new Exception("Cannot unmarshal type KnifeType");
         }
@@ -594,6 +716,33 @@ namespace DuckBot.Modules.Csgo
                     return Rarity.Remarkable;
                 case "Restricted":
                     return Rarity.Restricted;
+
+                //Numbe form
+
+                case "0":
+                    return Rarity.BaseGrade;
+                case "1":
+                    return Rarity.Classified;
+                case "2":
+                    return Rarity.ConsumerGrade;
+                case "3":
+                    return Rarity.Contraband;
+                case "4":
+                    return Rarity.Covert;
+                case "5":
+                    return Rarity.Exotic;
+                case "6":
+                    return Rarity.Extraordinary;
+                case "7":
+                    return Rarity.HighGrade;
+                case "8":
+                    return Rarity.IndustrialGrade;
+                case "9":
+                    return Rarity.MilSpecGrade;
+                case "10":
+                    return Rarity.Remarkable;
+                case "11":
+                    return Rarity.Restricted;
             }
             throw new Exception("Cannot unmarshal type Rarity");
         }
@@ -679,6 +828,26 @@ namespace DuckBot.Modules.Csgo
                     return TypeEnum.Pass;
                 case "Weapon":
                     return TypeEnum.Weapon;
+
+                    //In number form after it is converted
+                case "0":
+                    return TypeEnum.Collectible;
+                case "1":
+                    return TypeEnum.Container;
+                case "2":
+                    return TypeEnum.Gift;
+                case "3":
+                    return TypeEnum.Gloves;
+                case "4":
+                    return TypeEnum.Graffiti;
+                case "5":
+                    return TypeEnum.Key;
+                case "6":
+                    return TypeEnum.MusicKit;
+                case "7":
+                    return TypeEnum.Pass;
+                case "8":
+                    return TypeEnum.Weapon;
             }
             throw new Exception("Cannot unmarshal type TypeEnum");
         }
@@ -750,6 +919,23 @@ namespace DuckBot.Modules.Csgo
                 case "Shotgun":
                     return WeaponType.Shotgun;
                 case "Sniper Rifle":
+                    return WeaponType.SniperRifle;
+
+                //Number form
+
+                case "0":
+                    return WeaponType.Knife;
+                case "1":
+                    return WeaponType.Machinegun;
+                case "2":
+                    return WeaponType.Pistol;
+                case "3":
+                    return WeaponType.Rifle;
+                case "4":
+                    return WeaponType.Smg;
+                case "5":
+                    return WeaponType.Shotgun;
+                case "6":
                     return WeaponType.SniperRifle;
             }
             throw new Exception("Cannot unmarshal type WeaponType");

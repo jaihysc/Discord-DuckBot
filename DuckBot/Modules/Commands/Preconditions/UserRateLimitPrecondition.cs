@@ -104,16 +104,13 @@ namespace DuckBot.Modules.Commands.Preconditions
 
             timeout.TimesInvoked++;
 
-            //Allow bypass for whitelisted users
-            // Get the ID of the bot's owner
-            // Get the client via Depedency Injection
             var client = _services.GetRequiredService<DiscordSocketClient>();
 
             // Get the ID of the bot's owner
             var appInfo = await client.GetApplicationInfoAsync().ConfigureAwait(false);
             var ownerId = appInfo.Owner.Id;
 
-            //
+            //Allow bypass for whitelisted users
             // Get whitelisted users
             List<ulong> whitelistedUsers = new List<ulong>();
 

@@ -13,6 +13,7 @@ using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -24,21 +25,21 @@ namespace DuckBot
 {
     public class MainProgram
     {
-        public static string rootLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
         public static bool _stopThreads = false;
         public static string botCommandPrefix = ".d";
 
+        private static Stopwatch stopwatch = new Stopwatch();
 
         //Setup
         public static void Main(string[] args)
         {
             //Injection
-            //This will be depreciated soon
-            CoreMethod.DeclareRootLocation(rootLocation);
+            stopwatch.Start();
+            EventLogger.LogMessage("Hello World! - Beginning startup");
+
 
             //Runs setup if config files are not present
-            if (!File.Exists(rootLocation + @"\Paths.txt"))
+            if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Paths.txt"))
             {
                 SetupManager.GenerateConfigFile();
             }
@@ -46,11 +47,14 @@ namespace DuckBot
             //Continously running threads
             Thread updateUserBankingInterest = new Thread(new ThreadStart(UserBankingInterestUpdater.UpdateUserDebtInterest));
             Thread updateUserMarketStocks = new Thread(new ThreadStart(UserMarketStocksUpdater.UpdateMarketStocks));
-
-            //Start
+            //Start threads
             updateUserBankingInterest.Start();
             updateUserMarketStocks.Start();
 
+            //Setup
+            CsgoUnboxingHandler.GetRootWeaponSkin();
+
+            //Main
             new MainProgram().MainAsync().GetAwaiter().GetResult();
 
 
@@ -78,18 +82,7 @@ namespace DuckBot
             try
             {
                 //Get token
-                var configLocations = File.ReadAllLines(rootLocation + @"\Paths.txt");
-                var tokenLocation = configLocations.Where(p => p.Contains("BotToken.txt")).ToArray();
-
-                string token = "";
-                foreach (var item in tokenLocation)
-                {
-                    var tokenFile = File.ReadAllLines(item);
-                    foreach (var item2 in tokenFile)
-                    {
-                        token = item2;
-                    }
-                }
+                string token = File.ReadAllLines(CoreMethod.GetFileLocation("BotToken.txt")).FirstOrDefault();
 
                 //Connect to discord
                 await _client.LoginAsync(TokenType.Bot, token);
@@ -106,6 +99,10 @@ namespace DuckBot
             //Set help text playing
             await _client.SetGameAsync($"Use {botCommandPrefix} help");
 
+
+            stopwatch.Stop();
+            EventLogger.LogMessage($"Ready! - Took {stopwatch.ElapsedMilliseconds} milliseconds");
+
             //
             //Event handlers
             //
@@ -115,7 +112,6 @@ namespace DuckBot
             _client.MessageReceived += EventLogger.LogUserMessage;
 
             //Message received
-            _client.MessageReceived += MessageReceived;
             _client.MessageReceived += ModerationManager.ModerationManagerMessageReceived;
 
             //User joined
@@ -124,6 +120,8 @@ namespace DuckBot
 
             //Handles command on message received event
             _client.MessageReceived += HandleCommandAsync;
+
+
 
             //All commands before this
             await Task.Delay(-1);
@@ -138,9 +136,6 @@ namespace DuckBot
             if (message == null) return;
 
             if (message.Author.IsBot) return;
-
-            //if command is not sent in my beautiful dedicated channel
-            //if (message.Channel.Id != 504371769738526752) return;
 
             //integer to determine when commands start
             int argPos = 0;
@@ -204,25 +199,6 @@ namespace DuckBot
                 await channel.SendMessageAsync($"[Log] `{message}`  >|  {result.ToString()}");
             }
             */
-
-        }
-
-        private async Task MessageReceived(SocketMessage message)
-        {
-            //Message detection
-            CultureInfo culture = new CultureInfo("en-CA", false);
-
-            await ProhibitedWordsChecker.ProhibitedWordsHandler(message, rootLocation);
-
-            if (culture.CompareInfo.IndexOf(message.Content, "rule34", CompareOptions.IgnoreCase) >= 0 && message.Author.IsBot != true)
-            {
-                await message.Channel.SendMessageAsync("Woah hey hey hey, watch it! You have to be 18+ to use that command and I guarantee you that you aren't.");
-            }
-
-            if (culture.CompareInfo.IndexOf(message.Content, "->fish", CompareOptions.IgnoreCase) >= 0 && message.Author.IsBot != true)
-            {
-                await message.Channel.SendMessageAsync("Hey! How dare you fish in my pond, no regard for our species and our survival");
-            }
 
         }
     }

@@ -25,12 +25,33 @@ namespace DuckBot.Modules.Commands.StandardCommands
         }
 
         [Ratelimit(1, 5, Measure.Seconds)]
+        [Command("case", RunMode = RunMode.Async)]
+        public async Task SelectOpenCaseAsync()
+        {
+            var pager = CsgoUnboxingHandler.SelectOpenCase(Context);
+
+            //Send paginated message
+            await PagedReplyAsync(pager, new ReactionList
+            {
+                //Jump = true,
+                Forward = true,
+                Backward = true,
+                Trash = true
+            });
+
+            //Get user response
+            var response = await NextMessageAsync();
+            await CsgoUnboxingHandler.SelectOpenCase(Context, response.ToString());
+        }
+
+        [Ratelimit(1, 5, Measure.Seconds)]
         [Command("drop", RunMode = RunMode.Async)]
         [Alias("d")]
         public async Task OpenDropAsync()
         {
             await CsgoUnboxingHandler.OpenDrop(Context);
         }
+
 
         [Ratelimit(1, 30, Measure.Seconds)]
         [Command("inventory", RunMode = RunMode.Async)]

@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using DuckBot.Core;
+using DuckBot.Modules.Csgo;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.Finance.ServiceThreads;
@@ -52,15 +53,10 @@ namespace DuckBot.Modules.Commands
                 }
             }
 
-            [Command("stopService")]
-            public async Task StopServicesAsync()
+            [Command("skinRefresh")]
+            public async Task RefreshCsgoSkinDataAsync()
             {
-                MainProgram._stopThreads = true;
-            }
-            [Command("startService")]
-            public async Task StartServicesAsync()
-            {
-                MainProgram._stopThreads = false;
+                CsgoUnboxingHandler.RefreshRootWeaponSkin();
             }
 
             //Banking

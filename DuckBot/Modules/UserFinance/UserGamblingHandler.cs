@@ -51,7 +51,7 @@ namespace DuckBot.Modules.UserFinance
         {
             long returnAmount = 0;
 
-            double randomNumber = rand.Next(-10000, 1000000);
+            double randomNumber = rand.Next(-250000, 1000000);
 
             //Change this number to change the change of winning
             int randomNumber2 = rand.Next(5);
@@ -62,15 +62,15 @@ namespace DuckBot.Modules.UserFinance
             {
                 if (randomNumber == 999999)
                 {
-                    returnAmount = gambleAmount * 1000000;
+                    returnAmount = gambleAmount * 10000000;
                 }
                 if (randomNumber >= 970000 && randomNumber <= 999998)
                 {
-                    returnAmount = gambleAmount * 8;
+                    returnAmount = gambleAmount * 4;
                 }
                 if (randomNumber >= 900000 && randomNumber <= 969999)
                 {
-                    returnAmount = gambleAmount / rand.Next(10);
+                    returnAmount = gambleAmount * rand.Next(4);
                 }
                 if (randomNumber >= 700000 && randomNumber <= 899999)
                 {
@@ -78,7 +78,7 @@ namespace DuckBot.Modules.UserFinance
                 }
                 if (randomNumber >= 650000 && randomNumber <= 699999)
                 {
-                    returnAmount = gambleAmount * gambleAmount / (gambleAmount - rand.Next(30));
+                    returnAmount = gambleAmount * gambleAmount + (gambleAmount * rand.Next(5));
                 }
                 if (randomNumber >= 650000 && randomNumber <= 649999)
                 {
@@ -86,15 +86,15 @@ namespace DuckBot.Modules.UserFinance
                 }
                 if (randomNumber >= 500000 && randomNumber <= 599999)
                 {
-                    returnAmount = gambleAmount + gambleAmount - gambleAmount / 2;
+                    returnAmount = gambleAmount + gambleAmount + gambleAmount / 2;
                 }
                 if (randomNumber >= 470000 && randomNumber <= 499999)
                 {
-                    returnAmount = returnAmount * returnAmount;
+                    returnAmount = gambleAmount * gambleAmount / 100;
                 }
                 if (randomNumber >= 450000 && randomNumber <= 469999)
                 {
-                    returnAmount = returnAmount * returnAmount / rand.Next(5);
+                    returnAmount = returnAmount * returnAmount / rand.Next(3);
                 }
                 if (randomNumber >= 430000 && randomNumber <= 449999)
                 {
@@ -106,11 +106,11 @@ namespace DuckBot.Modules.UserFinance
                 }
                 if (randomNumber >= 350000 && randomNumber <= 399999)
                 {
-                    returnAmount = returnAmount - (rand.Next(3) * rand.Next(2, 8));
+                    returnAmount = returnAmount - (rand.Next(3) * rand.Next(1, 8));
                 }
                 if (randomNumber >= 300000 && randomNumber <= 349999)
                 {
-                    returnAmount = gambleAmount * 2 - (gambleAmount / 3);
+                    returnAmount = gambleAmount * 2;
                 }
                 if (randomNumber >= 0 && randomNumber <= 299999)
                 {

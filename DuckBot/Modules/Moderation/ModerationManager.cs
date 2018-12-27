@@ -1,8 +1,12 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using DuckBot.Modules.UserActions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,16 +17,36 @@ namespace DuckBot.Modules.Moderation
         public static async Task ModerationManagerMessageReceived(SocketMessage message)
         {
             await DeleteNonCommandsInCommandsChannel(message);
+            await MessageReplies(message);
         }
 
 
         private static async Task DeleteNonCommandsInCommandsChannel(SocketMessage message)
         {
-            if (message.Channel.Id == 504371769738526752 && !message.ToString().StartsWith(MainProgram.botCommandPrefix))
+            if (message.Channel.Id == 504371769738526752 && !message.ToString().StartsWith(MainProgram.botCommandPrefix) && !message.Author.IsBot)
             {
                 var sentMessage = await message.Channel.GetMessagesAsync(1).Flatten();
                 await message.Channel.DeleteMessagesAsync(sentMessage);
             }
+        }
+
+        private static async Task MessageReplies(SocketMessage message)
+        {
+            //Message detection
+            CultureInfo culture = new CultureInfo("en-CA", false);
+
+            await ProhibitedWordsChecker.ProhibitedWordsHandler(message);
+
+            if (culture.CompareInfo.IndexOf(message.Content, "rule34", CompareOptions.IgnoreCase) >= 0 && message.Author.IsBot != true)
+            {
+                await message.Channel.SendMessageAsync("Woah hey hey hey, watch it! You have to be 18+ to use that command and I guarantee you that you aren't.");
+            }
+
+            if (culture.CompareInfo.IndexOf(message.Content, "->fish", CompareOptions.IgnoreCase) >= 0 && message.Author.IsBot != true)
+            {
+                await message.Channel.SendMessageAsync("Hey! How dare you fish in my pond, no regard for our species and our survival");
+            }
+
         }
     }
 }

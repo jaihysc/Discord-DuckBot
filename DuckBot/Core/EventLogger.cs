@@ -2,6 +2,7 @@
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot_ClassLibrary;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -40,6 +41,11 @@ namespace DuckBot.Core
             return Task.CompletedTask;
         }
 
+        public static void LogMessage(string message)
+        {
+            Console.WriteLine($"{DateTime.Now,-19} [    Info] Logging: {message}");
+        }
+
         public static Task LogUserMessage(SocketMessage msg)
         {
             //Log user message to file
@@ -58,33 +64,28 @@ namespace DuckBot.Core
             Console.BackgroundColor = ConsoleColor.DarkGray;
             Console.WriteLine(msg.ToString());
 
-            var configLocations = File.ReadAllLines(MainProgram.rootLocation + @"\Paths.txt");
-            var logLocation = configLocations.Where(p => p.Contains("BotOutputLog.txt")).ToArray();
-
-            foreach (var item in logLocation)
+            string logLocation = CoreMethod.GetFileLocation("BotOutputLog.txt");
+            try
+            {
+                using (System.IO.StreamWriter file =
+                new System.IO.StreamWriter(logLocation, true))
+                {
+                    file.WriteLine($"{DateTime.Now,-19} [    Log] {chnl.Guild.Name} || {msg.Channel} - {msg.Author}: {msg.ToString()}");
+                }
+            }
+            catch (Exception)
             {
                 try
                 {
                     using (System.IO.StreamWriter file =
-                    new System.IO.StreamWriter(item, true))
+                    new System.IO.StreamWriter(logLocation, true))
                     {
-                        file.WriteLine($"{DateTime.Now,-19} [    Log] {chnl.Guild.Name} || {msg.Channel} - {msg.Author}: {msg.ToString()}");
+                        file.WriteLine($"{DateTime.Now,-19} [    Log] Direct Message >| {msg.Channel} - {msg.Author}: {msg.ToString()}");
                     }
                 }
                 catch (Exception)
                 {
-                    try
-                    {
-                        using (System.IO.StreamWriter file =
-                        new System.IO.StreamWriter(item, true))
-                        {
-                            file.WriteLine($"{DateTime.Now,-19} [    Log] Direct Message >| {msg.Channel} - {msg.Author}: {msg.ToString()}");
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        Console.WriteLine("Unable to write to log file!");
-                    }
+                    Console.WriteLine("Unable to write to log file!");
                 }
             }
             Console.BackgroundColor = cc;
