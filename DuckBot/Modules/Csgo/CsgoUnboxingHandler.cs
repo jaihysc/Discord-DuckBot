@@ -117,7 +117,7 @@ namespace DuckBot.Modules.Csgo
 
 
                 //Get item
-                var skinItem = itemProcess.GetItem(result, rootWeaponSkin, context);
+                var skinItem = itemProcess.GetItem(result, rootWeaponSkin, context, false);
 
 
                 //Add item to user file inventory
@@ -153,7 +153,7 @@ namespace DuckBot.Modules.Csgo
 
 
             //Get item
-            var skinItem = itemProcess.GetItem(rarity, rootWeaponSkin, context);
+            var skinItem = itemProcess.GetItem(rarity, rootWeaponSkin, context, true);
 
 
             //Add item to user file inventory
@@ -381,33 +381,42 @@ namespace DuckBot.Modules.Csgo
         /// <param name="itemListType">Type file</param>
         /// <param name="skinData">Skin data to look through</param>
         /// <returns></returns>
-        public SkinDataItem GetItem(ItemListType itemListType, RootSkinData skinData, SocketCommandContext context)
-        {
-            //Get user from dictionary
-            if (!CsgoUnboxingHandler.userSelectedCase.TryGetValue(context.Message.Author.Id, out var userSelectedCaseName))
-            {
-                //Default to danger zone case if user has not made a selection
-                CsgoUnboxingHandler.userSelectedCase.Add(context.Message.Author.Id, "Danger Zone Case");
-            }
-
-            //Filter skins to those in user's case
-            string selectedCase = CsgoUnboxingHandler.csgoContiners.Containers.Where(s => s.Name == CsgoUnboxingHandler.userSelectedCase[context.Message.Author.Id]).Select(s => s.Name).FirstOrDefault();
-
-            //Add skins matching user's case to sorted result
+        public SkinDataItem GetItem(ItemListType itemListType, RootSkinData skinData, SocketCommandContext context, bool byPassCaseFilter)
+        {          
             List<KeyValuePair<string, SkinDataItem>> sortedResult = new List<KeyValuePair<string, SkinDataItem>>();
 
-            foreach (var item in skinData.ItemsList)
+            //Add skins matching user's case to sorted result
+            if (byPassCaseFilter == false)
             {
-                if (item.Value.Cases != null)
+                //Get user from dictionary
+                if (!CsgoUnboxingHandler.userSelectedCase.TryGetValue(context.Message.Author.Id, out var userSelectedCaseName))
                 {
-                    foreach (var item2 in item.Value.Cases)
+                    //Default to danger zone case if user has not made a selection
+                    CsgoUnboxingHandler.userSelectedCase.Add(context.Message.Author.Id, "Danger Zone Case");
+                }
+
+                //Filter skins to those in user's case
+                string selectedCase = CsgoUnboxingHandler.csgoContiners.Containers.Where(s => s.Name == CsgoUnboxingHandler.userSelectedCase[context.Message.Author.Id]).Select(s => s.Name).FirstOrDefault();
+
+                //Find items matching filter case criteria, add to sortedResult ...!!!!Store this in the future to make this process more efficient
+                foreach (var item in skinData.ItemsList)
+                {
+                    if (item.Value.Cases != null)
                     {
-                        if (item2.CaseName == selectedCase)
+                        foreach (var item2 in item.Value.Cases)
                         {
-                            sortedResult.Add(item);
+                            if (item2.CaseName == selectedCase)
+                            {
+                                sortedResult.Add(item);
+                            }
                         }
                     }
                 }
+            }
+            else
+            {
+                //If bypass is true, sorted result is just root skinData
+                sortedResult = skinData.ItemsList.ToDictionary(x => x.Key, y => y.Value).ToList();
             }
 
             //Filter by rarity
