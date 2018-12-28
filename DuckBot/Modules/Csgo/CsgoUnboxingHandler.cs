@@ -23,8 +23,6 @@ namespace DuckBot.Modules.Csgo
         public static Dictionary<ulong, string> userSelectedCase = new Dictionary<ulong, string>();
         public static CsgoContainers csgoContiners = XmlManager.FromXmlFile<CsgoContainers>(CoreMethod.GetFileLocation("skinCases.xml"));
 
-
-
         /// <summary>
         /// Selects the appropriate cs go container to open, user replies with a number corrosponding to the case
         /// </summary>
@@ -61,7 +59,6 @@ namespace DuckBot.Modules.Csgo
 
             return pager;
         }
-
         /// <summary>
         /// Selects the appropriate cs go container to open, user replies with a number corrosponding to the case
         /// </summary>
@@ -113,7 +110,7 @@ namespace DuckBot.Modules.Csgo
             if (UserCreditsHandler.AddCredits(context, -300) == true)
             {
                 var itemProcess = new ItemDropProcessing();
-                var result = itemProcess.CalculateItemRarity();
+                var result = itemProcess.CalculateItemCaseRarity();
 
 
                 //Get item
@@ -146,10 +143,8 @@ namespace DuckBot.Modules.Csgo
             //Test if user has enough credits
             var itemProcess = new ItemDropProcessing();
 
-            var rarity = new ItemListType
-            {
-                Rarity = Rarity.ConsumerGrade
-            };
+            //Select a rarity, this is slightly modified towards the white side of the spectrum, higher value items are harder to get as this is a drop
+            var rarity = itemProcess.CalculateItemDropRarity();
 
 
             //Get item
@@ -170,8 +165,14 @@ namespace DuckBot.Modules.Csgo
         private static async Task SendOpenedItemInfo(SocketCommandContext context, SkinDataItem skinItem, long skinMarketValue)
         {
             //Get all collections skin / item is in
-            string skinCaseCollections = "*This weapon is not in any collections*";
-            if (skinItem.Cases != null) skinCaseCollections = string.Join("\n", skinItem.Cases.Select(i => i.CaseCollection));          
+            string skinCaseCollections = "\u200b";
+            //Do not display collection info for knives as they have a massive list of interchangeable cases
+            if (skinItem.WeaponType != WeaponType.Knife)
+            {
+                if (skinItem.Cases != null) skinCaseCollections = string.Join("\n", skinItem.Cases.Select(i => i.CaseCollection));
+            }
+            
+               
 
             //Embed
             var embedBuilder = new EmbedBuilder()
@@ -345,11 +346,10 @@ namespace DuckBot.Modules.Csgo
     {
         static Random rand = new Random();
 
-        public ItemListType CalculateItemRarity()
+        public ItemListType CalculateItemCaseRarity()
         {
             int randomNumber = rand.Next(9999);
 
-            //if (randomNumber < 10000 && randomNumber >= 6004) return new ItemListType{Rarity = Rarity.White };
             if (randomNumber < 10000 && randomNumber >= 2008) return new ItemListType { Rarity = Rarity.MilSpecGrade };
             if (randomNumber < 2008 && randomNumber >= 410) return new ItemListType { Rarity = Rarity.Restricted };
             if (randomNumber < 410 && randomNumber >= 90) return new ItemListType { Rarity = Rarity.Classified };
@@ -359,20 +359,17 @@ namespace DuckBot.Modules.Csgo
             return new ItemListType { Rarity = Rarity.MilSpecGrade };
         }
 
-        /// <summary>
-        /// 1 in 10 chance of stat trak, (Returns true for stattrak)
-        /// </summary>
-        /// <returns></returns>
-        public bool CalculateStatTrakDrop()
+        public ItemListType CalculateItemDropRarity()
         {
-            if (rand.Next(9) == 0)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            int randomNumber = rand.Next(9999);
+
+            if (randomNumber < 10000 && randomNumber >= 2008) return new ItemListType { Rarity = Rarity.ConsumerGrade };
+            if (randomNumber < 2008 && randomNumber >= 410) return new ItemListType { Rarity = Rarity.IndustrialGrade };
+            if (randomNumber < 410 && randomNumber >= 90) return new ItemListType { Rarity = Rarity.MilSpecGrade };
+            if (randomNumber < 90 && randomNumber >= 26) return new ItemListType { Rarity = Rarity.Restricted };
+            if (randomNumber < 26 && randomNumber >= 0) return new ItemListType { Rarity = Rarity.Classified };
+
+            return new ItemListType { Rarity = Rarity.ConsumerGrade };
         }
 
         /// <summary>
@@ -416,7 +413,22 @@ namespace DuckBot.Modules.Csgo
             else
             {
                 //If bypass is true, sorted result is just root skinData
-                sortedResult = skinData.ItemsList.ToDictionary(x => x.Key, y => y.Value).ToList();
+                //sortedResult = skinData.ItemsList.ToDictionary(x => x.Key, y => y.Value).ToList();
+
+                //Add collection items, E.g Mirage collection, Nuke collection for drop, which has null for casesName
+                foreach (var item in skinData.ItemsList)
+                {
+                    if (item.Value.Cases != null)
+                    {
+                        foreach (var item2 in item.Value.Cases)
+                        {
+                            if (item2.CaseName == null)
+                            {
+                                sortedResult.Add(item);
+                            }
+                        }
+                    }
+                }
             }
 
             //Filter by rarity
@@ -465,5 +477,18 @@ namespace DuckBot.Modules.Csgo
             }
             return selectedSkin.Value;
         }
+        private bool CalculateStatTrakDrop()
+        {
+            if (rand.Next(9) == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+
     }
 }
