@@ -171,8 +171,9 @@ namespace DuckBot.Modules.Csgo
             {
                 if (skinItem.Cases != null) skinCaseCollections = string.Join("\n", skinItem.Cases.Select(i => i.CaseCollection));
             }
-            
-               
+
+            //Get user selected case
+            string selectedCaseIcon = csgoContiners.Containers.Where(s => s.Name == userSelectedCase[context.Message.Author.Id]).Select(s => s.IconURL).FirstOrDefault();
 
             //Embed
             var embedBuilder = new EmbedBuilder()
@@ -186,11 +187,12 @@ namespace DuckBot.Modules.Csgo
                 .WithAuthor(author =>
                 {
                     author
-                        .WithName("Case Unboxing")
+                        .WithName("CS:GO Case Unboxing")
                         .WithIconUrl("https://i.redd.it/1s0j5e4fhws01.png");
                 })
                 .AddField(skinItem.Name, $"{skinCaseCollections}\n**Market Value: {skinMarketValue}**")
-                .WithImageUrl("https://steamcommunity.com/economy/image/" + skinItem.IconUrlLarge);
+                .WithImageUrl("https://steamcommunity.com/economy/image/" + skinItem.IconUrlLarge)
+                .WithThumbnailUrl(selectedCaseIcon);
 
             var embed = embedBuilder.Build();
 
