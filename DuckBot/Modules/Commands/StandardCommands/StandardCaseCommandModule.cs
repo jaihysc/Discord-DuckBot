@@ -88,6 +88,14 @@ namespace DuckBot.Modules.Commands.StandardCommands
             }           
         }
 
+        [Ratelimit(5, 5, Measure.Seconds)]
+        [Command("sellall", RunMode = RunMode.Async)]
+        [Alias("sa")]
+        public async Task SellAllSelectedInventoryItemAsync([Remainder]string inventoryMarketHash)
+        {
+            await CsgoTransactionHandler.SellAllSelectedInventoryItemAsync(Context, inventoryMarketHash);
+        }
+
         [Ratelimit(1, 4, Measure.Seconds)]
         [Command("buy", RunMode = RunMode.Async)]
         [Alias("b")]

@@ -14,10 +14,11 @@ namespace DuckBot.Modules.Csgo
 {
     public static class CsgoTransactionHandler
     {
+        //Buy
         public static async Task BuyItemFromMarketAsync(SocketCommandContext Context, string itemMarketHash)
         {
             //Get skin data
-            var rootWeaponSkins = CsgoUnboxingHandler.GetRootWeaponSkin();
+            var rootWeaponSkins = CsgoDataHandler.GetRootWeaponSkin();
 
             try
             {
@@ -90,10 +91,11 @@ namespace DuckBot.Modules.Csgo
             }
         }
 
+        //Sell
         public static async Task SellInventoryItemAsync(SocketCommandContext Context, string itemMarketHash)
         {
             //Get skin data
-            var rootWeaponSkin = CsgoUnboxingHandler.GetRootWeaponSkin();
+            var rootWeaponSkin = CsgoDataHandler.GetRootWeaponSkin();
             var rootUserSkin = XmlManager.FromXmlFile<UserSkinStorageRootobject>(CoreMethod.GetFileLocation("UserSkinStorage.xml"));
 
             try
@@ -111,19 +113,59 @@ namespace DuckBot.Modules.Csgo
                 UserCreditsHandler.AddCredits(Context, weaponSkinValue, true);
 
                 //Remove skin from inventory
-                var filteredUserSkinEntries = rootUserSkin.UserSkinEntries.Where(s => s.ClassId != selectedSkinToSell.ClassId).ToList();
+                var filteredUserSkinEntries = rootUserSkin.UserSkinEntries.Where(s => s.OwnerID == Context.Message.Author.Id).Where(s => s.ClassId != selectedSkinToSell.ClassId).ToList();
 
-                var filteredUserSkin = new UserSkinStorageRootobject
-                {
-                    SkinAmount = 0,
-                    UserSkinEntries = filteredUserSkinEntries
-                };
-
-                XmlManager.ToXmlFile(filteredUserSkin, CoreMethod.GetFileLocation("UserSkinStorage.xml"));
+                //Write to file
+                WriteUserSkinDataToFile(filteredUserSkinEntries);
 
                 //Send receipt
                 await Context.Channel.SendMessageAsync(
-                    $"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, you sold your `{selectedSkinToSell.MarketName}`" +
+                    UserInteraction.BoldUserName(Context) + $", you sold your `{selectedSkinToSell.MarketName}`" +
+                    $" for **{UserBankingHandler.CreditCurrencyFormatter(weaponSkinValue)} Credits** " +
+                    $"| A total of **{UserBankingHandler.CreditCurrencyFormatter(UserCreditsTaxHandler.TaxCollector(weaponSkinValue))} Credits was taken off as tax**");
+            }
+            catch (Exception)
+            {
+                //Send error if user does not have item
+                await Context.Channel.SendMessageAsync($"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, you do not have `{itemMarketHash}` in your inventory");
+            }
+
+        }
+
+        public static async Task SellAllSelectedInventoryItemAsync(SocketCommandContext Context, string itemMarketHash)
+        {
+            //Get skin data
+            var rootSkinData = CsgoDataHandler.GetRootWeaponSkin();
+            var userSkin = XmlManager.FromXmlFile<UserSkinStorageRootobject>(CoreMethod.GetFileLocation("UserSkinStorage.xml"));
+
+            try
+            {
+                //Find ALL user selected items, make sure it is owned by user
+                var selectedSkinToSell = userSkin.UserSkinEntries
+                    .Where(s => s.MarketName.ToLower().Contains(itemMarketHash.ToLower()))
+                    .Where(s => s.OwnerID == Context.Message.Author.Id).ToList();
+
+                //Get item prices
+                long weaponSkinValue = GetItemValue(selectedSkinToSell, rootSkinData);
+
+                //Give user credits
+                UserCreditsHandler.AddCredits(Context, weaponSkinValue, true);
+
+                //Remove skin from inventory
+                List<UserSkinEntry> filteredUserSkinEntries = new List<UserSkinEntry>();
+                List<string> filterUserSkinNames = new List<string>();
+                foreach (var item in selectedSkinToSell)
+                {
+                    filteredUserSkinEntries.Add(userSkin.UserSkinEntries.Where(s => s.OwnerID == Context.Message.Author.Id).Where(s => s.ClassId != item.ClassId).FirstOrDefault());
+                    filterUserSkinNames.Add(item.MarketName);
+                }
+
+                //Write to file
+                WriteUserSkinDataToFile(filteredUserSkinEntries);
+
+                //Send receipt
+                await Context.Channel.SendMessageAsync(
+                    UserInteraction.BoldUserName(Context) + $", you sold your \n`{string.Join("\n", filterUserSkinNames)}`" +
                     $" for **{UserBankingHandler.CreditCurrencyFormatter(weaponSkinValue)} Credits** " +
                     $"| A total of **{UserBankingHandler.CreditCurrencyFormatter(UserCreditsTaxHandler.TaxCollector(weaponSkinValue))} Credits was taken off as tax**");
             }
@@ -138,51 +180,54 @@ namespace DuckBot.Modules.Csgo
         public static async Task SellAllInventoryItemAsync(SocketCommandContext Context)
         {
             //Get price data
-            var rootWeaponSkinPrice = CsgoUnboxingHandler.GetRootWeaponSkin();
+            var rootSkinData = CsgoDataHandler.GetRootWeaponSkin();
             var userSkin = XmlManager.FromXmlFile<UserSkinStorageRootobject>(CoreMethod.GetFileLocation("UserSkinStorage.xml"));
 
             try
             {
-                long weaponSkinValue = 0;
-
-
-                foreach (var skin in userSkin.UserSkinEntries)
-                {
-                    try
-                    {
-                        weaponSkinValue += Convert.ToInt64(rootWeaponSkinPrice.ItemsList.Values.Where(s => s.Classid.ToLower() == skin.ClassId.ToLower()).FirstOrDefault().Price.AllTime.Average);
-                    }
-                    catch (Exception)
-                    {
-                    }
-
-                }
+                long weaponSkinValue = GetItemValue(userSkin.UserSkinEntries, rootSkinData);
 
                 //Give user credits
                 UserCreditsHandler.AddCredits(Context, weaponSkinValue, true);
 
                 //Remove skin from inventory
-                var filteredUserSkinEntries = userSkin.UserSkinEntries.Where(s => s.OwnerID != Context.Message.Author.Id).ToList();
+                var filteredUserSkinEntries = userSkin.UserSkinEntries.Where(s => s.OwnerID == Context.Message.Author.Id).Where(s => s.OwnerID != Context.Message.Author.Id).ToList();
 
-                var filteredUserSkin = new UserSkinStorageRootobject
-                {
-                    SkinAmount = 0,
-                    UserSkinEntries = filteredUserSkinEntries
-                };
-
-                XmlManager.ToXmlFile(filteredUserSkin, CoreMethod.GetFileLocation("UserSkinStorage.xml"));
+                //Write to file
+                WriteUserSkinDataToFile(filteredUserSkinEntries);
 
                 //Send receipt
                 await Context.Channel.SendMessageAsync(
-                    $"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, you sold your inventory" +
+                    UserInteraction.BoldUserName(Context) + $", you sold your inventory" +
                     $" for **{UserBankingHandler.CreditCurrencyFormatter(weaponSkinValue)} Credits** " +
                     $"| A total of **{UserBankingHandler.CreditCurrencyFormatter(UserCreditsTaxHandler.TaxCollector(weaponSkinValue))} Credits was taken off as tax**");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Fuck!!!");
-                Console.WriteLine(ex.StackTrace);
             }
+        }
+
+        private static long GetItemValue(List<UserSkinEntry> userSkins, RootSkinData rootSkinData)
+        {
+            long weaponSkinValue = 0;
+            foreach (var item in userSkins)
+            {
+                weaponSkinValue += Convert.ToInt64(rootSkinData.ItemsList.Values.Where(s => s.Name == item.MarketName).FirstOrDefault().Price.AllTime.Average);
+            }
+
+            return weaponSkinValue;
+        }
+
+        private static void WriteUserSkinDataToFile(List<UserSkinEntry> skinEntries)
+        {
+            var filteredUserSkin = new UserSkinStorageRootobject
+            {
+                SkinAmount = 0,
+                UserSkinEntries = skinEntries
+            };
+
+            XmlManager.ToXmlFile(filteredUserSkin, CoreMethod.GetFileLocation("UserSkinStorage.xml"));
+
         }
     }
 }

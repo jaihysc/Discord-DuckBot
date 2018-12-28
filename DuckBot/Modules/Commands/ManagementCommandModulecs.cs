@@ -56,7 +56,7 @@ namespace DuckBot.Modules.Commands
             [Command("skinRefresh")]
             public async Task RefreshCsgoSkinDataAsync()
             {
-                CsgoUnboxingHandler.RefreshRootWeaponSkin();
+                CsgoDataHandler.RefreshRootWeaponSkin();
             }
 
             //Banking

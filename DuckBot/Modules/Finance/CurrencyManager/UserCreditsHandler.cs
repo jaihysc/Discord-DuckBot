@@ -193,7 +193,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
                 long userCreditsNew = 0;
                 if (deductTaxes == true)
                 {
-                    userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount);
+                    userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(addAmount);
                 }
                 else if (deductTaxes == false)
                 {
@@ -284,7 +284,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
                 long userCreditsNew = 0;
                 if (deductTaxes == true)
                 {
-                    userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount);
+                    userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit + addAmount - UserCreditsTaxHandler.TaxCollector(addAmount);
                 }
                 else if (deductTaxes == false)
                 {

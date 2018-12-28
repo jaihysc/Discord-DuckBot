@@ -97,6 +97,13 @@
       <CommandUsage>.d cs open</CommandUsage>
 	  <CommandUsageDefinition></CommandUsageDefinition>
     </HelpMenuCommandEntry>
+  <HelpMenuCommandEntry>
+      <CommandName>cs drop</CommandName>
+      <CommandDescription>Get an item drop, lesser in quality compared to a case open</CommandDescription>
+      <CommandRequiredPermissions></CommandRequiredPermissions>
+      <CommandUsage>.d cs drop</CommandUsage>
+      <CommandUsageDefinition></CommandUsageDefinition>
+    </HelpMenuCommandEntry>
 	<HelpMenuCommandEntry>
       <CommandName>cs inventory</CommandName>
       <CommandDescription>Displays your current inventory of CS:GO skins</CommandDescription>
@@ -120,10 +127,17 @@
     </HelpMenuCommandEntry>
 	<HelpMenuCommandEntry>
       <CommandName>cs sell</CommandName>
-      <CommandDescription>Sells selected CS:GO from your inventory</CommandDescription>
+      <CommandDescription>Sells selected CS:GO skins from your inventory</CommandDescription>
 	  <CommandRequiredPermissions></CommandRequiredPermissions>
       <CommandUsage>.d cs sell [skinName] //.d cs sell AUG | Aristocrat (Field-Tested)</CommandUsage>
 	  <CommandUsageDefinition>[skinName] | Name of skin to sell, use * to sell all skins</CommandUsageDefinition>
+    </HelpMenuCommandEntry>
+  <HelpMenuCommandEntry>
+      <CommandName>cs sellall</CommandName>
+      <CommandDescription>Sells ALL selected CS:GO skins from your inventory</CommandDescription>
+      <CommandRequiredPermissions></CommandRequiredPermissions>
+      <CommandUsage>.d cs sell [skinName] //.d cs sellall (Field-Tested)</CommandUsage>
+      <CommandUsageDefinition>[skinName] | Words item must contain to be sold</CommandUsageDefinition>
     </HelpMenuCommandEntry>
 	<HelpMenuCommandEntry>
       <CommandName>cs info</CommandName>

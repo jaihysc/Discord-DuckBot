@@ -57,7 +57,7 @@ namespace DuckBot.Modules.Csgo
                 AuthorName = Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5) + " Inventory",
                 AuthorURL = Context.Message.Author.GetAvatarUrl(),
 
-                Description = $"To sell items, use `{MainProgram.botCommandPrefix} cs sell [name]`",
+                Description = $"To sell items, use `{MainProgram.botCommandPrefix} cs sell [name]` \n To sell all items matching filter, use `{MainProgram.botCommandPrefix} cs sellall [name]`",
 
                 DefaultFieldHeader = "You do not have any skins",
                 DefaultFieldDescription = $"Go unbox some with `{MainProgram.botCommandPrefix} case open`",
@@ -76,7 +76,7 @@ namespace DuckBot.Modules.Csgo
 
         private static void AddSkinFieldEntry(List<UserSkinEntry> foundUserSkins)
         {
-            var rootWeaponSkin = CsgoUnboxingHandler.GetRootWeaponSkin();
+            var rootWeaponSkin = CsgoDataHandler.GetRootWeaponSkin();
 
             //For every item belonging to sender
             foreach (var item in foundUserSkins)
@@ -133,7 +133,7 @@ namespace DuckBot.Modules.Csgo
         public static PaginatedMessage GetCsgoMarketInventory(SocketCommandContext Context, string filterString)
         {
             //Get skin data
-            var rootWeaponSkin = CsgoUnboxingHandler.GetRootWeaponSkin();
+            var rootWeaponSkin = CsgoDataHandler.GetRootWeaponSkin();
 
             List<string> filteredRootWeaponSkin = new List<string>();
             List<string> filteredRootWeaponSkinPrice = new List<string>();
@@ -199,7 +199,7 @@ namespace DuckBot.Modules.Csgo
         public static async Task DisplayCsgoItemStatistics(SocketCommandContext Context, string filterString)
         {
             //Get skin data
-            var rootWeaponSkin = Csgo.CsgoUnboxingHandler.GetRootWeaponSkin();
+            var rootWeaponSkin = CsgoDataHandler.GetRootWeaponSkin();
 
             try
             {

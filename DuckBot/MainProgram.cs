@@ -52,7 +52,7 @@ namespace DuckBot
             updateUserMarketStocks.Start();
 
             //Setup
-            CsgoUnboxingHandler.GetRootWeaponSkin();
+            CsgoDataHandler.GetRootWeaponSkin();
 
             //Main
             new MainProgram().MainAsync().GetAwaiter().GetResult();

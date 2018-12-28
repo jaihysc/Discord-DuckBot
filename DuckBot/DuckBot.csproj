@@ -164,6 +164,7 @@
     <Compile Include="Modules\Commands\StandardCommands\StandardFinanceCommandModule.cs" />
     <Compile Include="Modules\Commands\StandardCommands\StandardGameCommandModule.cs" />
     <Compile Include="Modules\Commands\StandardCommands\StandardStockCommandModule.cs" />
+    <Compile Include="Modules\Csgo\CsgoDataHandler.cs" />
     <Compile Include="Modules\Csgo\CsgoUnboxingHandler.cs" />
     <Compile Include="Modules\Csgo\CsgoInventoryManager.cs" />
     <Compile Include="Modules\Csgo\CsgoMarketDataSerializer.cs" />
@@ -181,7 +182,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Modules\Commands\RestrictedCommandModule.cs" />
     <Compile Include="Modules\UserFinance\UserGamblingHandler.cs" />
-    <Compile Include="Modules\UserActions\UserBugReportHandler.cs" />
     <Compile Include="Modules\UserActions\UserDataManager.cs" />
     <Compile Include="Modules\UserActions\UserHelpHandler.cs" />
     <Compile Include="Modules\UserActions\UserJoinHandler.cs" />
