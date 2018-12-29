@@ -44,29 +44,29 @@ namespace DuckBot.Modules.Finance.ServiceThreads
         ///</Summary>
         public static void UserDebtInterestUpdater()
         {
+            var userStorage = UserDataManager.GetUserStorage();
+
             //Update user debt
-            foreach (string file in Directory.EnumerateFiles(CoreMethod.GetFileLocation(@"\UserStorage"), "*.xml"))
+            foreach (var user in userStorage.UserInfo.Values)
             {
                 try
                 {
-                    var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(file);
-
                     //Calculate forcefully deduct amount
                     long deductionAmount = 0;
                     //Set deduction to 1 in the event debt is less than 5 and user owns credits
-                    if (userCreditStorage.UserInfo.UserBankingStorage.Credit > 0 && userCreditStorage.UserInfo.UserBankingStorage.CreditDebt > 0)
+                    if (userStorage.UserInfo[user.UserId].UserBankingStorage.Credit > 0 && userStorage.UserInfo[user.UserId].UserBankingStorage.CreditDebt > 0)
                     {
                         deductionAmount = 1;
                     }
 
-                    deductionAmount = Convert.ToInt64(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("interestRate")));
+                    deductionAmount = Convert.ToInt64(userStorage.UserInfo[user.UserId].UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("interestRate")));
 
                     //Calculate new credits
                     long userCreditsNew = 0;
                     //Check if user has sufficient credits
-                    if (userCreditStorage.UserInfo.UserBankingStorage.Credit - deductionAmount > 0)
+                    if (userStorage.UserInfo[user.UserId].UserBankingStorage.Credit - deductionAmount > 0)
                     {
-                        userCreditsNew = userCreditStorage.UserInfo.UserBankingStorage.Credit - deductionAmount;
+                        userCreditsNew = userStorage.UserInfo[user.UserId].UserBankingStorage.Credit - deductionAmount;
                     }
 
 
@@ -76,7 +76,7 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                     long debtAmountNew;
                     try
                     {
-                        debtAmountNew = Convert.ToInt64((userCreditStorage.UserInfo.UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("interestRate"))) + userCreditStorage.UserInfo.UserBankingStorage.CreditDebt);
+                        debtAmountNew = Convert.ToInt64((userStorage.UserInfo[user.UserId].UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("interestRate"))) + userStorage.UserInfo[user.UserId].UserBankingStorage.CreditDebt);
                     }
                     catch (OverflowException)
                     {
@@ -87,19 +87,13 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                     //Write to file
                     var userRecord = new UserStorage
                     {
-                        UserId = userCreditStorage.UserId,
-                        UserInfo = new UserInfo
-                        {
-                            UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime },
-                            UserBankingStorage = new UserBankingStorage { Credit = userCreditsNew, CreditDebt = debtAmountNew },
-                            UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
-                        }
+                        UserInfo = userStorage.UserInfo
                     };
 
-                    XmlManager.ToXmlFile(userRecord, file);
+                    UserDataManager.WriteUserStorage(userRecord);
 
                 }
-                catch(Exception ex)
+                catch(Exception)
                 {
                 }
             }

@@ -13,127 +13,136 @@ namespace DuckBot.Modules.Finance.CurrencyManager
 {
     public class UserDebtHandler
     {
-        public static async Task DisplayUserCreditsDebt(SocketCommandContext Context)
+        /// <summary>
+        /// Allows the user to borrow credits
+        /// </summary>
+        /// <param name="context">Invoke data for the user</param>
+        /// <param name="borrowAmount">Amount to borrow for the user</param>
+        /// <returns></returns>
+        public static async Task BorrowCredits(SocketCommandContext context, long borrowAmount)
         {
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
-
-            await Context.Message.Channel.SendMessageAsync($"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, You owe **{UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.CreditDebt)} Credits**");
-
-        }
-
-        public static long GetUserCreditsDebt(SocketCommandContext Context)
-        {
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
-
-            return userCreditStorage.UserInfo.UserBankingStorage.CreditDebt;
-        }
-        public static long GetUserCreditsDebt(ulong UserId)
-        {
-            var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + UserId + ".xml");
-
-            return userCreditStorage.UserInfo.UserBankingStorage.CreditDebt;
-        }
-
-
-        public static async Task BorrowCredits(SocketCommandContext Context, long borrowAmount)
-        {
-            if (GetUserCreditsDebt(Context) + borrowAmount > long.Parse(SettingsManager.RetrieveFromConfigFile("maxBorrow")))
+            if (GetUserCreditsDebt(context) + borrowAmount > long.Parse(SettingsManager.RetrieveFromConfigFile("maxBorrow")))
             {
-                await Context.Message.Channel.SendMessageAsync($"You have exceeded your credit limit of **{UserBankingHandler.CreditCurrencyFormatter(long.Parse(SettingsManager.RetrieveFromConfigFile("maxBorrow")))} Credits**");
+                await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you have exceeded your credit limit of **{UserBankingHandler.CreditCurrencyFormatter(long.Parse(SettingsManager.RetrieveFromConfigFile("maxBorrow")))} Credits**");
             }
             else if (borrowAmount <= 0)
             {
-                await Context.Message.Channel.SendMessageAsync($"You have to borrow **1 or more** Credits");
+                await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you have to borrow **1 or more** Credits");
             }
             else
             {
                 //Add to debt counter
-                AddDebt(Context, borrowAmount);
+                AddDebt(context, borrowAmount);
                 //Add credits to user
-                UserCreditsHandler.AddCredits(Context, borrowAmount);
+                UserCreditsHandler.AddCredits(context, borrowAmount);
 
                 //Send receipt
-                await Context.Message.Channel.SendMessageAsync($"You borrowed **{UserBankingHandler.CreditCurrencyFormatter(borrowAmount)} Credits**");
+                await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you borrowed **{UserBankingHandler.CreditCurrencyFormatter(borrowAmount)} Credits**");
             }
         }
 
-        public static async Task ReturnCredits(SocketCommandContext Context, long returnAmount)
+        /// <summary>
+        /// Allows the user to pay back their credits borrowed
+        /// </summary>
+        /// <param name="context">Invoke data for the user</param>
+        /// <param name="returnAmount">Amount to return for the user</param>
+        /// <returns></returns>
+        public static async Task ReturnCredits(SocketCommandContext context, long returnAmount)
         {
-            if (returnAmount > GetUserCreditsDebt(Context))
+            if (returnAmount > GetUserCreditsDebt(context))
             {
-                await Context.Message.Channel.SendMessageAsync($"You do not owe **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} Credits** || **{UserBankingHandler.CreditCurrencyFormatter(GetUserCreditsDebt(Context))} Credits**");
+                await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you do not owe **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} Credits** || **{UserBankingHandler.CreditCurrencyFormatter(GetUserCreditsDebt(context))} Credits**");
             }
             else if (returnAmount <= 0)
             {
-                await Context.Message.Channel.SendMessageAsync($"You have to pay back **1 or more** Credits");
+                await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you have to pay back **1 or more** Credits");
             }
-            else if (returnAmount > UserCreditsHandler.GetUserCredits(Context))
+            else if (returnAmount > UserCreditsHandler.GetUserCredits(context))
             {
-                await Context.Message.Channel.SendMessageAsync($"You do not have enough credits to pay back || **{UserCreditsHandler.GetUserCredits(Context)}** Credits");
+                await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you do not have enough credits to pay back || **{UserCreditsHandler.GetUserCredits(context)}** Credits");
             }
             else
             {
                 //Subtract from debt counter
-                AddDebt(Context, -returnAmount);
+                AddDebt(context, -returnAmount);
                 //Subtract credits to user
-                UserCreditsHandler.AddCredits(Context, -returnAmount);
+                UserCreditsHandler.AddCredits(context, -returnAmount);
 
                 //Send receipt
-                await Context.Message.Channel.SendMessageAsync($"You paid back **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} Credits**");
+                await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you paid back **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} Credits**");
             }
         }
 
+        //READ
+        /// <summary>
+        /// Sends a message to the invoke channel of the debt user has
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static async Task DisplayUserCreditsDebt(SocketCommandContext context)
+        {
+            long creditsOwed = GetUserCreditsDebt(context);
+
+            await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you owe **{creditsOwed} Credits**");
+
+        }
+
+        /// <summary>
+        /// Retrieves the user debt from storage
+        /// </summary>
+        /// <param name="context">invoke data from the user</param>
+        /// <returns></returns>
+        public static long GetUserCreditsDebt(SocketCommandContext context)
+        {
+            var userStorage = UserDataManager.GetUserStorage();
+
+            return userStorage.UserInfo[context.Message.Author.Id].UserBankingStorage.CreditDebt;
+        }
+        /// <summary>
+        /// Retrieves the user debt from storage
+        /// </summary>
+        /// <param name="userId">Id of the user</param>
+        /// <returns></returns>
+        public static long GetUserCreditsDebt(ulong userId)
+        {
+            var userStorage = UserDataManager.GetUserStorage();
+
+            return userStorage.UserInfo[userId].UserBankingStorage.CreditDebt;
+        }
+
+        //READ + WRITE
         /// <summary>
         /// Sets the user debt
         /// </summary>
-        /// <param name="Context">Command Context</param>
+        /// <param name="context">Command Context</param>
         /// <param name="setAmount">Amount to set debt to</param>
-        public static void SetDebt(SocketCommandContext Context, long setAmount)
+        public static void SetDebt(SocketCommandContext context, long setAmount)
         {
             //Get user debt to list
-            var userCreditDebtStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            var userStorage = UserDataManager.GetUserStorage();
+
+            //Set debt
+            userStorage.UserInfo[context.Message.Author.Id].UserBankingStorage.CreditDebt = setAmount;
 
             //Write new debt amount 
-            var userRecord = new UserStorage
-            {
-                UserId = userCreditDebtStorage.UserId,
-                UserInfo = new UserInfo
-                {
-                    UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditDebtStorage.UserInfo.UserDailyLastUseStorage.DateTime },
-                    UserBankingStorage = new UserBankingStorage { Credit = userCreditDebtStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = setAmount },
-                    UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditDebtStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
-                }
-            };
-
-            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            UserDataManager.WriteUserStorage(userStorage);
         }
 
         /// <summary>
         /// Sets the user debt
         /// </summary>
-        /// <param name="Context">Command Context</param>
+        /// <param name="context">Command Context</param>
         /// <param name="addAmount">Amount of debt to add</param>
-        public static void AddDebt(SocketCommandContext Context, long addAmount)
+        public static void AddDebt(SocketCommandContext context, long addAmount)
         {
             //Get user debt to list
-            var userCreditDebtStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            var userStorage = UserDataManager.GetUserStorage();
 
             //Calculate new debt balance
-            long userCreditsDebtNew = userCreditDebtStorage.UserInfo.UserBankingStorage.CreditDebt + addAmount;
+            userStorage.UserInfo[context.Message.Author.Id].UserBankingStorage.CreditDebt = userStorage.UserInfo[context.Message.Author.Id].UserBankingStorage.CreditDebt + addAmount;
 
             //Write new debt amount 
-            var userRecord = new UserStorage
-            {
-                UserId = userCreditDebtStorage.UserId,
-                UserInfo = new UserInfo
-                {
-                    UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userCreditDebtStorage.UserInfo.UserDailyLastUseStorage.DateTime },
-                    UserBankingStorage = new UserBankingStorage { Credit = userCreditDebtStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = userCreditsDebtNew },
-                    UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userCreditDebtStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
-                }
-            };
-
-            XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            UserDataManager.WriteUserStorage(userStorage);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace DuckBot.Modules.Commands.StandardCommands
         [Command("daily", RunMode = RunMode.Async)]
         public async Task SlotDailyCreditsAsync()
         {
-            await UserGamblingHandler.SlotDailyCreditsAsync(Context);
+            await UserGamblingHandler.GiveDailyCreditsAsync(Context);
         }
 
         [Command("moneyTransfer", RunMode = RunMode.Async)]

@@ -8,11 +8,11 @@ namespace DuckBot.Models
 {
     public class UserStorage
     {
-        public ulong UserId { get; set; }
-        public UserInfo UserInfo { get; set; }
+        public Dictionary<ulong, UserInfo> UserInfo { get; set; }
     }
     public class UserInfo
     {
+        public ulong UserId { get; set; }
         public UserDailyLastUseStorage UserDailyLastUseStorage { get; set; }
         public UserBankingStorage UserBankingStorage { get; set; }
         public UserProhibitedWordsStorage UserProhibitedWordsStorage { get; set; }

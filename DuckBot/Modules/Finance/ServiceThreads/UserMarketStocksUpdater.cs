@@ -29,7 +29,16 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                 //Get real price for each
                 foreach (var stock in marketStockStorage.MarketStock)
                 {
-                    long stockPriceNew = Convert.ToInt64(OnlineStockHandler.GetOnlineStockInfo(stock.StockTicker).LatestPrice * 100);
+                    long stockPriceNew = 0;
+
+                    try
+                    {
+                        stockPriceNew = Convert.ToInt64(OnlineStockHandler.GetOnlineStockInfo(stock.StockTicker).LatestPrice * 100);
+                    }
+                    catch (Exception)
+                    {
+                    }
+
 
                     updatedMarketStocks.Add(new MarketStock { StockTicker = stock.StockTicker, StockPrice = stockPriceNew });
                 }

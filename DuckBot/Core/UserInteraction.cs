@@ -9,6 +9,11 @@ namespace DuckBot.Core
 {
     public class UserInteraction
     {
+        /// <summary>
+        /// Returns a bolded user name of specified user
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public static string BoldUserName(SocketCommandContext context)
         {
             return $"**{context.Message.Author.ToString().Substring(0, context.Message.Author.ToString().Length - 5)}**";

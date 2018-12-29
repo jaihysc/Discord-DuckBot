@@ -92,19 +92,15 @@ namespace DuckBot.Modules.Moderation
                 //Get user storage
                 var userStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
 
+                userStorage.UserInfo[message.Author.Id].UserProhibitedWordsStorage.SwearCount = userStorage.UserInfo[message.Author.Id].UserProhibitedWordsStorage.SwearCount + 1;
+
                 //write new swear count to user profile
-                var userRecordNew = new UserStorage
+                var userRecord = new UserStorage
                 {
-                    UserId = userStorage.UserId,
-                    UserInfo = new UserInfo
-                    {
-                        UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = userStorage.UserInfo.UserDailyLastUseStorage.DateTime },
-                        UserBankingStorage = new UserBankingStorage { Credit = userStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = userStorage.UserInfo.UserBankingStorage.CreditDebt },
-                        UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userStorage.UserInfo.UserProhibitedWordsStorage.SwearCount + 1 }
-                    }
+                    UserInfo = userStorage.UserInfo
                 };
 
-                XmlManager.ToXmlFile(userRecordNew, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
+                XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + message.Author.Id + ".xml");
             }
         }
 

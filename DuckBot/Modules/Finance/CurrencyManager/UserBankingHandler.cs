@@ -17,23 +17,25 @@ namespace DuckBot.Modules.Finance.CurrencyManager
         /// <summary>
         /// This checks if a user profile exists, if not, it will create a profile
         /// </summary>
-        public static void CheckIfUserCreditProfileExists(SocketCommandContext Context)
+        public static void CheckIfUserCreditProfileExists(SocketCommandContext context)
         {
+            var userStorage = UserDataManager.GetUserStorage();
             //Create txt user credit entry if user does not exist
-            if (!File.Exists(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml"))
+            if (!userStorage.UserInfo.TryGetValue(context.Message.Author.Id, out var i))
             {
                 //Create user profile
-                UserXmlDataStorage.CreateNewUserXmlEntry(Context);
+                UserDataManager.CreateNewUserXmlEntry(context);
             }
         }
 
         public static void CheckIfUserCreditProfileExists(SocketGuildUser user)
         {
+            var userStorage = UserDataManager.GetUserStorage();
             //Create txt user credit entry if user does not exist
-            if (!File.Exists(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + user.Id + ".xml"))
+            if (!userStorage.UserInfo.TryGetValue(user.Id, out var i))
             {
                 //Create user profile
-                UserXmlDataStorage.CreateNewUserXmlEntry(user);
+                UserDataManager.CreateNewUserXmlEntry(user);
             }
         }
 

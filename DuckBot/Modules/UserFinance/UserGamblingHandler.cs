@@ -13,35 +13,35 @@ namespace DuckBot.Modules.UserFinance
 {
     public class UserGamblingHandler : ModuleBase<SocketCommandContext>
     {
-        public static async Task UserGambling(SocketCommandContext Context, SocketMessage message, long gambleAmount)
+        public static async Task UserGambling(SocketCommandContext context, SocketMessage message, long gambleAmount)
         {
             //Tell off the user if they are trying to gamble 0 dollars
             if (gambleAmount <= 0)
             {
-                await message.Channel.SendMessageAsync("Quack, you have to gamble **1 or more** credits");
+                await message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + "Quack, you have to gamble **1 or more** credits");
             }
             else
             {
                 //Get user credits to list
-                var userCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+                var userCreditStorage = UserDataManager.GetUserStorage();
 
                 //Money subtractor
-                if ((userCreditStorage.UserInfo.UserBankingStorage.Credit - gambleAmount) < 0)
+                if ((userCreditStorage.UserInfo[context.Message.Author.Id].UserBankingStorage.Credit - gambleAmount) < 0)
                 {
-                    await message.Channel.SendMessageAsync("You broke quack, you do not have enough credits || **" + UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo.UserBankingStorage.Credit) + " Credits**");
+                    await message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you broke quack, you do not have enough credits || **" + UserBankingHandler.CreditCurrencyFormatter(userCreditStorage.UserInfo[context.Message.Author.Id].UserBankingStorage.Credit) + " Credits**");
                 }
                 else
                 {
                     //Calculate outcome (userCredits - amountGambled + AmountReturned)
                     long returnAmount = CalculateUserGamblingOutcome(gambleAmount);
 
-                    long userReturnAmount = userCreditStorage.UserInfo.UserBankingStorage.Credit - gambleAmount + returnAmount;
+                    long userReturnAmount = userCreditStorage.UserInfo[context.Message.Author.Id].UserBankingStorage.Credit - gambleAmount + returnAmount;
 
                     //Send outcome & calculate taxes
                     //Write credits to file
                     UserCreditsHandler.SetCredits(
-                        Context,
-                        userReturnAmount - await UserCreditsTaxHandler.TaxCollectorAsync(Context, returnAmount, $"You gambled **{UserBankingHandler.CreditCurrencyFormatter(gambleAmount)} credits** and made **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} credits**"));
+                        context,
+                        userReturnAmount - await UserCreditsTaxHandler.TaxCollectorAsync(context, returnAmount, UserInteraction.BoldUserName(context) + $", you gambled **{UserBankingHandler.CreditCurrencyFormatter(gambleAmount)} credits** and made **{UserBankingHandler.CreditCurrencyFormatter(returnAmount)} credits**"));
                 }
             }
         }
@@ -128,42 +128,34 @@ namespace DuckBot.Modules.UserFinance
         }
 
         //Daily
-        public static async Task SlotDailyCreditsAsync(SocketCommandContext Context)
+        public static async Task GiveDailyCreditsAsync(SocketCommandContext context)
         {
             //Get user storage
-            var userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+            var userStorage = UserDataManager.GetUserStorage();
 
             //If 24 hours has passed
-            if (userLastDailyCreditStorage.UserInfo.UserDailyLastUseStorage.DateTime.AddHours(24) < DateTime.UtcNow)
+            if (userStorage.UserInfo[context.Message.Author.Id].UserDailyLastUseStorage.DateTime.AddHours(24) < DateTime.UtcNow)
             {
                 //Add credits
-                UserCreditsHandler.AddCredits(Context, long.Parse(SettingsManager.RetrieveFromConfigFile("dailyAmount")));
-
+                UserCreditsHandler.AddCredits(context, long.Parse(SettingsManager.RetrieveFromConfigFile("dailyAmount")));
 
                 //Write last use date
-                userLastDailyCreditStorage = XmlManager.FromXmlFile<UserStorage>(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
-                var userRecord = new UserStorage
-                {
-                    UserId = Context.Message.Author.Id,
-                    UserInfo = new UserInfo
-                    {
-                        UserDailyLastUseStorage = new UserDailyLastUseStorage { DateTime = DateTime.UtcNow },
-                        UserBankingStorage = new UserBankingStorage { Credit = userLastDailyCreditStorage.UserInfo.UserBankingStorage.Credit, CreditDebt = userLastDailyCreditStorage.UserInfo.UserBankingStorage.CreditDebt },
-                        UserProhibitedWordsStorage = new UserProhibitedWordsStorage { SwearCount = userLastDailyCreditStorage.UserInfo.UserProhibitedWordsStorage.SwearCount }
-                    }
-                };
+                userStorage.UserInfo[context.Message.Author.Id].UserDailyLastUseStorage.DateTime = DateTime.UtcNow;
+
 
                 //Write new credits and last redeem date to file
-                XmlManager.ToXmlFile(userRecord, CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + Context.Message.Author.Id + ".xml");
+                userStorage = UserDataManager.GetUserStorage();
+                userStorage.UserInfo[context.Message.Author.Id].UserDailyLastUseStorage.DateTime = DateTime.UtcNow;
+                UserDataManager.WriteUserStorage(userStorage);
 
 
                 //Send channel message confirmation
-                await Context.Message.Channel.SendMessageAsync("You have redeemed your daily **" + UserBankingHandler.CreditCurrencyFormatter(long.Parse(SettingsManager.RetrieveFromConfigFile("dailyAmount"))) + " Credits!**");
+                await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + ", you have redeemed your daily **" + UserBankingHandler.CreditCurrencyFormatter(long.Parse(SettingsManager.RetrieveFromConfigFile("dailyAmount"))) + " Credits!**");
 
             }
             else
             {
-                await Context.Message.Channel.SendMessageAsync("You quacker, it has not yet been 24 hours since you last redeemed");
+                await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + ", you quacker, it has not yet been 24 hours since you last redeemed");
             }
 
         }

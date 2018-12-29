@@ -17,11 +17,13 @@ namespace DuckBot.Modules.Commands.Preconditions
         // Override the CheckPermissions method
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider _services)
         {
+            var userStorage = UserDataManager.GetUserStorage();
+
             //Create xml user credit entry if user does not exist
-            if (!File.Exists(CoreMethod.GetFileLocation(@"\UserStorage") + @"\" + context.Message.Author.Id + ".xml"))
+            if (!userStorage.UserInfo.TryGetValue(context.Message.Author.Id, out var i))
             {
                 //Create user profile
-                UserXmlDataStorage.CreateNewUserXmlEntry(context as SocketCommandContext);
+                UserDataManager.CreateNewUserXmlEntry(context as SocketCommandContext);
             }
 
             

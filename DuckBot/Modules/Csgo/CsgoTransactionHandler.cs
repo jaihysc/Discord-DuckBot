@@ -15,7 +15,7 @@ namespace DuckBot.Modules.Csgo
     public static class CsgoTransactionHandler
     {
         //Buy
-        public static async Task BuyItemFromMarketAsync(SocketCommandContext Context, string itemMarketHash)
+        public static async Task BuyItemFromMarketAsync(SocketCommandContext context, string itemMarketHash)
         {
             //Get skin data
             var rootWeaponSkins = CsgoDataHandler.GetRootWeaponSkin();
@@ -44,7 +44,7 @@ namespace DuckBot.Modules.Csgo
                         userSpecifiedSkinExistsInMarket = true;
 
                         selectedMarketSkin.ClassId = marketSkin.Classid;
-                        selectedMarketSkin.OwnerID = Context.Message.Author.Id;
+                        selectedMarketSkin.OwnerID = context.Message.Author.Id;
                         selectedMarketSkin.UnboxDate = DateTime.UtcNow;
                         selectedMarketSkin.MarketName = marketSkin.Name;
                     }
@@ -52,19 +52,19 @@ namespace DuckBot.Modules.Csgo
                 //Send error if skin does not exist
                 if (userSpecifiedSkinExistsInMarket == false)
                 {
-                    await Context.Message.Channel.SendMessageAsync($"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, `{itemMarketHash}` does not exist in the current skin market");
+                    await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", `{itemMarketHash}` does not exist in the current skin market");
                 }
                 //Make sure user has enough credits to buy skin
-                else if (UserCreditsHandler.GetUserCredits(Context) < weaponSkinValue)
+                else if (UserCreditsHandler.GetUserCredits(context) < weaponSkinValue)
                 {
-                    await Context.Message.Channel.SendMessageAsync($"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, you do not have enough credits to buy`{itemMarketHash}` | **{UserCreditsHandler.GetUserCredits(Context)} Credits**");
+                    await context.Message.Channel.SendMessageAsync($"**{context.Message.Author.ToString().Substring(0, context.Message.Author.ToString().Length - 5)}**, you do not have enough credits to buy`{itemMarketHash}` | **{UserCreditsHandler.GetUserCredits(context)} Credits**");
                 }
                 else
                 {
                     //Checks are true, now give user skin and remove credits
 
                     //Remove user credits
-                    UserCreditsHandler.AddCredits(Context, -weaponSkinValue, true);
+                    UserCreditsHandler.AddCredits(context, -weaponSkinValue, true);
 
                     //Add skin to inventory
                     var userSkins = XmlManager.FromXmlFile<UserSkinStorageRootobject>(CoreMethod.GetFileLocation("UserSkinStorage.xml"));
@@ -80,8 +80,8 @@ namespace DuckBot.Modules.Csgo
                     XmlManager.ToXmlFile(filteredUserSkin, CoreMethod.GetFileLocation("UserSkinStorage.xml"));
 
                     //Send receipt
-                    await Context.Channel.SendMessageAsync(
-                        $"**{Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5)}**, you bought`{selectedMarketSkin.MarketName}`" +
+                    await context.Channel.SendMessageAsync(
+                        UserInteraction.BoldUserName(context) + $", you bought`{selectedMarketSkin.MarketName}`" +
                         $" for **{UserBankingHandler.CreditCurrencyFormatter(weaponSkinValue)} Credits**");
                 }
             }
