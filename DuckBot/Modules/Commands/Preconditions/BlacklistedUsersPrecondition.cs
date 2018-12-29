@@ -16,30 +16,39 @@ namespace DuckBot.Modules.Commands.Preconditions
         // Override the CheckPermissions method
         public async override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider _services)
         {
-            //
-            // If this command was executed by predefined users, return a failure
-            List<ulong> blacklistedUsers = new List<ulong>();
-
-            CoreMethod.ReadFromFileToList("UserBlacklist.txt").ForEach(u => blacklistedUsers.Add(ulong.Parse(u)));
-
-            //Test if user is blacklisted
-            bool userIsBlackListed = false;
-            foreach (var user in blacklistedUsers)
+            try
             {
-                if (context.Message.Author.Id == user)
+                //
+                // If this command was executed by predefined users, return a failure
+                List<ulong> blacklistedUsers = new List<ulong>();
+
+                CoreMethod.ReadFromFileToList(CoreMethod.GetFileLocation("UserBlacklist.txt")).ForEach(u => blacklistedUsers.Add(ulong.Parse(u)));
+
+                //Test if user is blacklisted
+                bool userIsBlackListed = false;
+                foreach (var user in blacklistedUsers)
                 {
-                    userIsBlackListed = true;
+                    if (context.Message.Author.Id == user)
+                    {
+                        userIsBlackListed = true;
+                    }
                 }
-            }
 
-            if (userIsBlackListed == false)
-            {
-                return PreconditionResult.FromSuccess();
+                if (userIsBlackListed == false)
+                {
+                    return PreconditionResult.FromSuccess();
+                }
+                else
+                {
+                    await context.Channel.SendMessageAsync(context.Message.Author.Mention + " You have been blocked from using this command");
+                    return PreconditionResult.FromError("You have been blocked from using this command.");
+                }
+
             }
-            else
+            catch (Exception)
             {
-                await context.Channel.SendMessageAsync(context.Message.Author.Mention + " You have been blocked from using this command");
-                return PreconditionResult.FromError("You have been blocked from using this command.");
+
+                throw;
             }
 
         }

@@ -142,6 +142,7 @@
   <ItemGroup>
     <Compile Include="Core\SettingsManager.cs" />
     <Compile Include="Core\UserInteraction.cs" />
+    <Compile Include="Models\CommandPrefix.cs" />
     <Compile Include="Models\CsgoContainers.cs" />
     <Compile Include="Models\CsgoItemData.cs" />
     <Compile Include="Models\GuildRoles.cs" />

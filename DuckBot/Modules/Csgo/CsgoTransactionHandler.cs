@@ -152,16 +152,17 @@ namespace DuckBot.Modules.Csgo
                 UserCreditsHandler.AddCredits(Context, weaponSkinValue, true);
 
                 //Remove skin from inventory
-                List<UserSkinEntry> filteredUserSkinEntries = new List<UserSkinEntry>();
                 List<string> filterUserSkinNames = new List<string>();
                 foreach (var item in selectedSkinToSell)
                 {
-                    filteredUserSkinEntries.Add(userSkin.UserSkinEntries.Where(s => s.OwnerID == Context.Message.Author.Id).Where(s => s.ClassId != item.ClassId).FirstOrDefault());
+                    //Remove items that were selected to be sold
+                    userSkin.UserSkinEntries.Remove(item);
+
                     filterUserSkinNames.Add(item.MarketName);
                 }
 
                 //Write to file
-                WriteUserSkinDataToFile(filteredUserSkinEntries);
+                WriteUserSkinDataToFile(userSkin);
 
                 //Send receipt
                 await Context.Channel.SendMessageAsync(
@@ -227,6 +228,12 @@ namespace DuckBot.Modules.Csgo
             };
 
             XmlManager.ToXmlFile(filteredUserSkin, CoreMethod.GetFileLocation("UserSkinStorage.xml"));
+
+        }
+
+        private static void WriteUserSkinDataToFile(UserSkinStorageRootobject skinEntry)
+        {
+            XmlManager.ToXmlFile(skinEntry, CoreMethod.GetFileLocation("UserSkinStorage.xml"));
 
         }
     }

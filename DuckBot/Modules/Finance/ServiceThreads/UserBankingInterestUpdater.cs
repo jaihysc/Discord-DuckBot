@@ -59,7 +59,8 @@ namespace DuckBot.Modules.Finance.ServiceThreads
                         deductionAmount = 1;
                     }
 
-                    deductionAmount = Convert.ToInt64(userStorage.UserInfo[user.UserId].UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("interestRate")));
+                        deductionAmount = Convert.ToInt64(userStorage.UserInfo[user.UserId].UserBankingStorage.CreditDebt * double.Parse(SettingsManager.RetrieveFromConfigFile("interestRate")));
+
 
                     //Calculate new credits
                     long userCreditsNew = 0;
@@ -85,12 +86,10 @@ namespace DuckBot.Modules.Finance.ServiceThreads
 
 
                     //Write to file
-                    var userRecord = new UserStorage
-                    {
-                        UserInfo = userStorage.UserInfo
-                    };
+                    userStorage.UserInfo[user.UserId].UserBankingStorage.CreditDebt = debtAmountNew;
+                    userStorage.UserInfo[user.UserId].UserBankingStorage.Credit = userCreditsNew;
 
-                    UserDataManager.WriteUserStorage(userRecord);
+                    UserDataManager.WriteUserStorage(userStorage);
 
                 }
                 catch(Exception)

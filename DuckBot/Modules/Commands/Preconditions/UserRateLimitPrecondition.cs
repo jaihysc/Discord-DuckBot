@@ -116,7 +116,7 @@ namespace DuckBot.Modules.Commands.Preconditions
 
             whitelistedUsers.Add(ownerId);
 
-            CoreMethod.ReadFromFileToList("UserWhitelist.txt").ForEach(u => whitelistedUsers.Add(ulong.Parse(u)));
+            CoreMethod.ReadFromFileToList(CoreMethod.GetFileLocation("UserWhitelist.txt")).ForEach(u => whitelistedUsers.Add(ulong.Parse(u)));
 
             //Test if user is whitelisted
             bool userIsWhiteListed = false;

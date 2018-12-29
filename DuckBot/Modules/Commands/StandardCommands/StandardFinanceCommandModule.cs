@@ -1,5 +1,6 @@
 ﻿using Discord.Addons.Interactive;
 using Discord.Commands;
+using DuckBot.Core;
 using DuckBot.Modules.Commands.Preconditions;
 using DuckBot.Modules.Finance.CurrencyManager;
 using DuckBot.Modules.UserFinance;
@@ -44,7 +45,9 @@ namespace DuckBot.Modules.Commands.StandardCommands
         [Command("debt", RunMode = RunMode.Async)]
         public async Task GetBorrowedCreditsAsync()
         {
-            await UserDebtHandler.DisplayUserCreditsDebt(Context);
+            long creditsOwed = UserDebtHandler.GetUserCreditsDebt(Context);
+
+            await Context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(Context) + $", you owe **{creditsOwed} Credits**");
         }
         [Command("borrow", RunMode = RunMode.Async)]
         public async Task BorrowCreditsAsync(long amount)

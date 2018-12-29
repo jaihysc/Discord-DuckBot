@@ -110,7 +110,7 @@ namespace DuckBot.Modules.Finance.CurrencyManager
         {
             var userStorage = UserDataManager.GetUserStorage();
 
-            userStorage.UserInfo[context.Message.Author.Id].UserBankingStorage.CreditDebt = setAmount;
+            userStorage.UserInfo[context.Message.Author.Id].UserBankingStorage.Credit = setAmount;
 
             //Write new credits amount 
             UserDataManager.WriteUserStorage(userStorage);

@@ -18,7 +18,7 @@ namespace DuckBot.Modules.UserFinance
             //Tell off the user if they are trying to gamble 0 dollars
             if (gambleAmount <= 0)
             {
-                await message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + "Quack, you have to gamble **1 or more** credits");
+                await message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + ", Quack, you have to gamble **1 or more** credits");
             }
             else
             {

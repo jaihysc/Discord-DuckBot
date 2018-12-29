@@ -187,6 +187,8 @@ namespace DuckBot
                 {
                     await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
                 }
+
+                await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
             }
 
             /*
@@ -200,6 +202,11 @@ namespace DuckBot
             }
             */
 
+        }
+
+        private static string GetGuildCommandPrefix()
+        {
+            return "pus";
         }
     }
 }

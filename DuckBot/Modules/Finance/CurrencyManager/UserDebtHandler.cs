@@ -75,19 +75,6 @@ namespace DuckBot.Modules.Finance.CurrencyManager
 
         //READ
         /// <summary>
-        /// Sends a message to the invoke channel of the debt user has
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public static async Task DisplayUserCreditsDebt(SocketCommandContext context)
-        {
-            long creditsOwed = GetUserCreditsDebt(context);
-
-            await context.Message.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", you owe **{creditsOwed} Credits**");
-
-        }
-
-        /// <summary>
         /// Retrieves the user debt from storage
         /// </summary>
         /// <param name="context">invoke data from the user</param>

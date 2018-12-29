@@ -109,7 +109,7 @@ namespace DuckBot.Modules.Moderation
             // If this command was NOT executed by predefined users, return a failure
             List<ulong> whitelistedUsers = new List<ulong>();
 
-            CoreMethod.ReadFromFileToList("UserWhitelist.txt").ForEach(u => whitelistedUsers.Add(ulong.Parse(u)));
+            CoreMethod.ReadFromFileToList(CoreMethod.GetFileLocation("UserWhitelist.txt")).ForEach(u => whitelistedUsers.Add(ulong.Parse(u)));
 
             //Test if user is whitelisted
             bool userIsWhiteListed = false;
