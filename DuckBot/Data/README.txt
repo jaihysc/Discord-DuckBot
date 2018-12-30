@@ -1,7 +1,6 @@
-﻿Files used by the application should be stored here.
+﻿Files used by the application MUST be stored here.
 
-NOTE!!! - You will have to individually set the path for each file in the paths.exe in the execution directory of this application.
+You can move the location of this folder by modifying the paths.exe in the execution directory of this application.
 
 
-To change where the files are located, simply modify the paths for each file in paths.txt in the execution directory of this application.
-The name of the files CAN NOT be changed, however their locations can.
+The name of the files CAN NOT be changed, as these file names are hard coded in the application

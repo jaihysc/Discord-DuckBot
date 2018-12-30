@@ -1,5 +1,6 @@
 ﻿using Discord.Addons.Interactive;
 using Discord.Commands;
+using DuckBot.Core;
 using DuckBot.Modules.Commands.Preconditions;
 using DuckBot.Modules.Csgo;
 using System;
@@ -21,6 +22,9 @@ namespace DuckBot.Modules.Commands.StandardCommands
         [Alias("o")]
         public async Task OpenCaseAsync()
         {
+            //See if user has opened a case before, if not, send a help tip
+            if (!CsgoCaseSelectionHandler.GetHasUserSelectedCase(Context)) await ReplyAndDeleteAsync($"Tip: Use `{CommandGuildPrefixManager.GetGuildCommandPrefix(Context)} cs case` to select different cases to open", timeout: TimeSpan.FromSeconds(60));
+
             await CsgoUnboxingHandler.OpenCase(Context);
         }
 
@@ -28,20 +32,19 @@ namespace DuckBot.Modules.Commands.StandardCommands
         [Command("case", RunMode = RunMode.Async)]
         public async Task SelectOpenCaseAsync()
         {
-            var pager = CsgoUnboxingHandler.SelectOpenCase(Context);
+            var pager = CsgoCaseSelectionHandler.ShowPossibleCases(Context);
 
             //Send paginated message
-            await PagedReplyAsync(pager, new ReactionList
+            Discord.IUserMessage sentMessage = await PagedReplyAsync(pager, new ReactionList
             {
-                //Jump = true,
                 Forward = true,
                 Backward = true,
-                Trash = true
             });
 
             //Get user response
             var response = await NextMessageAsync();
-            await CsgoUnboxingHandler.SelectOpenCase(Context, response.ToString());
+
+            await CsgoCaseSelectionHandler.SelectOpenCase(Context, response.ToString(), sentMessage);
         }
 
         [Ratelimit(1, 5, Measure.Seconds)]
@@ -64,12 +67,10 @@ namespace DuckBot.Modules.Commands.StandardCommands
             //Send paginated message
             await PagedReplyAsync(pager, new ReactionList
             {
-                //Jump = true,
                 Forward = true,
                 Backward = true,
-                Last = true,
-                Trash = true,
-                First = true
+                Jump = true,
+                Trash = true
             });
         }
 
@@ -116,10 +117,7 @@ namespace DuckBot.Modules.Commands.StandardCommands
             {
                 Jump = true,
                 Forward = true,
-                Backward = true,
-                Last = true,
-                Trash = true,
-                First = true
+                Backward = true
             });
         }
 

@@ -105,6 +105,13 @@
       <CommandUsageDefinition></CommandUsageDefinition>
     </HelpMenuCommandEntry>
 	<HelpMenuCommandEntry>
+      <CommandName>cs case</CommandName>
+      <CommandDescription>Opens the case selection menu</CommandDescription>
+      <CommandRequiredPermissions></CommandRequiredPermissions>
+      <CommandUsage>.d cs case</CommandUsage>
+      <CommandUsageDefinition></CommandUsageDefinition>
+    </HelpMenuCommandEntry>
+	<HelpMenuCommandEntry>
       <CommandName>cs inventory</CommandName>
       <CommandDescription>Displays your current inventory of CS:GO skins</CommandDescription>
 	  <CommandRequiredPermissions></CommandRequiredPermissions>

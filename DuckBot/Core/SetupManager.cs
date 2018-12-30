@@ -12,76 +12,33 @@ namespace DuckBot.Core
 {
     public class SetupManager : ModuleBase<SocketCommandContext>
     {
-        public static void GenerateConfigFile()
+        /// <summary>
+        /// Checks to see if a Paths.txt is present at the execution folder, otherwise it will prompt the user to create one
+        /// </summary>
+        public static void CheckIfPathsFileExists()
         {
-            List<string> paths = new List<string>();
+            if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Paths.txt"))
+            {
+                GenerateConfigFile();
+            }
+        }
 
+        private static void GenerateConfigFile()
+        {
             //Get user input and generate config file
             Console.WriteLine("It appears this is your first startup of DuckBot");
-            Console.WriteLine("This setup wizard will configure the settings of the bot");
+            Console.WriteLine("Configure the bot by entering the paths file where all data will be stored");
             Console.WriteLine();
-            Console.WriteLine("Press any key to continue...");
-            Console.ReadLine();
-
-            Console.WriteLine();
-            Console.WriteLine("Path where BotToken.txt will be stored, this is the bot token given by discord.");
-            Console.WriteLine(@"Example: C:\DuckBot\BotToken.txt");
-            paths.Add(Console.ReadLine());
-
-            Console.WriteLine();
-            Console.WriteLine("Path where ProhibitedWords.txt will be stored, this defines all words or phrases that will trigger a warning from the bot");
-            Console.WriteLine(@"Example: C:\DuckBot\ProhibitedWords.txt");
-            paths.Add(Console.ReadLine());
-
-            Console.WriteLine("Path where BotOutputLog.txt will be stored, this is a log of all messages received by the bot");
-            Console.WriteLine(@"Example: C:\DuckBot\BotOutputLog.txt");
-            paths.Add(Console.ReadLine());
-
-            //UserBlacklist.txt
-            Console.WriteLine();
-            Console.WriteLine("Path where UserWhitelist.txt will be stored, this will store users with elevated priviledges from the bot.");
-            Console.WriteLine(@"Example: C:\DuckBot\UserWhitelist.txt");
-            paths.Add(Console.ReadLine());
-
-            Console.WriteLine();
-            Console.WriteLine("Path where UserBlacklist.txt will be stored, this will store users blocked from the bot.");
-            Console.WriteLine(@"Example: C:\DuckBot\UserBlacklist.txt");
-            paths.Add(Console.ReadLine());
-
-            Console.WriteLine();
-            Console.WriteLine("Path where MarketStocksValue.xml will be stored, this will store the stock cost retrieved from online.");
-            Console.WriteLine(@"Example: C:\DuckBot\MarketStocksValue.xml");
-            paths.Add(Console.ReadLine());
-
-            Console.WriteLine();
-            Console.WriteLine("Path where CommandHelpDescription.xml will be stored, this will store definitions for the help command");
-            Console.WriteLine(@"Example: C:\DuckBot\CommandHelpDescription.xml");
-            paths.Add(Console.ReadLine());
-
-            Console.WriteLine();
-            Console.WriteLine("Path where User info will be stored, MUST BE A FOLDER.");
-            Console.WriteLine(@"Example: C:\DuckBot\UserInfo");
-            paths.Add(Console.ReadLine());
-
-            Console.WriteLine();
-            Console.WriteLine("Path where User stocks will be stored, MUST BE A FOLDER.");
-            Console.WriteLine(@"Example: C:\DuckBot\UserStocks");
-            paths.Add(Console.ReadLine());
-
-            Console.WriteLine();
-            Console.WriteLine("Path where CS:GO skin data will be stored");
-            Console.WriteLine(@"Example: C:\DuckBot\skinData.json");
-            paths.Add(Console.ReadLine());
+            string path = Console.ReadLine();
 
             try
             {
-                File.WriteAllText(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\config.txt", "");
-                CoreMethod.WriteListToFile(paths, true, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\config.txt");
+                CoreMethod.WriteStringToFile(path, true, Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Paths.txt");
 
                 Console.WriteLine();
                 Console.WriteLine("Setup is complete");
                 Console.WriteLine();
-                Console.WriteLine("Press any key to continue...");
+                Console.WriteLine("Press ENTER to continue...");
                 Console.ReadLine();
 
                 Console.Clear();
@@ -91,7 +48,7 @@ namespace DuckBot.Core
                 Console.WriteLine();
                 Console.WriteLine("An error occurred during setup");
                 Console.WriteLine();
-                Console.WriteLine("Press any key to continue...");
+                Console.WriteLine("Press ENTER to continue...");
                 Console.WriteLine();
                 Console.WriteLine(ex.StackTrace);
                 Console.ReadLine();

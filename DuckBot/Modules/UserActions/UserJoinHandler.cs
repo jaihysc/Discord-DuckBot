@@ -13,7 +13,7 @@ namespace DuckBot.Modules.UserActions
 {
     public class UserJoinHandler : ModuleBase<SocketCommandContext>
     {
-        public static async Task DisplayUserGenderChoice(SocketGuildUser joinedUser)
+        public static async Task DisplayUserGenderChoiceAsync(SocketGuildUser joinedUser)
         {
             var builder = new EmbedBuilder()
             .WithTitle("Welcome " + joinedUser.ToString())

@@ -17,7 +17,7 @@ namespace DuckBot.Core
     class EventLogger : ModuleBase<SocketCommandContext>
     {
         
-        public static Task Log(LogMessage message)
+        public static Task LogAsync(LogMessage message)
         {
             //Logs server messages to console
             switch (message.Severity)
@@ -47,7 +47,7 @@ namespace DuckBot.Core
             Console.WriteLine($"{DateTime.Now,-19} [    Info] Logging: {message}");
         }
 
-        public static Task LogUserMessage(SocketMessage msg)
+        public static Task LogUserMessageAsync(SocketMessage msg)
         {
             //Log user message to file
             var chnl = msg.Channel as SocketGuildChannel;

@@ -34,12 +34,12 @@ namespace DuckBot.Modules.Commands
                 if (chnl.Guild.OwnerId == Context.Message.Author.Id)
                 {
                     CommandGuildPrefixManager.ChangeGuildCommandPrefix(Context, input);
-                    await Context.Channel.SendMessageAsync(UserInteraction.BoldUserName(Context) + $" , server prefix has successfully been changed to `{CommandGuildPrefixManager.GetGuildCommandPrefix(Context)}`");
+                    await Context.Channel.SendMessageAsync(UserInteraction.BoldUserName(Context) + $", server prefix has successfully been changed to `{CommandGuildPrefixManager.GetGuildCommandPrefix(Context)}`");
                 }
                 //Otherwise send error
                 else
                 {
-                    await Context.Channel.SendMessageAsync(UserInteraction.BoldUserName(Context) + " , only the server owner may invoke this command");
+                    await Context.Channel.SendMessageAsync(UserInteraction.BoldUserName(Context) + ", only the server owner may invoke this command");
                 }
             }
 

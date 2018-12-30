@@ -7,6 +7,7 @@ using DuckBot.Models;
 using DuckBot.Modules.Csgo;
 using DuckBot.Modules.Finance;
 using DuckBot.Modules.Finance.ServiceThreads;
+using DuckBot.Modules.Interaction;
 using DuckBot.Modules.Moderation;
 using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
@@ -39,11 +40,8 @@ namespace DuckBot
             EventLogger.LogMessage("Hello World! - Beginning startup");
 
 
-            //Runs setup if config files are not present
-            if (!File.Exists(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + @"\Paths.txt"))
-            {
-                SetupManager.GenerateConfigFile();
-            }
+            //Runs setup if path file is not present
+            SetupManager.CheckIfPathsFileExists();
 
             //Continously running threads
             Thread updateUserBankingInterest = new Thread(new ThreadStart(UserBankingInterestUpdater.UpdateUserDebtInterest));
@@ -92,7 +90,7 @@ namespace DuckBot
             }
             catch (Exception)
             {
-                throw new Exception("Unable to initialize!");
+                throw new Exception("Unable to initialize! - Could it be because of an invalid token?");
             }
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
@@ -100,20 +98,20 @@ namespace DuckBot
             stopwatch.Stop();
             EventLogger.LogMessage($"Ready! - Took {stopwatch.ElapsedMilliseconds} milliseconds");
 
-            //
-            //Event handlers
-            //
 
+            //EVENT HANDLERS
             //Log user / console messages
-            _client.Log += EventLogger.Log;
-            _client.MessageReceived += EventLogger.LogUserMessage;
+            _client.Log += EventLogger.LogAsync;
+            _client.MessageReceived += EventLogger.LogUserMessageAsync;
 
-            //Message received
-            _client.MessageReceived += ModerationManager.ModerationManagerMessageReceived;
+            //Moderation Message received
+            _client.MessageReceived += ModerationManager.ModerationManagerMessageReceivedAsync;
 
             //User joined
-            _client.UserJoined += UserJoinHandler.DisplayUserGenderChoice;
-            //_client.ReactionAdded += UserJoinHandler.GenderReactionInput();
+            _client.UserJoined += UserJoinHandler.DisplayUserGenderChoiceAsync;
+
+            //Joining a guild first time, display help text
+            _client.JoinedGuild += GuildJoinInteraction.SendFirstTimeHelpMenuAsync;
 
             //Handles command on message received event
             _client.MessageReceived += HandleCommandAsync;
@@ -128,7 +126,7 @@ namespace DuckBot
         //Command Handler
         public async Task HandleCommandAsync(SocketMessage messageParam)
         {
-            // Don't process the command if it was a system message, if sender is bot or ID is not ME!
+            // Don't process the command if it was a system message, if sender is bot
             SocketUserMessage message = messageParam as SocketUserMessage;
             if (message == null) return;
 
@@ -180,12 +178,10 @@ namespace DuckBot
                 {
                     await context.Channel.SendMessageAsync($"Invalid command usage, use `.d help <command>` for correct command usage");
                 }
-                else
+                else if (result.Error != CommandError.UnmetPrecondition)
                 {
                     await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
                 }
-
-                //await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
             }
         }
     }

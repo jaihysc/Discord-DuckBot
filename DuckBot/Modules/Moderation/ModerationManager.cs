@@ -14,7 +14,7 @@ namespace DuckBot.Modules.Moderation
 {
     public class ModerationManager
     {
-        public static async Task ModerationManagerMessageReceived(SocketMessage message)
+        public static async Task ModerationManagerMessageReceivedAsync(SocketMessage message)
         {
             await DeleteNonCommandsInCommandsChannel(message);
             await MessageReplies(message);

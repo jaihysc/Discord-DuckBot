@@ -18,86 +18,10 @@ using System.Threading.Tasks;
 
 namespace DuckBot.Modules.Csgo
 {
-    public class CsgoUnboxingHandler
+    public class CsgoUnboxingHandler : InteractiveBase<SocketCommandContext>
     {
         public static Dictionary<ulong, string> userSelectedCase = new Dictionary<ulong, string>();
         public static CsgoContainers csgoContiners = XmlManager.FromXmlFile<CsgoContainers>(CoreMethod.GetFileLocation("skinCases.xml"));
-
-        /// <summary>
-        /// Selects the appropriate cs go container to open, user replies with a number corrosponding to the case
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public static PaginatedMessage SelectOpenCase(SocketCommandContext context)
-        {
-            //Create pagination entries
-            List<string> leftCounter = new List<string>();
-            List<string> filteredContainers = new List<string>();
-
-            //Find containers whose name is not null
-            filteredContainers = csgoContiners.Containers.Where(c => c.Name != null).Select(c => c.Name).ToList();
-            //Create a list of ascending numbers to reference each container
-            for (int i = 0; i < filteredContainers.Count(); i++)
-            {
-                leftCounter.Add(i.ToString());
-            }
-
-            //Generate pagination
-            PaginationConfig paginationConfig = new PaginationConfig
-            {
-                AuthorName = "CS:GO Containers",
-                AuthorURL = "https://csgostash.com/img/containers/c259.png",
-
-                Description = $"Select a container by typing the appropriate number on the left\nThen use `{MainProgram.botCommandPrefix} cs open` to open cases",
-
-                Field1Header = "Number",
-                Field2Header = "Case",
-            };
-
-            PaginationManager paginationManager = new PaginationManager();
-            var pager = paginationManager.GeneratePaginatedMessage(leftCounter, filteredContainers, paginationConfig);
-
-            return pager;
-        }
-        /// <summary>
-        /// Selects the appropriate cs go container to open, user replies with a number corrosponding to the case
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public static async Task SelectOpenCase(SocketCommandContext context, string input)
-        {
-            var continers = csgoContiners.Containers.Where(c => c.Name != null).ToList();
-
-            //Try to turn user input to string
-            int userInput = 0;
-            Container userSelectedContainer = new Container();
-            try
-            {
-                userInput = int.Parse(input);
-
-                //Get the case user selected
-                userSelectedContainer = continers[userInput];
-            }
-            catch (Exception)
-            {
-                await context.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + ", Please input a valid number");
-                return;
-            }
-
-            //Set user case preference
-            if (!userSelectedCase.TryGetValue(context.Message.Author.Id, out var t))
-            {
-                //If user does not exist, generate and set
-                userSelectedCase.Add(context.Message.Author.Id, userSelectedContainer.Name);
-            }
-            else
-            {
-                //If user does exist, only set
-                userSelectedCase[context.Message.Author.Id] = userSelectedContainer.Name;
-            }
-
-            await context.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", You set your case to open to **{userSelectedContainer.Name}**");
-        }
 
         /// <summary>
         /// Opens a virtual CS:GO case, result is sent to Context channel in a method
@@ -109,12 +33,11 @@ namespace DuckBot.Modules.Csgo
             //Test if user has enough credits
             if (UserCreditsHandler.AddCredits(context, -300) == true)
             {
-                var itemProcess = new ItemDropProcessing();
-                var result = itemProcess.CalculateItemCaseRarity();
+                var result = ItemDropProcessing.CalculateItemCaseRarity();
 
 
                 //Get item
-                var skinItem = itemProcess.GetItem(result, CsgoDataHandler.rootWeaponSkin, context, false);
+                var skinItem = ItemDropProcessing.GetItem(result, CsgoDataHandler.rootWeaponSkin, context, false);
 
 
                 //Add item to user file inventory
@@ -140,15 +63,12 @@ namespace DuckBot.Modules.Csgo
         /// <returns></returns>
         public static async Task OpenDrop(SocketCommandContext context)
         {
-            //Test if user has enough credits
-            var itemProcess = new ItemDropProcessing();
-
             //Select a rarity, this is slightly modified towards the white side of the spectrum, higher value items are harder to get as this is a drop
-            var rarity = itemProcess.CalculateItemDropRarity();
+            var rarity = ItemDropProcessing.CalculateItemDropRarity();
 
 
             //Get item
-            var skinItem = itemProcess.GetItem(rarity, CsgoDataHandler.rootWeaponSkin, context, true);
+            var skinItem = ItemDropProcessing.GetItem(rarity, CsgoDataHandler.rootWeaponSkin, context, true);
 
 
             //Add item to user file inventory
@@ -219,11 +139,105 @@ namespace DuckBot.Modules.Csgo
         private enum UnboxType{ CaseUnboxing, ItemDrop};
     }
 
+    public class CsgoCaseSelectionHandler
+    {
+        /// <summary>
+        /// Selects the appropriate cs go container to open, user replies with a number corrosponding to the case
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static PaginatedMessage ShowPossibleCases(SocketCommandContext context)
+        {
+            //Create pagination entries
+            List<string> leftCounter = new List<string>();
+            List<string> filteredContainers = new List<string>();
+
+            //Find containers whose name is not null
+            filteredContainers = CsgoUnboxingHandler.csgoContiners.Containers.Where(c => c.Name != null).Select(c => c.Name).ToList();
+            //Create a list of ascending numbers to reference each container
+            for (int i = 0; i < filteredContainers.Count(); i++)
+            {
+                leftCounter.Add(i.ToString());
+            }
+
+            //Generate pagination
+            PaginationConfig paginationConfig = new PaginationConfig
+            {
+                AuthorName = "CS:GO Containers",
+                AuthorURL = "https://csgostash.com/img/containers/c259.png",
+
+                Description = $"Select a container by typing the appropriate number on the left\nThen use `{MainProgram.botCommandPrefix} cs open` to open cases",
+
+                Field1Header = "Number",
+                Field2Header = "Case",
+            };
+
+            PaginationManager paginationManager = new PaginationManager();
+            var pager = paginationManager.GeneratePaginatedMessage(leftCounter, filteredContainers, paginationConfig);
+
+            return pager;
+        }
+
+        /// <summary>
+        /// Selects the appropriate cs go container to open, user replies with a number corrosponding to the case, the paginator message showing case options will also be deleted
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static async Task SelectOpenCase(SocketCommandContext context, string input, Discord.IUserMessage sentMessage)
+        {
+            //Delete the pagination message after receiving user input
+            await sentMessage.DeleteAsync();
+
+
+            var continers = CsgoUnboxingHandler.csgoContiners.Containers.Where(c => c.Name != null).ToList();
+
+            //Try to turn user input to string
+            int userInput = 0;
+            Container userSelectedContainer = new Container();
+            try
+            {
+                userInput = int.Parse(input);
+
+                //Get the case user selected
+                userSelectedContainer = continers[userInput];
+            }
+            catch (Exception)
+            {
+                await context.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + ", Please input a valid number");
+                return;
+            }
+
+            //Set user case preference
+            if (!CsgoUnboxingHandler.userSelectedCase.TryGetValue(context.Message.Author.Id, out var t))
+            {
+                //If user does not exist, generate and set
+                CsgoUnboxingHandler.userSelectedCase.Add(context.Message.Author.Id, userSelectedContainer.Name);
+            }
+            else
+            {
+                //If user does exist, only set
+                CsgoUnboxingHandler.userSelectedCase[context.Message.Author.Id] = userSelectedContainer.Name;
+            }
+
+            await context.Channel.SendMessageAsync(UserInteraction.BoldUserName(context) + $", You set your case to open to **{userSelectedContainer.Name}**");
+        }
+
+        public static bool GetHasUserSelectedCase(SocketCommandContext context)
+        {
+            if (!CsgoUnboxingHandler.userSelectedCase.TryGetValue(context.Message.Author.Id, out var userSelectedCaseName))
+            {
+                return false;
+            }
+
+            return true;
+        }
+    }
+
     internal class ItemDropProcessing
     {
         static Random rand = new Random();
 
-        public ItemListType CalculateItemCaseRarity()
+        public static ItemListType CalculateItemCaseRarity()
         {
             int randomNumber = rand.Next(9999);
 
@@ -236,7 +250,7 @@ namespace DuckBot.Modules.Csgo
             return new ItemListType { Rarity = Rarity.MilSpecGrade };
         }
 
-        public ItemListType CalculateItemDropRarity()
+        public static ItemListType CalculateItemDropRarity()
         {
             int randomNumber = rand.Next(9999);
 
@@ -255,7 +269,7 @@ namespace DuckBot.Modules.Csgo
         /// <param name="itemListType">Type file</param>
         /// <param name="skinData">Skin data to look through</param>
         /// <returns></returns>
-        public SkinDataItem GetItem(ItemListType itemListType, RootSkinData skinData, SocketCommandContext context, bool byPassCaseFilter)
+        public static SkinDataItem GetItem(ItemListType itemListType, RootSkinData skinData, SocketCommandContext context, bool byPassCaseFilter)
         {          
             List<KeyValuePair<string, SkinDataItem>> sortedResult = new List<KeyValuePair<string, SkinDataItem>>();
 
@@ -354,7 +368,8 @@ namespace DuckBot.Modules.Csgo
             }
             return selectedSkin.Value;
         }
-        private bool CalculateStatTrakDrop()
+
+        private static bool CalculateStatTrakDrop()
         {
             if (rand.Next(9) == 0)
             {
