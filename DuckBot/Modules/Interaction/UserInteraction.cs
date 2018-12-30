@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DuckBot.Core
+namespace DuckBot.Modules.Interaction
 {
     public class UserInteraction
     {

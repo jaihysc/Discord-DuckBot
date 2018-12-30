@@ -12,6 +12,7 @@ using DuckBot.Modules.UserActions;
 using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -96,10 +97,6 @@ namespace DuckBot
 
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly());
 
-            //Set help text playing
-            await _client.SetGameAsync($"Use {botCommandPrefix} help");
-
-
             stopwatch.Stop();
             EventLogger.LogMessage($"Ready! - Took {stopwatch.ElapsedMilliseconds} milliseconds");
 
@@ -140,16 +137,20 @@ namespace DuckBot
             //integer to determine when commands start
             int argPos = 0;
 
-            if (!(message.HasStringPrefix(MainProgram.botCommandPrefix + " ", ref argPos) ||
+
+            //Ignore commands that are not using the prefix
+            var context = new SocketCommandContext(_client, message);
+            string commandPrefix = CommandGuildPrefixManager.GetGuildCommandPrefix(context);
+
+            if (!(message.HasStringPrefix(commandPrefix + " ", ref argPos) ||
                 message.Author.IsBot))
                 return;
 
-            var context = new SocketCommandContext(_client, message);
             var result = await _commands.ExecuteAsync(context: context, argPos: argPos, services: _services);
+
 
             //COMMAND LOGGING
             // Inform the user if the command fails
-
             if (!result.IsSuccess)
             {
                 var guild = _client.GetGuild(384492615745142784);
@@ -179,34 +180,13 @@ namespace DuckBot
                 {
                     await context.Channel.SendMessageAsync($"Invalid command usage, use `.d help <command>` for correct command usage");
                 }
-                else if (result.Error == CommandError.UnmetPrecondition)
-                {
-                    //await context.Channel.SendMessageAsync($"Woah, Slow down (Ratelimited)");
-                }
                 else
                 {
                     await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
                 }
 
-                await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
+                //await channel.SendMessageAsync($"[ERROR] **{message.Author.ToString()}** `{message}`  >|  {result.ErrorReason}");
             }
-
-            /*
-            //Logs command if successful
-            if (result.IsSuccess)
-            {
-                var guild = _client.GetGuild(384492615745142784);
-                var channel = guild.GetTextChannel(504375404547801138);
-
-                await channel.SendMessageAsync($"[Log] `{message}`  >|  {result.ToString()}");
-            }
-            */
-
-        }
-
-        private static string GetGuildCommandPrefix()
-        {
-            return "pus";
         }
     }
 }

@@ -1,8 +1,10 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DuckBot.Core;
 using DuckBot.Modules.Commands.Preconditions;
 using DuckBot.Modules.Finance;
+using DuckBot.Modules.Interaction;
 using DuckBot.Modules.Moderation;
 using System;
 using System.Collections.Generic;
@@ -22,6 +24,26 @@ namespace DuckBot.Modules.Commands
         [Alias("e")]
         public class Elevated : ModuleBase<SocketCommandContext>
         {
+            [Command("prefix")]
+            public async Task ChangeGuildCommandPrefixAsync([Remainder]string input)
+            {
+                //Find guild id
+                var chnl = Context.Channel as SocketGuildChannel;
+
+                //Make sure invoker is owner of guild
+                if (chnl.Guild.OwnerId == Context.Message.Author.Id)
+                {
+                    CommandGuildPrefixManager.ChangeGuildCommandPrefix(Context, input);
+                    await Context.Channel.SendMessageAsync(UserInteraction.BoldUserName(Context) + $" , server prefix has successfully been changed to `{CommandGuildPrefixManager.GetGuildCommandPrefix(Context)}`");
+                }
+                //Otherwise send error
+                else
+                {
+                    await Context.Channel.SendMessageAsync(UserInteraction.BoldUserName(Context) + " , only the server owner may invoke this command");
+                }
+            }
+
+
             [Command("clean")]
             public async Task CleanMessagesAsync(int messageAmount, string deleteAuthorTarget = null)
             {

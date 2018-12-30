@@ -140,8 +140,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\CommandGuildPrefixManager.cs" />
     <Compile Include="Core\SettingsManager.cs" />
-    <Compile Include="Core\UserInteraction.cs" />
+    <Compile Include="Modules\Interaction\UserInteraction.cs" />
     <Compile Include="Models\CommandPrefix.cs" />
     <Compile Include="Models\CsgoContainers.cs" />
     <Compile Include="Models\CsgoItemData.cs" />

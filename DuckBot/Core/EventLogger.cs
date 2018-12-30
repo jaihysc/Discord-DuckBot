@@ -16,6 +16,7 @@ namespace DuckBot.Core
 {
     class EventLogger : ModuleBase<SocketCommandContext>
     {
+        
         public static Task Log(LogMessage message)
         {
             //Logs server messages to console
@@ -40,7 +41,7 @@ namespace DuckBot.Core
             Console.ForegroundColor = ConsoleColor.White;
             return Task.CompletedTask;
         }
-
+        
         public static void LogMessage(string message)
         {
             Console.WriteLine($"{DateTime.Now,-19} [    Info] Logging: {message}");

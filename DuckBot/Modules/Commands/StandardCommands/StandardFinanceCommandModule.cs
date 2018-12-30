@@ -3,6 +3,7 @@ using Discord.Commands;
 using DuckBot.Core;
 using DuckBot.Modules.Commands.Preconditions;
 using DuckBot.Modules.Finance.CurrencyManager;
+using DuckBot.Modules.Interaction;
 using DuckBot.Modules.UserFinance;
 using DuckBot_ClassLibrary;
 using System;

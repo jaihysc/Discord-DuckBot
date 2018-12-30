@@ -4,6 +4,7 @@ using Discord.Commands;
 using DuckBot.Core;
 using DuckBot.Models;
 using DuckBot.Modules.Finance.CurrencyManager;
+using DuckBot.Modules.Interaction;
 using DuckBot_ClassLibrary;
 using DuckBot_ClassLibrary.Modules;
 using Newtonsoft.Json;
