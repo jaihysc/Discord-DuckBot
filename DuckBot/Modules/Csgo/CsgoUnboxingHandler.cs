@@ -148,6 +148,8 @@ namespace DuckBot.Modules.Csgo
         /// <returns></returns>
         public static PaginatedMessage ShowPossibleCases(SocketCommandContext context)
         {
+            string botCommandPrefix = CommandGuildPrefixManager.GetGuildCommandPrefix(context);
+
             //Create pagination entries
             List<string> leftCounter = new List<string>();
             List<string> filteredContainers = new List<string>();
@@ -166,7 +168,7 @@ namespace DuckBot.Modules.Csgo
                 AuthorName = "CS:GO Containers",
                 AuthorURL = "https://csgostash.com/img/containers/c259.png",
 
-                Description = $"Select a container by typing the appropriate number on the left\nThen use `{MainProgram.botCommandPrefix} cs open` to open cases",
+                Description = $"Select a container by typing the appropriate number on the left\nThen use `{botCommandPrefix} cs open` to open cases",
 
                 Field1Header = "Number",
                 Field2Header = "Case",

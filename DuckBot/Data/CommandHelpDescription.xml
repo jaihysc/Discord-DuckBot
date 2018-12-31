@@ -134,10 +134,10 @@
     </HelpMenuCommandEntry>
 	<HelpMenuCommandEntry>
       <CommandName>cs sell</CommandName>
-      <CommandDescription>Sells selected CS:GO skins from your inventory</CommandDescription>
+      <CommandDescription>Sells selected CS:GO skins from your inventory, to sell all skins, use `*` for skin name</CommandDescription>
 	  <CommandRequiredPermissions></CommandRequiredPermissions>
       <CommandUsage>.d cs sell [skinName] //.d cs sell AUG | Aristocrat (Field-Tested)</CommandUsage>
-	  <CommandUsageDefinition>[skinName] | Name of skin to sell, use * to sell all skins</CommandUsageDefinition>
+	  <CommandUsageDefinition>[skinName] | Name of skin to sell, **use `*` to sell all skins**</CommandUsageDefinition>
     </HelpMenuCommandEntry>
   <HelpMenuCommandEntry>
       <CommandName>cs sellall</CommandName>

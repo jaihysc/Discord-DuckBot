@@ -20,13 +20,6 @@ namespace DuckBot.Modules.Commands
         [Group("manage")]
         public class Management : ModuleBase<SocketCommandContext>
         {
-            [Command("setGame")]
-            public async Task SetGameAsync([Remainder]string game)
-            {
-                MainProgram.botCommandPrefix = game;
-                await Context.Client.SetGameAsync($"Use {game} help");
-            }
-
             [Command("logAllMessages")]
             public async Task LogAllMessagesAsync(ulong guildID, ulong retrieveTargetChannelID, string path)
             {

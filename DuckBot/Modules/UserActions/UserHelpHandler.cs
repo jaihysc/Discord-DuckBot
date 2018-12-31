@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using DuckBot.Core;
 using Discord.WebSocket;
 using DuckBot.Models;
 using DuckBot_ClassLibrary;
@@ -14,17 +15,19 @@ namespace DuckBot.Modules.UserActions
 {
     public class UserHelpHandler : ModuleBase<SocketCommandContext>
     {
-        public static async Task DisplayHelpMenu(SocketCommandContext Context)
+        public static async Task DisplayHelpMenu(SocketCommandContext context)
         {
+            string botCommandPrefix = CommandGuildPrefixManager.GetGuildCommandPrefix(context);
+
             //https://leovoel.github.io/embed-visualizer/
             var embedBuilder = new EmbedBuilder()
-                .WithDescription($" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki). \n \n Prefix: `{MainProgram.botCommandPrefix}`")
+                .WithDescription($" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki). \n \n Prefix: `{botCommandPrefix}`")
                 .WithColor(new Color(253, 184, 20))
                 .WithFooter(footer =>
                 {
                     footer
-                        .WithText("To check command usage, type .d help <command> // Use .d @help for moderation commands // Sent by " + Context.Message.Author.ToString())
-                        .WithIconUrl(Context.Message.Author.GetAvatarUrl());
+                        .WithText("To check command usage, type .d help <command> // Use .d @help for moderation commands // Sent by " + context.Message.Author.ToString())
+                        .WithIconUrl(context.Message.Author.GetAvatarUrl());
                 })
                 .WithAuthor(author =>
                 {
@@ -40,19 +43,21 @@ namespace DuckBot.Modules.UserActions
 
             var embed = embedBuilder.Build();
 
-            await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
+            await context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
         }
 
-        public static async Task DisplayModerationHelpMenu(SocketCommandContext Context)
+        public static async Task DisplayModerationHelpMenu(SocketCommandContext context)
         {
+            string botCommandPrefix = CommandGuildPrefixManager.GetGuildCommandPrefix(context);
+
             var embedBuilder = new EmbedBuilder()
                 .WithDescription(" For a detailed guide on the usage of Duck, please check the [wiki](https://github.com/jaihysc/Discord-DuckBot/wiki/Main). \n \n Prefix: `.d elevated` \n Requires permission `Administrator`")
                 .WithColor(new Color(252, 144, 0))
                 .WithFooter(footer =>
                 {
                     footer
-                        .WithText($"To check command usage, type `{MainProgram.botCommandPrefix}` @help <command> // Use `{MainProgram.botCommandPrefix}` help for standard commands // Sent by " + Context.Message.Author.ToString())
-                        .WithIconUrl(Context.Message.Author.GetAvatarUrl());
+                        .WithText($"To check command usage, type `{botCommandPrefix}` @help <command> // Use `{botCommandPrefix}` help for standard commands // Sent by " + context.Message.Author.ToString())
+                        .WithIconUrl(context.Message.Author.GetAvatarUrl());
                 })
                 .WithAuthor(author =>
                 {
@@ -65,7 +70,7 @@ namespace DuckBot.Modules.UserActions
 
             var embed = embedBuilder.Build();
 
-            await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
+            await context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
         }
 
         public static async Task DisplayCommandHelpMenu(SocketCommandContext Context, string inputCommand)

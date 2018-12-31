@@ -1,5 +1,7 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+using DuckBot.Core;
 using DuckBot.Modules.UserActions;
 using System;
 using System.Collections.Generic;
@@ -16,18 +18,7 @@ namespace DuckBot.Modules.Moderation
     {
         public static async Task ModerationManagerMessageReceivedAsync(SocketMessage message)
         {
-            await DeleteNonCommandsInCommandsChannel(message);
             await MessageReplies(message);
-        }
-
-
-        private static async Task DeleteNonCommandsInCommandsChannel(SocketMessage message)
-        {
-            if (message.Channel.Id == 504371769738526752 && !message.ToString().StartsWith(MainProgram.botCommandPrefix) && !message.Author.IsBot)
-            {
-                var sentMessage = await message.Channel.GetMessagesAsync(1).Flatten();
-                await message.Channel.DeleteMessagesAsync(sentMessage);
-            }
         }
 
         private static async Task MessageReplies(SocketMessage message)

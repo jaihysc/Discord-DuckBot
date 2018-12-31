@@ -28,7 +28,6 @@ namespace DuckBot
     public class MainProgram
     {
         public static bool _stopThreads = false;
-        public static string botCommandPrefix = ".d";
 
         private static Stopwatch stopwatch = new Stopwatch();
 
@@ -160,7 +159,7 @@ namespace DuckBot
                     var commandHelpDefinitionStorage = XmlManager.FromXmlFile<HelpMenuCommands>(CoreMethod.GetFileLocation(@"CommandHelpDescription.xml"));
                     string similarItemsString = UserHelpHandler.FindSimilarCommands(
                         commandHelpDefinitionStorage.CommandHelpEntry.Select(i => i.CommandName).ToList(), 
-                        message.ToString().Substring(botCommandPrefix.Length + 1));
+                        message.ToString().Substring(CommandGuildPrefixManager.GetGuildCommandPrefix(context).Length + 1));
 
                     //If no similar matches are found, send nothing
                     if (string.IsNullOrEmpty(similarItemsString))

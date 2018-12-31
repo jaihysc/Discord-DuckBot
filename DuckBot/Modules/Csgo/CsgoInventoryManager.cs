@@ -21,8 +21,10 @@ namespace DuckBot.Modules.Csgo
         private static List<string> embedFieldsMaster = new List<string>();
         private static List<string> embedPriceFieldsMaster = new List<string>();
 
-        public static PaginatedMessage DisplayUserCsgoInventory(SocketCommandContext Context)
+        public static PaginatedMessage DisplayUserCsgoInventory(SocketCommandContext context)
         {
+            string botCommandPrefix = CommandGuildPrefixManager.GetGuildCommandPrefix(context);
+
             //Reset fields
             embedFieldsMaster = new List<string>();
             embedPriceFieldsMaster = new List<string>();
@@ -42,9 +44,9 @@ namespace DuckBot.Modules.Csgo
             foreach (var userSkinEntry in userSkin.UserSkinEntries)
             {
                 //Filter skin search to those owned by user
-                if (userSkinEntry.OwnerID == Context.Message.Author.Id)
+                if (userSkinEntry.OwnerID == context.Message.Author.Id)
                 {
-                    foundUserSkins.Add(new UserSkinEntry { OwnerID = Context.Message.Author.Id, ClassId = userSkinEntry.ClassId, UnboxDate = userSkinEntry.UnboxDate });
+                    foundUserSkins.Add(new UserSkinEntry { OwnerID = context.Message.Author.Id, ClassId = userSkinEntry.ClassId, UnboxDate = userSkinEntry.UnboxDate });
                 }
             }
 
@@ -54,13 +56,13 @@ namespace DuckBot.Modules.Csgo
             //Configurate paginated message
             var paginationConfig = new PaginationConfig
             {
-                AuthorName = Context.Message.Author.ToString().Substring(0, Context.Message.Author.ToString().Length - 5) + " Inventory",
-                AuthorURL = Context.Message.Author.GetAvatarUrl(),
+                AuthorName = context.Message.Author.ToString().Substring(0, context.Message.Author.ToString().Length - 5) + " Inventory",
+                AuthorURL = context.Message.Author.GetAvatarUrl(),
 
-                Description = $"To sell items, use `{MainProgram.botCommandPrefix} cs sell [name]` \n To sell all items matching filter, use `{MainProgram.botCommandPrefix} cs sellall [name]`",
+                Description = $"To sell items, use `{botCommandPrefix} cs sell [name]` \n To sell all items matching filter, use `{botCommandPrefix} cs sellall [name]`",
 
                 DefaultFieldHeader = "You do not have any skins",
-                DefaultFieldDescription = $"Go unbox some with `{MainProgram.botCommandPrefix} case open`",
+                DefaultFieldDescription = $"Go unbox some with `{botCommandPrefix} case open`",
 
                 Field1Header = "Item Name",
                 Field2Header = "Market Value",
@@ -130,8 +132,10 @@ namespace DuckBot.Modules.Csgo
         }
 
 
-        public static PaginatedMessage GetCsgoMarketInventory(SocketCommandContext Context, string filterString)
+        public static PaginatedMessage GetCsgoMarketInventory(SocketCommandContext context, string filterString)
         {
+            string botCommandPrefix = CommandGuildPrefixManager.GetGuildCommandPrefix(context);
+
             //Get skin data
             var rootWeaponSkin = CsgoDataHandler.GetRootWeaponSkin();
 
@@ -177,9 +181,9 @@ namespace DuckBot.Modules.Csgo
             var paginationConfig = new PaginationConfig
             {
                 AuthorName = "CS:GO Market",
-                AuthorURL = Context.Message.Author.GetAvatarUrl(),
+                AuthorURL = context.Message.Author.GetAvatarUrl(),
 
-                Description = $"Current skin market, to buy skins, use `{MainProgram.botCommandPrefix} cs buy [name]` \n use `{MainProgram.botCommandPrefix} cs market [name]` to filter skins by name \n use `{MainProgram.botCommandPrefix} cs info [name]` to preview skins",
+                Description = $"Current skin market, to buy skins, use `{botCommandPrefix} cs buy [name]` \n use `{botCommandPrefix} cs market [name]` to filter skins by name \n use `{botCommandPrefix} cs info [name]` to preview skins",
 
                 DefaultFieldHeader = "Unable to find specified weapon skin!",
                 DefaultFieldDescription = $"Broaden your search parameters and try again",
@@ -196,7 +200,7 @@ namespace DuckBot.Modules.Csgo
             return pager;
         }
 
-        public static async Task DisplayCsgoItemStatistics(SocketCommandContext Context, string filterString)
+        public static async Task DisplayCsgoItemStatistics(SocketCommandContext context, string filterString)
         {
             //Get skin data
             var rootWeaponSkin = CsgoDataHandler.GetRootWeaponSkin();
@@ -217,8 +221,8 @@ namespace DuckBot.Modules.Csgo
                     .WithFooter(footer =>
                     {
                         footer
-                            .WithText("Sent by " + Context.Message.Author.ToString())
-                            .WithIconUrl(Context.Message.Author.GetAvatarUrl());
+                            .WithText("Sent by " + context.Message.Author.ToString())
+                            .WithIconUrl(context.Message.Author.GetAvatarUrl());
                     })
                     .WithAuthor(author =>
                     {
@@ -231,7 +235,7 @@ namespace DuckBot.Modules.Csgo
 
                 var embed = embedBuilder.Build();
 
-                await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
+                await context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
             }
             catch (Exception)
             {
@@ -241,8 +245,8 @@ namespace DuckBot.Modules.Csgo
                     .WithFooter(footer =>
                     {
                         footer
-                            .WithText("Sent by " + Context.Message.Author.ToString())
-                            .WithIconUrl(Context.Message.Author.GetAvatarUrl());
+                            .WithText("Sent by " + context.Message.Author.ToString())
+                            .WithIconUrl(context.Message.Author.GetAvatarUrl());
                     })
                     .WithAuthor(author =>
                     {
@@ -254,7 +258,7 @@ namespace DuckBot.Modules.Csgo
 
                 var embed = embedBuilder.Build();
 
-                await Context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
+                await context.Message.Channel.SendMessageAsync(" ", embed: embed).ConfigureAwait(false);
             }
 
         }
