@@ -60,7 +60,7 @@ namespace DuckBot.Modules.Csgo
 
                         //Sort each skin into corropsonding cases
                         //Read from case data config
-                        var skinCases = XmlManager.FromXmlFile<CsgoContainers>(CoreMethod.GetFileLocation("skinCases.xml"));
+                        var skinCases = CsgoUnboxingHandler.csgoContiners;
 
                         //Find the container for each skin
                         foreach (var skinCase in skinCases.Containers)
@@ -73,43 +73,47 @@ namespace DuckBot.Modules.Csgo
                                 //if FN, MW, ETC, it will find all skin conditions + stattrak
 
                                 //For above, append statements for wear 
-                                comparisonItems.Add(skinCaseItem.SkinName + " (Factory New)");
-                                comparisonItems.Add(skinCaseItem.SkinName + " (Minimal Wear)");
-                                comparisonItems.Add(skinCaseItem.SkinName + " (Field-Tested)");
-                                comparisonItems.Add(skinCaseItem.SkinName + " (Well-Worn)");
-                                comparisonItems.Add(skinCaseItem.SkinName + " (Battle-Scarred)");
+                                if (!skinCase.IsSouvenir)
+                                {
+                                    comparisonItems.Add(skinCaseItem.SkinName + " (Factory New)");
+                                    comparisonItems.Add(skinCaseItem.SkinName + " (Minimal Wear)");
+                                    comparisonItems.Add(skinCaseItem.SkinName + " (Field-Tested)");
+                                    comparisonItems.Add(skinCaseItem.SkinName + " (Well-Worn)");
+                                    comparisonItems.Add(skinCaseItem.SkinName + " (Battle-Scarred)");
+
+                                    //Add StatTrak\u2122 before to check for stattrak
+                                    comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Factory New)");
+                                    comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Minimal Wear)");
+                                    comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Field-Tested)");
+                                    comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Well-Worn)");
+                                    comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Battle-Scarred)");
+
+                                    //KNIVES
+
+                                    //\u2605 for knives
+                                    comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Factory New)");
+                                    comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Minimal Wear)");
+                                    comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Field-Tested)");
+                                    comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Well-Worn)");
+                                    comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Battle-Scarred)");
+
+                                    //\u2605 StatTrak\u2122 for knife stattrak
+                                    comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Factory New)");
+                                    comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Minimal Wear)");
+                                    comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Field-Tested)");
+                                    comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Well-Worn)");
+                                    comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Battle-Scarred)");
+                                }                    
 
                                 //Souvenir
-                                comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Factory New)");
-                                comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Minimal Wear)");
-                                comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Field-Tested)");
-                                comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Well-Worn)");
-                                comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Battle-Scarred)");
-
-                                //Add StatTrak\u2122 before to check for stattrak
-                                comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Factory New)");
-                                comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Minimal Wear)");
-                                comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Field-Tested)");
-                                comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Well-Worn)");
-                                comparisonItems.Add("StatTrak\u2122 " + skinCaseItem.SkinName + " (Battle-Scarred)");
-
-
-
-                                //KNIVES
-
-                                //\u2605 for knives
-                                comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Factory New)");
-                                comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Minimal Wear)");
-                                comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Field-Tested)");
-                                comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Well-Worn)");
-                                comparisonItems.Add("\u2605 " + skinCaseItem.SkinName + " (Battle-Scarred)");
-
-                                //\u2605 StatTrak\u2122 for knife stattrak
-                                comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Factory New)");
-                                comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Minimal Wear)");
-                                comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Field-Tested)");
-                                comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Well-Worn)");
-                                comparisonItems.Add("\u2605 StatTrak\u2122 " + skinCaseItem.SkinName + " (Battle-Scarred)");
+                                else if (skinCase.IsSouvenir)
+                                {
+                                    comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Factory New)");
+                                    comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Minimal Wear)");
+                                    comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Field-Tested)");
+                                    comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Well-Worn)");
+                                    comparisonItems.Add("Souvenir " + skinCaseItem.SkinName + " (Battle-Scarred)");
+                                }                              
 
                                 //Check for possible matches, matching CASE skin name
                                 foreach (var comparisonItem in comparisonItems)
@@ -157,6 +161,37 @@ namespace DuckBot.Modules.Csgo
 
             //Get root weapon data again
             GetRootWeaponSkin();
+        }
+
+        /// <summary>
+        /// Gets items available in souvenir version, generates souvenir version and add to container list
+        /// </summary>
+        public static void GenerateSouvenirCollections()
+        {
+            //Create a tempory csgoContainers to work with while main one is in a foreach loop
+            var csgoContainersTemp = CsgoUnboxingHandler.csgoContiners;
+            foreach (var container in CsgoUnboxingHandler.csgoContiners.Containers.ToList())
+            {
+                if (container.SouvenirAvailable)
+                {
+                    //If item has available souvenir version, generate souvenir version and add to container list
+                    var souvenirDuplicateContainer = new Container
+                    {
+                        IsSouvenir = true,
+                        SouvenirAvailable = false,
+                        Name = container.CollectionName + " Souvenir",
+                        CollectionName = container.CollectionName + " Souvenir",
+                        IconURL = container.IconURL,
+                        ContainerEntries = container.ContainerEntries
+                    };
+
+                    csgoContainersTemp.Containers.Add(souvenirDuplicateContainer);
+
+                }
+            }
+
+            CsgoUnboxingHandler.csgoContiners = csgoContainersTemp;
+
         }
     }
 }

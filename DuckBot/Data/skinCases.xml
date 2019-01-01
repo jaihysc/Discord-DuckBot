@@ -3,6 +3,7 @@
     <Container>
       <Name>Danger Zone Case</Name>
       <CollectionName>The Danger Zone Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c259.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -217,6 +218,7 @@
     <Container>
       <Name>Horizon Case</Name>
       <CollectionName>The Horizon Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c244.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -431,6 +433,7 @@
     <Container>
       <Name>Spectrum 2 Case</Name>
       <CollectionName>The Spectrum 2 Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c220.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -579,6 +582,7 @@
     <Container>
       <Name>Gamma Case</Name>
       <CollectionName>The Gamma Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c144.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -727,6 +731,7 @@
     <Container>
       <Name>Gamma 2 Case</Name>
       <CollectionName>The Gamma 2 Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c172.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -875,6 +880,7 @@
     <Container>
       <Name>Glove Case</Name>
       <CollectionName>The Glove Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c179.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -933,6 +939,7 @@
     <Container>
       <Name>Spectrum Case</Name>
       <CollectionName>The Spectrum Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c207.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -1081,6 +1088,7 @@
     <Container>
       <Name>CS:GO Weapon Case</Name>
       <CollectionName>The Arms Deal Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c1.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -1310,6 +1318,7 @@
     <Container>
       <Name>CS:GO Weapon Case 2</Name>
       <CollectionName>The Arms Deal 2 Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c4.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -1548,6 +1557,7 @@
     <Container>
       <Name>CS:GO Weapon Case 3</Name>
       <CollectionName>The Arms Deal 3 Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c10.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -1786,6 +1796,7 @@
     <Container>
       <Name>Chroma Case</Name>
       <CollectionName>The Chroma Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c38.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -1925,6 +1936,7 @@
     <Container>
       <Name>Chroma 2 Case</Name>
       <CollectionName>The Chroma 2 Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c48.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -2067,6 +2079,7 @@
     <Container>
       <Name>Chroma 3 Case</Name>
       <CollectionName>The Chroma 3 Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c141.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -2215,6 +2228,7 @@
     <Container>
       <Name>Falchion Case</Name>
       <CollectionName>The Falchion Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c50.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -2309,6 +2323,7 @@
     <Container>
       <Name>Huntsman Weapon Case</Name>
       <CollectionName>The Huntsman Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c17.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -2430,6 +2445,7 @@
     <Container>
       <Name>Operation Bravo Case</Name>
       <CollectionName>The Bravo Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c3.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -2677,6 +2693,7 @@
     <Container>
       <Name>Operation Breakout Weapon Case</Name>
       <CollectionName>The Breakout Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c18.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -2765,6 +2782,7 @@
     <Container>
       <Name>Operation Hydra Case</Name>
       <CollectionName>The Operation Hydra Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c208.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -2823,6 +2841,7 @@
     <Container>
       <Name>eSports 2013 Case</Name>
       <CollectionName>The eSports 2013 Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c2.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -3052,6 +3071,7 @@
     <Container>
       <Name>eSports 2013 Winter Case</Name>
       <CollectionName>The eSports 2013 Winter Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c5.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -3290,6 +3310,7 @@
     <Container>
       <Name>eSports 2014 Summer Case</Name>
       <CollectionName>The eSports 2014 Summer Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c19.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -3543,6 +3564,7 @@
     <Container>
       <Name>Operation Phoenix Weapon Case</Name>
       <CollectionName>The Phoenix Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c11.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -3784,6 +3806,7 @@
     <Container>
       <Name>Operation Vanguard Weapon Case</Name>
       <CollectionName>The Vanguard Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c29.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4028,6 +4051,7 @@
     <Container>
       <Name>Operation Wildfire Case</Name>
       <CollectionName>The Wildfire Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c112.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4122,6 +4146,7 @@
     <Container>
       <Name>Revolver Case</Name>
       <CollectionName>The Revolver Case Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c111.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4375,6 +4400,7 @@
     <Container>
       <Name>Shadow Case</Name>
       <CollectionName>The Shadow Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c80.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4469,6 +4495,7 @@
     <Container>
       <Name>Winter Offensive Weapon Case</Name>
       <CollectionName>The Winter Offensive Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c7.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4709,6 +4736,7 @@
     </Container>
     <Container>
       <CollectionName>The Blacksite Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_blacksite_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4718,6 +4746,7 @@
     </Container>
     <Container>
       <CollectionName>The 2018 Inferno Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_2018_inferno_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4778,6 +4807,7 @@
     </Container>
     <Container>
       <CollectionName>The 2018 Nuke Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_2018_nuke_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4838,6 +4868,7 @@
     </Container>
     <Container>
       <CollectionName>The Alpha Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_alpha_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4892,6 +4923,7 @@
     </Container>
     <Container>
       <CollectionName>The Assault Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_assault_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4919,6 +4951,7 @@
     </Container>
     <Container>
       <CollectionName>The Aztec Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_aztec_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4943,6 +4976,7 @@
     </Container>
     <Container>
       <CollectionName>The Baggage Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_baggage_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -4994,6 +5028,7 @@
     </Container>
     <Container>
       <CollectionName>The Bank Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_bank_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5048,6 +5083,7 @@
     </Container>
     <Container>
       <CollectionName>The Cache Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_cache_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5093,6 +5129,7 @@
     </Container>
     <Container>
       <CollectionName>The Chop Shop Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_chop_shop_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5147,6 +5184,7 @@
     </Container>
     <Container>
       <CollectionName>The Cobblestone Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_cobblestone_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5198,6 +5236,7 @@
     </Container>
     <Container>
       <CollectionName>The Dust Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_dust_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5231,6 +5270,7 @@
     </Container>
     <Container>
       <CollectionName>The Dust 2 Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_dust_2_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5285,6 +5325,7 @@
     </Container>
     <Container>
       <CollectionName>The Gods and Monsters Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_gods_and_monsters_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5333,6 +5374,7 @@
     </Container>
     <Container>
       <CollectionName>The Inferno Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_inferno_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5357,6 +5399,7 @@
     </Container>
     <Container>
       <CollectionName>The Italy Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_italy_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5408,6 +5451,7 @@
     </Container>
     <Container>
       <CollectionName>The Lake Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_lake_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5459,6 +5503,7 @@
     </Container>
     <Container>
       <CollectionName>The Militia Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_militia_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5498,6 +5543,7 @@
     </Container>
     <Container>
       <CollectionName>The Mirage Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_mirage_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5549,6 +5595,7 @@
     </Container>
     <Container>
       <CollectionName>The Nuke Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_nuke_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5582,6 +5629,7 @@
     </Container>
     <Container>
       <CollectionName>The Office Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_office_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5606,6 +5654,7 @@
     </Container>
     <Container>
       <CollectionName>The Overpass Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_overpass_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5657,6 +5706,7 @@
     </Container>
     <Container>
       <CollectionName>The Rising Sun Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_rising_sun_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5711,6 +5761,7 @@
     </Container>
     <Container>
       <CollectionName>The Safehouse Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_safehouse_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5762,6 +5813,7 @@
     </Container>
     <Container>
       <CollectionName>The Train Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_train_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5813,6 +5865,7 @@
     </Container>
     <Container>
       <CollectionName>The Vertigo Collection</CollectionName>
+      <SouvenirAvailable>true</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/collections/the_vertigo_collection.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>
@@ -5838,6 +5891,7 @@
     <Container>
       <Name>Clutch Case</Name>
       <CollectionName>The Clutch Collection</CollectionName>
+      <SouvenirAvailable>false</SouvenirAvailable>
       <IconURL>https://csgostash.com/img/containers/c238.png</IconURL>
       <ContainerEntries>
         <ContainerEntry>

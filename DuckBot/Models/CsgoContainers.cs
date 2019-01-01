@@ -14,6 +14,8 @@ namespace DuckBot.Models
     {
         public string Name { get; set; }
         public string CollectionName { get; set; }
+        public bool IsSouvenir { get; set; }
+        public bool SouvenirAvailable { get; set; }
         public string IconURL { get; set; }
         public List<ContainerEntry> ContainerEntries { get; set; }
     }

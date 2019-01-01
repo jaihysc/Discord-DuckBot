@@ -282,12 +282,12 @@ namespace DuckBot.Modules.Csgo
                 CsgoUnboxingHandler.userSelectedCase.Add(context.Message.Author.Id, "Danger Zone Case");
             }
 
+            //Filter skins to those in user's case
+            string selectedCase = CsgoUnboxingHandler.csgoContiners.Containers.Where(s => s.Name == CsgoUnboxingHandler.userSelectedCase[context.Message.Author.Id]).Select(s => s.Name).FirstOrDefault();
+
             //Add skins matching user's case to sorted result
             if (byPassCaseFilter == false)
             {
-                //Filter skins to those in user's case
-                string selectedCase = CsgoUnboxingHandler.csgoContiners.Containers.Where(s => s.Name == CsgoUnboxingHandler.userSelectedCase[context.Message.Author.Id]).Select(s => s.Name).FirstOrDefault();
-
                 //Find items matching filter case criteria, add to sortedResult ...!!!!Store this in the future to make this process more efficient
                 foreach (var item in skinData.ItemsList)
                 {
@@ -324,6 +324,7 @@ namespace DuckBot.Modules.Csgo
                 }
             }
 
+
             //Filter by rarity
             sortedResult = sortedResult.Where(s => s.Value.Rarity == itemListType.Rarity).ToList();
 
@@ -341,13 +342,24 @@ namespace DuckBot.Modules.Csgo
                 .Where(s => s.Value.WeaponType != itemListType.BlackListWeaponType).ToList();
             }
 
+            //If case is not a souvenir, filter out souvenir items, if it is, filter out non souvenir items
+            if (byPassCaseFilter == false && CsgoUnboxingHandler.csgoContiners.Containers.Where(c => c.Name == selectedCase).FirstOrDefault().IsSouvenir)
+            {
+                //True
+                sortedResult = sortedResult.Where(s => s.Value.Name.ToLower().Contains("souvenir")).ToList();
+            }
+            else
+            {
+                //False
+                sortedResult = sortedResult.Where(s => !s.Value.Name.ToLower().Contains("souvenir")).ToList();
+            }
+
             //Filter out stattrak, stickers, music kits, and graffiti
             sortedResult = sortedResult
                 .Where(s => !s.Value.Name.ToLower().Contains("stattrak"))
                 .Where(s => !s.Value.Name.ToLower().Contains("sticker"))
                 .Where(s => !s.Value.Name.ToLower().Contains("music kit"))
                 .Where(s => !s.Value.Name.ToLower().Contains(" pin"))
-                .Where(s => !s.Value.Name.ToLower().Contains("souvenir"))
                 .Where(s => !s.Value.Name.ToLower().Contains("graffiti")).ToList();
 
 

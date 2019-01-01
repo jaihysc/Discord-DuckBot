@@ -41,6 +41,7 @@ namespace DuckBot
 
             //Runs setup if path file is not present
             SetupManager.CheckIfPathsFileExists();
+            CsgoDataHandler.GenerateSouvenirCollections();
 
             //Continously running threads
             Thread updateUserBankingInterest = new Thread(new ThreadStart(UserBankingInterestUpdater.UpdateUserDebtInterest));
