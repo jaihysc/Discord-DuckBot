@@ -132,6 +132,7 @@ namespace DuckBot.Modules.Commands.Preconditions
             if (timeout.TimesInvoked <= _invokeLimit || userIsWhiteListed == true)
             {
                 _invokeTracker[key] = timeout;
+
                 return await Task.FromResult(PreconditionResult.FromSuccess());
             }
             else
@@ -142,14 +143,20 @@ namespace DuckBot.Modules.Commands.Preconditions
                     //Only send this message once
                     _invokeTracker[key].ReceivedError = true;
 
-                    await context.Channel.SendMessageAsync(context.Message.Author.Mention + " Chill, calm down. Take a drink, have a walk, come back **(You are in cooldown)**");
+                    //Stores the warning message to delete later on
+                    SendWarningMessageAsync(context);
+
                 }
-                
-              
+                         
                 return await Task.FromResult(PreconditionResult.FromError("User is in cooldown"));
             }
+        }
 
-
+        private static async Task SendWarningMessageAsync(ICommandContext context)
+        {
+            var d = await context.Channel.SendMessageAsync(context.Message.Author.Mention + " Chill, calm down. Take a drink, have a walk, come back **(You are in cooldown)**");
+            await Task.Delay(5000);
+            await d.DeleteAsync();
         }
     }
 
