@@ -1,8 +1,7 @@
 # Discord-DuckBot
 Discord bot using Discord.net
 
+***
 
-
-This bot is depreciated, updates are unlikely to happen
-
-Rewritten in Discord-UncrateGO, containing the most popular features of this bot
+A smaller version of this is available rewritten as Discord-UncrateGO, containing the most popular feature of this bot.
+https://github.com/jaihysc/Discord-UncrateGO
